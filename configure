@@ -6954,7 +6954,12 @@ if test "${enable_shared+set}" = set; then :
   enableval=$enable_shared; p=${PACKAGE-default}
     case $enableval in
     yes) enable_shared=yes ;;
-    no) enable_shared=no ;;
+    no)
+      enable_shared=no
+
+$as_echo "#define LT_MINGW_STATIC_TESTSUITE_HACK 1" >>confdefs.h
+
+      ;;
     *)
       enable_shared=no
       # Look at the argument we got.  We use all the common list separators.
@@ -12183,7 +12188,7 @@ fi
 if test "$CYGWIN" != "yes"; then
 
 case $host_os in
-  *cygwin* ) CYGWIN=yes;;
+  *cygwin* | *msys*) CYGWIN=yes;;
 	 * ) CYGWIN=no;;
 esac
 
