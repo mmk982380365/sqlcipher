@@ -186,9 +186,12 @@ AC_MSG_CHECKING([whether to support threadsafe operation])
 if test "$enable_threadsafe" = "no"; then
   SQLITE_THREADSAFE=0
   AC_MSG_RESULT([no])
+elif test "$enable_threadsafe" = "multi"; then
+  SQLITE_THREADSAFE=2
+  AC_MSG_RESULT([multi-threaded])
 else
   SQLITE_THREADSAFE=1
-  AC_MSG_RESULT([yes])
+  AC_MSG_RESULT([serialized])
 fi
 AC_SUBST(SQLITE_THREADSAFE)
 

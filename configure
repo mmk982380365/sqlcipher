@@ -11829,10 +11829,14 @@ if test "$enable_threadsafe" = "no"; then
   SQLITE_THREADSAFE=0
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
+elif test "$enable_threadsafe" = "multi"; then
+  SQLITE_THREADSAFE=2
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: multi-threaded" >&5
+$as_echo "multi-threaded" >&6; }
 else
   SQLITE_THREADSAFE=1
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: serialized" >&5
+$as_echo "serialized" >&6; }
 fi
 
 
