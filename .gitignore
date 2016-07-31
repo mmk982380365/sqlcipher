@@ -37,4 +37,7 @@ xcuserdata/*
 /sqlcipher.pc
 /sqlite3ext.h
 /libsqlcipher.la
+/fts5.c
+/fts5.h
+/fts5parse.*
 /.DS_Store
