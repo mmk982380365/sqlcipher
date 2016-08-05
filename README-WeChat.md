@@ -15,6 +15,7 @@ Additional configurations for Android environment:
  * Optimize for size rather than speed; (`-Os`)
  * PIC must be enabled; (`-fPIC`)
  * PIE (position independent executable) must be enabled for Android >= 5.0; (`-fPIE -pie`)
+ * Omit memory lock in SQLCipher, which will cause problems with some drivers; (`-DOMIT_MEMLOCK`)
  * Thread-safe mode set to multi-threaded;
  * Use pread64/pwrite64 for disk I/O;
  * Other options from official Android source;
@@ -30,7 +31,7 @@ $ CFLAGS='-I/path/to/openssl/include -Os -mthumb \
 -DUSE_PREAD64=1 \
 -DSQLITE_ENABLE_FTS3_TOKENIZER \
 -DSQLITE_HAS_CODEC \
--DSQLITE_HAVE_ISNAN \
+-DOMIT_MEMLOCK \
 -DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 \
 -DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 \
 -DSQLITE_DEFAULT_FILE_PERMISSIONS=0600 \
