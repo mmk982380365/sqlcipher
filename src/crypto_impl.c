@@ -165,43 +165,93 @@ void sqlcipher_deactivate() {
    Note: As suggested by Joachim Schipper (joachim.schipper@fox-it.com)
 */
 void* sqlcipher_memset(void *v, unsigned char value, int len) {
-  int i = 0;
-  volatile unsigned char *a = v;
-
+#ifndef OMIT_CONSTTIME_MEM
   if (v == NULL) return v;
 
-  for(i = 0; i < len; i++) {
-    a[i] = value;
+  unsigned long val = 0;
+  int i;
+  for (i = 0; i < sizeof(unsigned long); i++) {
+    val = (val << 8) | (value & 0xff);
+  }
+  int len2 = len % sizeof(unsigned long);
+  len = len / sizeof(unsigned long);
+
+  unsigned long *aa = (unsigned long *) v;
+  for (i = 0; i < len; i++) {
+    *aa++ = val;
+  }
+  unsigned char *a = (unsigned char *) aa;
+  for (i = 0; i < len; i++) {
+    *a++ = value;
   }
 
   return v;
+#else
+  return memset(v, value, len);
+#endif
 }
 
 /* constant time memory check tests every position of a memory segement
    matches a single value (i.e. the memory is all zeros)
    returns 0 if match, 1 of no match */
 int sqlcipher_ismemset(const void *v, unsigned char value, int len) {
-  const unsigned char *a = v;
-  int i = 0, result = 0;
+  unsigned long val = 0;
+  int i;
+  for (i = 0; i < sizeof(unsigned long); i++) {
+    val = (val << 8) | (value & 0xff);
+  }
+  int len2 = len % sizeof(unsigned long);
+  len = len / sizeof(unsigned long);
 
-  for(i = 0; i < len; i++) {
-    result |= a[i] ^ value;
+#ifndef OMIT_CONSTTIME_MEM
+  int result = 0;
+  const unsigned long *aa = (const unsigned long *) v;
+  for (i = 0; i < len; i++) {
+    result |= *aa++ ^ val;
+  }
+  const unsigned char *a = (const unsigned char *) aa;
+  for (i = 0; i < len2; i++) {
+    result |= *a++ ^ value;
   }
 
   return (result != 0);
+#else
+  const unsigned long *aa = (const unsigned long *) v;
+  for (i = 0; i < len; i++) {
+    if (*aa++ != val) return 1;
+  }
+  const unsigned char *a = (const unsigned char *) aa;
+  for (i = 0; i < len2; i++) {
+    if (*a++ != value) return 1;
+  }
+
+  return 0;
+#endif
 }
 
 /* constant time memory comparison routine. 
    returns 0 if match, 1 if no match */
 int sqlcipher_memcmp(const void *v0, const void *v1, int len) {
-  const unsigned char *a0 = v0, *a1 = v1;
-  int i = 0, result = 0;
+#ifndef OMIT_CONSTTIME_MEM
+  int len2 = len % sizeof(unsigned long);
+  len = len / sizeof(unsigned long);
+  int i, result = 0;
 
-  for(i = 0; i < len; i++) {
-    result |= a0[i] ^ a1[i];
+  const unsigned long *aa0 = (const unsigned long *) v0;
+  const unsigned long *aa1 = (const unsigned long *) v1;
+  for (i = 0; i < len; i++) {
+    result |= *aa0++ ^ *aa1++;
+  }
+  const unsigned char *a0 = (const unsigned char *) aa0;
+  const unsigned char *a1 = (const unsigned char *) aa1;
+  for (i = 0; i < len2; i++) {
+    result |= *a0++ ^ *a1++;
   }
   
   return (result != 0);
+#else
+  return memcmp(v0, v1, len);
+#endif
 }
 
 /**
