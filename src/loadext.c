@@ -126,6 +126,19 @@
 ** also check to make sure that the pointer to the function is
 ** not NULL before calling it.
 */
+#ifdef SQLITE_HAS_CODEC
+static const sqlcipher_api_routines sqlcipherApis = {
+  sqlcipher_register_provider,
+  sqlcipher_get_provider,
+  sqlcipher_register_custom_provider,
+  sqlcipher_unregister_custom_provider,
+  sqlite3_key,
+  sqlite3_key_v2,
+  sqlite3_rekey,
+  sqlite3_rekey_v2
+};
+#endif
+
 static const sqlite3_api_routines sqlite3Apis = {
   sqlite3_aggregate_context,
 #ifndef SQLITE_OMIT_DEPRECATED
@@ -198,7 +211,15 @@ static const sqlite3_api_routines sqlite3Apis = {
   sqlite3_get_autocommit,
   sqlite3_get_auxdata,
   sqlite3_get_table,
-  0,     /* Was sqlite3_global_recover(), but that function is deprecated */
+
+#ifdef SQLITE_HAS_CODEC  
+  /* Was sqlite3_global_recover(), but that function is deprecated.
+     We 'steal' this slot to place pointers to SQLCipher APIs. */
+  &sqlcipherApis,
+#else
+  0,
+#endif
+  
   sqlite3_interrupt,
   sqlite3_last_insert_rowid,
   sqlite3_libversion,

@@ -18,7 +18,9 @@
 #ifndef _SQLITE3EXT_H_
 #define _SQLITE3EXT_H_
 #include "sqlite3.h"
+#include "sqlcipher.h"
 
+typedef struct sqlcipher_api_routines sqlcipher_api_routines;
 typedef struct sqlite3_api_routines sqlite3_api_routines;
 
 /*
@@ -31,6 +33,19 @@ typedef struct sqlite3_api_routines sqlite3_api_routines;
 ** versions of SQLite will not be able to load each other's shared
 ** libraries!
 */
+#ifdef SQLITE_HAS_CODEC
+struct sqlcipher_api_routines {
+  int (*register_provider)(sqlcipher_provider *p);
+  sqlcipher_provider* (*get_provider)();
+  int (*register_custom_provider)(const char *name, sqlcipher_provider *p);
+  int (*unregister_custom_provider)(const char *name);
+  int (*key)(sqlite3 *db, const void *pKey, int nKey);
+  int (*key_v2)(sqlite3 *db, const char *zDb, const void *pKey, int nKey);
+  int (*rekey)(sqlite3 *db, const void *pKey, int nKey);
+  int (*rekey_v2)(sqlite3 *db, const char *zDb, const void *pKey, int nKey);
+};
+#endif
+
 struct sqlite3_api_routines {
   void * (*aggregate_context)(sqlite3_context*,int nBytes);
   int  (*aggregate_count)(sqlite3_context*);
@@ -105,7 +120,15 @@ struct sqlite3_api_routines {
   int  (*get_autocommit)(sqlite3*);
   void * (*get_auxdata)(sqlite3_context*,int);
   int  (*get_table)(sqlite3*,const char*,char***,int*,int*,char**);
+
+#ifdef SQLITE_HAS_CODEC
+  /* Was `int  (*global_recover)(void);`, but no longer used.
+     Replaced with sqlcipher api pointers. */
+  sqlcipher_api_routines *sqlcipher;
+#else
   int  (*global_recover)(void);
+#endif
+
   void  (*interruptx)(sqlite3*);
   sqlite_int64  (*last_insert_rowid)(sqlite3*);
   const char * (*libversion)(void);
@@ -522,6 +545,19 @@ struct sqlite3_api_routines {
 #define sqlite3_status64               sqlite3_api->status64
 #define sqlite3_strlike                sqlite3_api->strlike
 #define sqlite3_db_cacheflush          sqlite3_api->db_cacheflush
+
+/* SQLCipher APIs */
+#ifdef SQLITE_HAS_CODEC
+#define sqlite3_key                    sqlite3_api->sqlcipher->key
+#define sqlite3_key_v2                 sqlite3_api->sqlcipher->key_v2
+#define sqlite3_rekey                  sqlite3_api->sqlcipher->rekey
+#define sqlite3_rekey_v2               sqlite3_api->sqlcipher->rekey_v2
+#define sqlcipher_register_provider    sqlite3_api->sqlcipher->register_provider
+#define sqlcipher_get_provider         sqlite3_api->sqlcipher->get_provider
+#define sqlcipher_register_custom_provider    sqlite3_api->sqlcipher->register_custom_provider
+#define sqlcipher_unregister_custom_provider  sqlite3_api->sqlcipher->unregister_custom_provider
+#endif
+
 #endif /* !defined(SQLITE_CORE) && !defined(SQLITE_OMIT_LOAD_EXTENSION) */
 
 #if !defined(SQLITE_CORE) && !defined(SQLITE_OMIT_LOAD_EXTENSION)
