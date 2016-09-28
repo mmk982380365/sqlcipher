@@ -59,17 +59,11 @@ typedef struct {
   const char* (*get_provider_version)(void *ctx);
 } sqlcipher_provider;
 
-/* utility functions */
-void sqlcipher_free(void *ptr, int sz);
-void* sqlcipher_malloc(int sz);
-void* sqlcipher_memset(void *v, unsigned char value, int len);
-int sqlcipher_ismemset(const void *v, unsigned char value, int len);
-int sqlcipher_memcmp(const void *v0, const void *v1, int len);
-void sqlcipher_free(void *, int);
-
 /* provider interfaces */
-int sqlcipher_register_provider(sqlcipher_provider *p);
-sqlcipher_provider* sqlcipher_get_provider();
+SQLITE_API int SQLITE_STDCALL sqlcipher_register_provider(sqlcipher_provider *p);
+SQLITE_API sqlcipher_provider* SQLITE_STDCALL sqlcipher_get_provider();
+SQLITE_API int SQLITE_STDCALL sqlcipher_register_custom_provider(const char *name, sqlcipher_provider *p);
+SQLITE_API int SQLITE_STDCALL sqlcipher_unregister_custom_provider(const char *name);
 
 #endif
 #endif

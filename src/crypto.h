@@ -123,6 +123,14 @@
 #define CODEC_HEXDUMP(DESC,BUFFER,LEN)
 #endif
 
+/* utility functions */
+void sqlcipher_free(void *ptr, int sz);
+void* sqlcipher_malloc(int sz);
+void* sqlcipher_memset(void *v, unsigned char value, int len);
+int sqlcipher_ismemset(const void *v, unsigned char value, int len);
+int sqlcipher_memcmp(const void *v0, const void *v1, int len);
+void sqlcipher_free(void *, int);
+
 /* extensions defined in pager.c */ 
 void sqlite3pager_get_codec(Pager *pPager, void **ctx);
 int sqlite3pager_is_mj_pgno(Pager *pPager, Pgno pgno);
