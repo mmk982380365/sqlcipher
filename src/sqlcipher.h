@@ -62,7 +62,7 @@ typedef struct {
 /* provider interfaces */
 SQLITE_API int SQLITE_STDCALL sqlcipher_register_provider(sqlcipher_provider *p);
 SQLITE_API sqlcipher_provider* SQLITE_STDCALL sqlcipher_get_provider();
-SQLITE_API int SQLITE_STDCALL sqlcipher_register_custom_provider(const char *name, sqlcipher_provider *p);
+SQLITE_API int SQLITE_STDCALL sqlcipher_register_custom_provider(const char *name, const sqlcipher_provider *p);
 SQLITE_API int SQLITE_STDCALL sqlcipher_unregister_custom_provider(const char *name);
 
 #endif

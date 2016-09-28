@@ -26,7 +26,7 @@ static sqlite3_mutex *custom_providers_mutex;
 static sqlcipher_provider *default_provider;    /* Default fallback provider, should be openssl, libtomcrypt or commoncrypto */
 static int activate_count = 0;
 
-static void provider_overload(sqlcipher_provider *base, sqlcipher_provider *p) {
+static void provider_overload(const sqlcipher_provider *base, sqlcipher_provider *p) {
     /* sqlcipher_provider is actually a pile of function pointers, which has the same size of (void *).
        We can just run a loop comparing and assigning raw pointers. */
     int n = sizeof(sqlcipher_provider) / sizeof(void *);
@@ -47,8 +47,8 @@ static int select_provider(custom_ctx *ctx, const char *name) {
     if (name) {
         int i;
         for (i = 0; i < custom_providers_count; i++) {
-            if (strcmp(custom_providers[i].name, name) == 0) {
-                ctx->p = &custom_providers[i].p;
+            if (strcmp(custom_providers[i]->name, name) == 0) {
+                ctx->p = &custom_providers[i]->p;
                 break;
             }
         }
@@ -67,11 +67,11 @@ end:
     return rc;
 }
 
-int sqlcipher_register_custom_provider(const char *name, sqlcipher_provider *p) {
+int sqlcipher_register_custom_provider(const char *name, const sqlcipher_provider *p) {
     sqlite3_mutex_enter(custom_providers_mutex);
 
     /* Grow custom provider list if it's full. */
-    if (custom_provider_count >= custom_providers_capacity) {
+    if (custom_providers_count >= custom_providers_capacity) {
         /* Linear growth should be enough here as we probably don't have so much providers. */
         int new_capacity = custom_providers_capacity + 16;
         void *new_list = sqlite3_realloc(custom_providers, new_capacity * sizeof(sqlcipher_named_provider *));
@@ -93,7 +93,7 @@ int sqlcipher_register_custom_provider(const char *name, sqlcipher_provider *p) 
     /* Find existing provider. */
     int i;
     for (i = 0; i < custom_providers_count; i++) {
-        if (strcmp(custom_providers[i].name, name) == 0)
+        if (strcmp(custom_providers[i]->name, name) == 0)
             break;
     }
     if (i < custom_providers_count) {
@@ -119,7 +119,7 @@ int sqlcipher_unregister_custom_provider(const char *name) {
     /* Find existing provider. */
     int i;
     for (i = 0; i < custom_providers_count; i++) {
-        if (strcmp(custom_providers[i].name, name) == 0)
+        if (strcmp(custom_providers[i]->name, name) == 0)
             break;
     }
     if (i < custom_providers_count) {
@@ -154,7 +154,7 @@ static int sqlcipher_custom_activate(void *ctx) {
 #error "NO DEFAULT SQLCIPHER CRYPTO PROVIDER DEFINED"
 #endif
 
-        custom_provider_mutex = sqlite3_mutex_alloc(SQLITE_MUTEX_FAST);
+        custom_providers_mutex = sqlite3_mutex_alloc(SQLITE_MUTEX_FAST);
     }
 
     activate_count++;
@@ -173,7 +173,7 @@ static int sqlcipher_custom_deactivate(void *ctx) {
     if (--activate_count == 0) {
         sqlite3_free(default_provider);
         default_provider = NULL;
-        sqlite3_mutex_free(custom_provider_mutex);
+        sqlite3_mutex_free(custom_providers_mutex);
     }
 
     sqlite3_mutex_leave(mutex);
@@ -242,7 +242,7 @@ static int sqlcipher_custom_random(void *ctx_, void *buffer, int length) {
     int rc;
     if (!ctx->p && (rc = select_provider(ctx, NULL)) != SQLITE_OK) 
         return rc;
-    return ctx->p->random(p->p_ctx, buffer, length);
+    return ctx->p->random(ctx->p_ctx, buffer, length);
 }
 
 static int sqlcipher_custom_add_random(void *ctx_, void *buffer, int length) {
@@ -280,28 +280,28 @@ static int sqlcipher_custom_cipher(void *ctx_, int mode, unsigned char *key, int
     return ctx->p->cipher(ctx->p_ctx, mode, key, key_sz, iv, in, in_sz, out);
 }
 
-static int sqlcipher_custom_get_key_sz(void *ctx) {
+static int sqlcipher_custom_get_key_sz(void *ctx_) {
     custom_ctx *ctx = (custom_ctx *) ctx_;
     if (!ctx->p && select_provider(ctx, NULL) != SQLITE_OK) 
         return 0;
     return ctx->p->get_key_sz(ctx->p_ctx);
 }
 
-static int sqlcipher_custom_get_iv_sz(void *ctx) {
+static int sqlcipher_custom_get_iv_sz(void *ctx_) {
     custom_ctx *ctx = (custom_ctx *) ctx_;
     if (!ctx->p && select_provider(ctx, NULL) != SQLITE_OK) 
         return 0;
     return ctx->p->get_iv_sz(ctx->p_ctx);
 }
 
-static int sqlcipher_custom_get_block_sz(void *ctx) {
+static int sqlcipher_custom_get_block_sz(void *ctx_) {
     custom_ctx *ctx = (custom_ctx *) ctx_;
     if (!ctx->p && select_provider(ctx, NULL) != SQLITE_OK) 
         return 0;
     return ctx->p->get_block_sz(ctx->p_ctx);
 }
 
-static int sqlcipher_custom_get_hmac_sz(void *ctx) {
+static int sqlcipher_custom_get_hmac_sz(void *ctx_) {
     custom_ctx *ctx = (custom_ctx *) ctx_;
     if (!ctx->p && select_provider(ctx, NULL) != SQLITE_OK) 
         return 0;

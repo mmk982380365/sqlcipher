@@ -114,7 +114,7 @@ static const char *sqlcipher_xxtea_get_provider_name(void *ctx) {
 }
 
 static const char *sqlcipher_xxtea_get_provider_version(void *ctx) {
-    return "0.1"
+    return "0.1";
 }
 
 static int sqlcipher_xxtea_set_cipher(void *ctx, const char *cipher_name) {
@@ -156,7 +156,7 @@ static int sqlcipher_xxtea_ctx_init(void **ctx) {
 }
 
 static int sqlcipher_xxtea_ctx_free(void **ctx) {
-    sqlcipher_free(*ctx);
+    sqlcipher_free(*ctx, sizeof(xxtea_context));
 }
 
 static int sqlcipher_xxtea_fips_status(void *ctx) {
@@ -187,6 +187,7 @@ static const sqlcipher_provider g_xxtea_provider = {
     sqlcipher_xxtea_ctx_cmp,            /* ctx_cmp */
     sqlcipher_xxtea_ctx_init,           /* ctx_init */
     sqlcipher_xxtea_ctx_free,           /* ctx_free */
+    sqlcipher_xxtea_fips_status,        /* fips_status */
     sqlcipher_xxtea_get_provider_version
 };
 

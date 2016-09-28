@@ -284,6 +284,7 @@ foreach file {
    crypto_libtomcrypt.c
    crypto_openssl.c
    crypto_cc.c
+   crypto_custom.c
 
    global.c
    ctime.c
@@ -391,6 +392,7 @@ foreach file {
    dbstat.c
    json1.c
    fts5.c
+   xxtea.c
 } {
   copy_file tsrc/$file
 }

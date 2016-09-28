@@ -144,7 +144,7 @@ CRYPTOLIBOBJ = \
   crypto_openssl.lo \
   crypto_libtomcrypt.lo \
   crypto_cc.lo \
-  crypto_custom.lo \
+  crypto_custom.lo
   
 CRYPTOSRC = \
   $(TOP)/src/crypto.h \
@@ -707,6 +707,8 @@ crypto_libtomcrypt.lo:	$(TOP)/src/crypto_libtomcrypt.c $(HDR)
 	$(LTCOMPILE) -c $(TOP)/src/crypto_libtomcrypt.c
 crypto_cc.lo:	$(TOP)/src/crypto_cc.c $(HDR)
 	$(LTCOMPILE) -c $(TOP)/src/crypto_cc.c
+crypto_custom.lo: $(TOP)/src/crypto_crypto.c $(HDR)
+	$(LTCOMPILE) -c $(TOP)/src/crypto_crypto.c
 # END CRYPTO
 
 # Rules to build individual *.o files from files in the src directory.
@@ -1041,6 +1043,9 @@ rtree.lo:	$(TOP)/ext/rtree/rtree.c $(HDR) $(EXTHDR)
 
 json1.lo:	$(TOP)/ext/misc/json1.c
 	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/misc/json1.c
+
+xxtea.lo: $(TOP)/ext/crypto/xxtea.c
+	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/crypto/xxtea.c
 
 # FTS5 things
 #
