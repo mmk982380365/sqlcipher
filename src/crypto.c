@@ -108,11 +108,6 @@ int sqlcipher_codec_pragma(sqlite3* db, int iDb, Parse *pParse, const char *zLef
       codec_vdbe_return_static_string(pParse, "cipher_store_pass", store_pass_value);
       sqlite3_free(store_pass_value);
     }
-  }
-  if( sqlite3StrICmp(zLeft, "cipher_profile")== 0 && zRight ){
-      char *profile_status = sqlite3_mprintf("%d", sqlcipher_cipher_profile(db, zRight));
-      codec_vdbe_return_static_string(pParse, "cipher_profile", profile_status);
-      sqlite3_free(profile_status);
   } else
   if( sqlite3StrICmp(zLeft, "cipher_add_random")==0 && zRight ){
     if(ctx) {
@@ -140,7 +135,7 @@ int sqlcipher_codec_pragma(sqlite3* db, int iDb, Parse *pParse, const char *zLef
   } else
   if( sqlite3StrICmp(zLeft, "cipher_version")==0 && !zRight ){
     codec_vdbe_return_static_string(pParse, "cipher_version", codec_get_cipher_version());
-  }else
+  } else
   if( sqlite3StrICmp(zLeft, "cipher")==0 ){
     if(ctx) {
       if( zRight ) {
