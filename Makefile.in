@@ -143,16 +143,18 @@ CRYPTOLIBOBJ = \
   crypto_impl.lo \
   crypto_openssl.lo \
   crypto_libtomcrypt.lo \
-  crypto_cc.lo
+  crypto_cc.lo \
+  crypto_custom.lo \
   
 CRYPTOSRC = \
   $(TOP)/src/crypto.h \
   $(TOP)/src/sqlcipher.h \
   $(TOP)/src/crypto.c \
   $(TOP)/src/crypto_impl.c \
-	$(TOP)/src/crypto_libtomcrypt.c \
-	$(TOP)/src/crypto_openssl.c \
-	$(TOP)/src/crypto_cc.c
+  $(TOP)/src/crypto_libtomcrypt.c \
+  $(TOP)/src/crypto_openssl.c \
+  $(TOP)/src/crypto_cc.c \
+  $(TOP)/src/crypto_custom.c
 
 # END CRYPTO
 
@@ -368,6 +370,10 @@ SRC += \
 SRC += \
   $(TOP)/ext/misc/json1.c
 
+# Source code for crypto extensions
+#
+SRC += \
+  $(TOP)/ext/crypto/xxtea.c
 
 
 # Generated source code files
