@@ -5003,7 +5003,9 @@ int SQLITE_CDECL main(int argc, char **argv){
       if( zHistory ){ shell_read_history(zHistory); }
       rc = process_input(&data, 0);
       if( zHistory ){
+#ifndef __MINGW32__
         shell_stifle_history(100);
+#endif
         shell_write_history(zHistory);
         free(zHistory);
       }
