@@ -79,7 +79,6 @@ static int codec_set_pass_key(sqlite3* db, int nDb, const void *zKey, int nKey, 
 } 
 
 int sqlcipher_codec_pragma(sqlite3* db, int iDb, Parse *pParse, const char *zLeft, const char *zRight) {
-  char *pragma_cipher_deprecated_msg = "PRAGMA cipher command is deprecated, please remove from usage.";
   struct Db *pDb = &db->aDb[iDb];
   codec_ctx *ctx = NULL;
   int rc;
@@ -140,18 +139,15 @@ int sqlcipher_codec_pragma(sqlite3* db, int iDb, Parse *pParse, const char *zLef
     if(ctx) {
       if( zRight ) {
         sqlcipher_codec_ctx_set_cipher(ctx, zRight, 2); // change cipher for both
-        codec_vdbe_return_static_string(pParse, "cipher", pragma_cipher_deprecated_msg);
-        sqlite3_log(SQLITE_WARNING, pragma_cipher_deprecated_msg);
-        return SQLITE_ERROR;
       }else {
         codec_vdbe_return_static_string(pParse, "cipher",
           sqlcipher_codec_ctx_get_cipher(ctx, 2));
       }
     }
-  }else
+  } else
   if( sqlite3StrICmp(zLeft, "rekey_cipher")==0 && zRight ){
     if(ctx) sqlcipher_codec_ctx_set_cipher(ctx, zRight, 1); // change write cipher only 
-  }else
+  } else
   if( sqlite3StrICmp(zLeft,"cipher_default_kdf_iter")==0 ){
     if( zRight ) {
       sqlcipher_set_default_kdf_iter(atoi(zRight)); // change default KDF iterations

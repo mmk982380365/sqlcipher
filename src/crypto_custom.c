@@ -23,7 +23,7 @@ static int custom_providers_count;
 static int custom_providers_capacity;
 static sqlite3_mutex *custom_providers_mutex;
 
-static sqlcipher_provider *default_provider;    /* Default fallback provider, should be openssl, libtomcrypt or commoncrypto */
+static sqlcipher_provider *fallback_provider;    /* Default fallback provider, should be openssl, libtomcrypt or commoncrypto */
 static int activate_count = 0;
 
 static void provider_overload(const sqlcipher_provider *base, sqlcipher_provider *p) {
@@ -55,7 +55,7 @@ static int select_provider(custom_ctx *ctx, const char *name) {
     }
 
     if (!ctx->p)
-        ctx->p = default_provider;
+        ctx->p = fallback_provider;
 
     /* Now we have chosen which provider will be used, 
        we can initialize the real provider context. */
@@ -88,7 +88,7 @@ int sqlcipher_register_custom_provider(const char *name, const sqlcipher_provide
     /* Overload provider functions. */
     strncpy(np->name, name, len);
     memcpy(&np->p, p, sizeof(sqlcipher_provider));
-    provider_overload(default_provider, &np->p);
+    provider_overload(fallback_provider, &np->p);
 
     /* Find existing provider. */
     int i;
@@ -137,19 +137,19 @@ static int sqlcipher_custom_activate(void *ctx) {
     sqlite3_mutex *mutex = sqlite3_mutex_alloc(SQLITE_MUTEX_STATIC_MASTER);
     sqlite3_mutex_enter(mutex);
 
-    if (!default_provider) {
-        default_provider = (sqlcipher_provider *) malloc(sizeof(sqlcipher_provider));
-        if (!default_provider) goto bail;
+    if (!fallback_provider) {
+        fallback_provider = (sqlcipher_provider *) malloc(sizeof(sqlcipher_provider));
+        if (!fallback_provider) goto bail;
 
 #if defined (SQLCIPHER_CRYPTO_CC)
         extern int sqlcipher_cc_setup(sqlcipher_provider *p);
-        sqlcipher_cc_setup(default_provider);
+        sqlcipher_cc_setup(fallback_provider);
 #elif defined (SQLCIPHER_CRYPTO_LIBTOMCRYPT)
         extern int sqlcipher_ltc_setup(sqlcipher_provider *p);
-        sqlcipher_ltc_setup(default_provider);
+        sqlcipher_ltc_setup(fallback_provider);
 #elif defined (SQLCIPHER_CRYPTO_OPENSSL)
-        extern int sqlcipher_custom_setup(sqlcipher_provider *p);
-        sqlcipher_custom_setup(default_provider);
+        extern int sqlcipher_openssl_setup(sqlcipher_provider *p);
+        sqlcipher_openssl_setup(fallback_provider);
 #else
 #error "NO DEFAULT SQLCIPHER CRYPTO PROVIDER DEFINED"
 #endif
@@ -171,8 +171,8 @@ static int sqlcipher_custom_deactivate(void *ctx) {
     sqlite3_mutex_enter(mutex);
 
     if (--activate_count == 0) {
-        sqlite3_free(default_provider);
-        default_provider = NULL;
+        sqlite3_free(fallback_provider);
+        fallback_provider = NULL;
         sqlite3_mutex_free(custom_providers_mutex);
     }
 
