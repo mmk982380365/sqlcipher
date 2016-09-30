@@ -73,7 +73,6 @@ static int sqlcipher_xxtea_cipher(void *ctx, int mode, unsigned char *key, int k
 	int turns = ((xxtea_context *) ctx)->turns;
     uint32_t xor_key = *(uint32_t *) iv;
     int i;
-    if (!mode) n = -n;
 
 	//CODEC_TRACE(("sqlcipher_xxtea_cipher: cipher data %d\n",xxtea_turns));
 	//CODEC_HEXDUMP("sqlcipher_xxtea_cipher: key data ", key,key_sz);
@@ -88,15 +87,15 @@ static int sqlcipher_xxtea_cipher(void *ctx, int mode, unsigned char *key, int k
 
         uint32_t *p_in = (uint32_t *) in;
         uint32_t *p_out = (uint32_t *) out;
-        for (i = 0; i < in_sz; i += 4) {
-            xor_key ^= *p_in++;
-            *p_out++ = xor_key;
+        for (i = 0; i < n; i++) {
+            *p_out++ = xor_key ^ *p_in;
+            xor_key = *p_in++;
         }
     } else {
         /* Encryption */
         uint32_t *p_in = (uint32_t *) in;
         uint32_t *p_out = (uint32_t *) out;
-        for (i = 0; i < in_sz; i += 4) {
+        for (i = 0; i < n; i++) {
             xor_key ^= *p_in++;
             *p_out++ = xor_key;
         }
@@ -191,6 +190,7 @@ static const sqlcipher_provider g_xxtea_provider = {
     sqlcipher_xxtea_get_provider_version
 };
 
+#ifndef SQLITE_CORE
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
@@ -199,11 +199,17 @@ int sqlite3_xxtea_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines 
 
     if (!g_cipher_registered) {
         g_cipher_registered = 1;
-        sqlcipher_register_custom_provider("xxtea", &g_xxtea_provider);
+        return sqlcipher_register_custom_provider("xxtea", &g_xxtea_provider);
     }
 
     return SQLITE_OK;
 }
+#else /* SQLITE_CORE */
+int sqlcipherCryptoXxteaInit() {
+    g_cipher_registered = 1;
+    return sqlcipher_register_custom_provider("xxtea", &g_xxtea_provider);
+}
+#endif
 
 #endif /* defined(SQLCIPHER_CRYPTO_XXTEA) || !defined(SQLITE_CORE) */
 #endif /* SQLITE_HAS_CODEC */
