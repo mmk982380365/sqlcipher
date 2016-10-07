@@ -1242,6 +1242,7 @@ install:	sqlcipher$(TEXE) lib_install sqlite3.h sqlcipher.pc ${HAVE_TCL:1=tcl_in
 	$(INSTALL) -d $(DESTDIR)$(includedir)
 	$(INSTALL) -m 0644 sqlite3.h $(DESTDIR)$(includedir)
 	$(INSTALL) -m 0644 $(TOP)/src/sqlite3ext.h $(DESTDIR)$(includedir)
+	$(INSTALL) -m 0644 $(TOP)/src/sqlcipher.h $(DESTDIR)$(includedir)
 	$(INSTALL) -d $(DESTDIR)$(pkgconfigdir)
 	$(INSTALL) -m 0644 sqlcipher.pc $(DESTDIR)$(pkgconfigdir)
 
