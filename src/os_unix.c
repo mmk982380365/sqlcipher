@@ -312,6 +312,16 @@ static pid_t randomnessPid = 0;
 ** is the 32-bit version, even if _FILE_OFFSET_BITS=64 is defined.
 */
 #ifdef __ANDROID__
+
+# include <android/api-level.h>
+# if __ANDROID_API__ < 12
+/* Android API < 12 lacks ftruncate64 implementation. */
+# include <sys/syscall.h>
+static int ftruncate64(int fd, off64_t size) {
+  return syscall(__NR_ftruncate64, fd, 0, size & 0xFFFFFFFF, size >> 32);
+}
+# endif
+
 # define lseek lseek64
 #endif
 
@@ -371,8 +381,13 @@ static struct unix_syscall {
 #define osFstat     ((int(*)(int,struct stat*))aSyscall[5].pCurrent)
 #endif
 
+#if defined(__ANDROID__)
+  { "ftruncate",    (sqlite3_syscall_ptr)ftruncate64, 0 },
+# define osFtruncate ((int(*)(int,off64_t))aSyscall[6].pCurrent)
+#else
   { "ftruncate",    (sqlite3_syscall_ptr)ftruncate,  0  },
-#define osFtruncate ((int(*)(int,off_t))aSyscall[6].pCurrent)
+# define osFtruncate ((int(*)(int,off_t))aSyscall[6].pCurrent)
+#endif
 
   { "fcntl",        (sqlite3_syscall_ptr)fcntl,      0  },
 #define osFcntl     ((int(*)(int,int,...))aSyscall[7].pCurrent)
@@ -393,9 +408,9 @@ static struct unix_syscall {
   { "pread64",      (sqlite3_syscall_ptr)0,          0  },
 #endif
 #if defined(__ANDROID__)
-#define osPread64   ((ssize_t(*)(int,void*,size_t,off64_t))aSyscall[10].pCurrent)
+# define osPread64   ((ssize_t(*)(int,void*,size_t,off64_t))aSyscall[10].pCurrent)
 #else
-#define osPread64   ((ssize_t(*)(int,void*,size_t,off_t))aSyscall[10].pCurrent)
+# define osPread64   ((ssize_t(*)(int,void*,size_t,off_t))aSyscall[10].pCurrent)
 #endif
 
   { "write",        (sqlite3_syscall_ptr)write,      0  },
@@ -415,10 +430,10 @@ static struct unix_syscall {
   { "pwrite64",     (sqlite3_syscall_ptr)0,          0  },
 #endif
 #if defined(__ANDROID__)
-#define osPwrite64  ((ssize_t(*)(int,const void*,size_t,off64_t))\
+# define osPwrite64  ((ssize_t(*)(int,const void*,size_t,off64_t))\
                     aSyscall[13].pCurrent)
 #else
-#define osPwrite64  ((ssize_t(*)(int,const void*,size_t,off_t))\
+# define osPwrite64  ((ssize_t(*)(int,const void*,size_t,off_t))\
                     aSyscall[13].pCurrent)
 #endif
 
@@ -772,15 +787,6 @@ static int lockTrace(int fd, int op, struct flock *p){
 */
 static int robust_ftruncate(int h, sqlite3_int64 sz){
   int rc;
-#ifdef __ANDROID__
-  /* On Android, ftruncate() always uses 32-bit offsets, even if 
-  ** _FILE_OFFSET_BITS=64 is defined. This means it is unsafe to attempt to
-  ** truncate a file to any size larger than 2GiB. Silently ignore any
-  ** such attempts.  */
-  if( sz>(sqlite3_int64)0x7FFFFFFF ){
-    rc = SQLITE_OK;
-  }else
-#endif
   do{ rc = osFtruncate(h,sz); }while( rc<0 && errno==EINTR );
   return rc;
 }

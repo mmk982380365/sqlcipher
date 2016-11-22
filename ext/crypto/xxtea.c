@@ -156,6 +156,7 @@ static int sqlcipher_xxtea_ctx_init(void **ctx) {
 
 static int sqlcipher_xxtea_ctx_free(void **ctx) {
     sqlcipher_free(*ctx, sizeof(xxtea_context));
+    return SQLITE_OK;
 }
 
 static int sqlcipher_xxtea_fips_status(void *ctx) {
