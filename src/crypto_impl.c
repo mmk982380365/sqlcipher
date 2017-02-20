@@ -68,7 +68,7 @@ typedef struct {
 static unsigned int default_flags = DEFAULT_CIPHER_FLAGS;
 static unsigned char hmac_salt_mask = HMAC_SALT_MASK;
 static int default_kdf_iter = PBKDF2_ITER;
-static int default_page_size = SQLITE_DEFAULT_PAGE_SIZE;
+static int default_page_size = 1024;
 static unsigned int sqlcipher_activate_count = 0;
 static sqlite3_mutex* sqlcipher_provider_mutex = NULL;
 static sqlcipher_provider *default_provider = NULL;
@@ -528,8 +528,11 @@ int sqlcipher_codec_ctx_set_cipher(codec_ctx *ctx, const char *cipher_name, int 
   cipher_ctx *c_ctx = for_ctx ? ctx->write_ctx : ctx->read_ctx;
   int rc;
 
-  c_ctx->provider->set_cipher(c_ctx->provider_ctx, cipher_name);
-
+  rc = c_ctx->provider->set_cipher(c_ctx->provider_ctx, cipher_name);
+  if(rc != SQLITE_OK){
+    sqlcipher_codec_ctx_set_error(ctx, rc);
+    return rc;
+  }
   c_ctx->key_sz = c_ctx->provider->get_key_sz(c_ctx->provider_ctx);
   c_ctx->iv_sz = c_ctx->provider->get_iv_sz(c_ctx->provider_ctx);
   c_ctx->block_sz = c_ctx->provider->get_block_sz(c_ctx->provider_ctx);
@@ -1059,7 +1062,7 @@ int sqlcipher_codec_ctx_migrate(codec_ctx *ctx) {
   int saved_flags;
   int saved_nChange;
   int saved_nTotalChange;
-  void (*saved_xTrace)(void*,const char*);
+  int (*saved_xTrace)(u32,void*,void*,void*); /* Saved db->xTrace */
   Db *pDb = 0;
   sqlite3 *db = ctx->pBt->db;
   const char *db_filename = sqlite3_db_filename(db, "main");
