@@ -924,8 +924,14 @@ static int sqlcipher_cipher_ctx_key_derive(codec_ctx *ctx, cipher_ctx *c_ctx) {
   
   if(c_ctx->pass && c_ctx->pass_sz) { // if pass is not null
 
-    if(ctx->need_kdf_salt) {
-      if(ctx->read_ctx->provider->random(ctx->read_ctx->provider_ctx, ctx->kdf_salt, FILE_HEADER_SZ) != SQLITE_OK) return SQLITE_ERROR;
+    if (ctx->need_kdf_salt) {
+      /* Try reading KDF salt from file header again before generating new salt. 
+         The salt may have been initialized by another connection already. */
+      sqlite3_file *fd = sqlite3PagerFile(ctx->pBt->pBt->pPager);
+
+      if (sqlite3OsRead(fd, ctx->kdf_salt, FILE_HEADER_SZ, 0) != SQLITE_OK &&
+        ctx->read_ctx->provider->random(ctx->read_ctx->provider_ctx, ctx->kdf_salt, FILE_HEADER_SZ) != SQLITE_OK) 
+          return SQLITE_ERROR;
       ctx->need_kdf_salt = 0;
     }
     if (c_ctx->pass_sz == ((c_ctx->key_sz * 2) + 3) && sqlite3StrNICmp((const char *)c_ctx->pass ,"x'", 2) == 0 && cipher_isHex(c_ctx->pass + 2, c_ctx->key_sz * 2)) { 
