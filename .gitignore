@@ -36,6 +36,7 @@ xcuserdata/*
 /sqlite3.pc
 /sqlcipher.pc
 /sqlite3ext.h
+/sqlite3session.h
 /libsqlcipher.la
 /fts5.c
 /fts5.h
