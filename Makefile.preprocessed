@@ -1,0 +1,20 @@
+#!/usr/make
+
+SRC = \
+	opcodes.h \
+opcodes.c \
+keywordhash.h \
+fts5.c \
+fts5.h \
+sqlite3.h \
+parse.h \
+parse.c
+
+all: $(SRC)
+$(SRC): Makefile
+	make opcodes.h opcodes.c keywordhash.h fts5.c fts5.h sqlite3.h parse.h parse.c
+Makefile: configure
+	./configure --enable-tempstore=yes --with-crypto-lib=commoncrypto CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2" --disable-amalgamation
+	make opcodes.h opcodes.c keywordhash.h fts5.c fts5.h sqlite3.h parse.h parse.c
+clean:
+	make clean
