@@ -1186,7 +1186,10 @@ int sqlcipher_codec_ctx_migrate(codec_ctx *ctx) {
       
       assert( 1==sqlite3BtreeIsInTrans(pDest) );
       assert( 1==sqlite3BtreeIsInTrans(pSrc) );
-
+#if defined (SQLCIPHER_PREPROCESSED)
+        extern int sqlite3CodecAttach(sqlite3*, int, const void*, int);
+        extern void sqlite3CodecGetKey(sqlite3*, int, void**, int*);
+#endif /* SQLCIPHER_PREPROCESSED */
       sqlite3CodecGetKey(db, db->nDb - 1, (void**)&key, &password_sz);
       sqlite3CodecAttach(db, 0, key, password_sz);
       sqlite3pager_get_codec(pDest->pBt->pPager, (void**)&ctx);

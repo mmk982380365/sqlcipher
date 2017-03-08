@@ -41,6 +41,10 @@
 #define SQLCIPHER_CRYPTO_OPENSSL
 #endif
 
+#if defined (SQLCIPHER_PREPROCESSED)
+#include "sqliteInt.h"
+#endif /* SQLCIPHER_PREPROCESSED */
+
 #define FILE_HEADER_SZ 16
 
 #ifndef CIPHER_VERSION
@@ -154,21 +158,33 @@ static int cipher_hex2int(char c) {
          (c>='a' && c<='f') ? (c)-'a'+10 : 0;
 }
 
+#if defined (SQLCIPHER_PREPROCESSED)
+void cipher_hex2bin(const unsigned char *hex, int sz, unsigned char *out){
+#else /* SQLCIPHER_PREPROCESSED */
 static void cipher_hex2bin(const unsigned char *hex, int sz, unsigned char *out){
+#endif /* SQLCIPHER_PREPROCESSED */
   int i;
   for(i = 0; i < sz; i += 2){
     out[i/2] = (cipher_hex2int(hex[i])<<4) | cipher_hex2int(hex[i+1]);
   }
 }
 
+#if defined (SQLCIPHER_PREPROCESSED)
+void cipher_bin2hex(const unsigned char* in, int sz, char *out) {
+#else /* SQLCIPHER_PREPROCESSED */
 static void cipher_bin2hex(const unsigned char* in, int sz, char *out) {
+#endif /* SQLCIPHER_PREPROCESSED */
     int i;
     for(i=0; i < sz; i++) {
       sqlite3_snprintf(3, out + (i*2), "%02x ", in[i]);
     } 
 }
 
+#if defined (SQLCIPHER_PREPROCESSED)
+int cipher_isHex(const unsigned char *hex, int sz){
+#else /* SQLCIPHER_PREPROCESSED */
 static int cipher_isHex(const unsigned char *hex, int sz){
+#endif /* SQLCIPHER_PREPROCESSED */
   int i;
   for(i = 0; i < sz; i++) {
     unsigned char c = hex[i];
@@ -242,9 +258,15 @@ int sqlcipher_codec_ctx_get_flag(codec_ctx *ctx, unsigned int flag, int for_ctx)
 const char* sqlcipher_codec_get_cipher_provider(codec_ctx *ctx);
 int sqlcipher_codec_ctx_migrate(codec_ctx *ctx);
 int sqlcipher_codec_add_random(codec_ctx *ctx, const char *data, int random_sz);
+#if defined (SQLCIPHER_PREPROCESSED)
+int sqlcipher_codec_get_store_pass(codec_ctx *ctx);
+void sqlcipher_codec_get_pass(codec_ctx *ctx, void **zKey, int *nKey);
+void sqlcipher_codec_set_store_pass(codec_ctx *ctx, int value);
+#else /* SQLCIPHER_PREPROCESSED */
 static int sqlcipher_codec_get_store_pass(codec_ctx *ctx);
 static void sqlcipher_codec_get_pass(codec_ctx *ctx, void **zKey, int *nKey);
 static void sqlcipher_codec_set_store_pass(codec_ctx *ctx, int value);
+#endif /* SQLCIPHER_PREPROCESSED */
 int sqlcipher_codec_fips_status(codec_ctx *ctx);
 const char* sqlcipher_codec_get_provider_version(codec_ctx *ctx);
 #endif

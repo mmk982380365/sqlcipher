@@ -262,6 +262,9 @@ static int backupOnePage(
   /* Backup is not possible if the page size of the destination is changing
   ** and a codec is in use.
   */
+#if defined (SQLCIPHER_PREPROCESSED)
+    extern void *sqlite3PagerGetCodec(Pager *pPager);
+#endif /* SQLCIPHER_PREPROCESSED */
   if( nSrcPgsz!=nDestPgsz && sqlite3PagerGetCodec(pDestPager)!=0 ){
     rc = SQLITE_READONLY;
   }
