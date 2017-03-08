@@ -159,32 +159,31 @@ static int cipher_hex2int(char c) {
 }
 
 #if defined (SQLCIPHER_PREPROCESSED)
-void cipher_hex2bin(const unsigned char *hex, int sz, unsigned char *out){
+void cipher_hex2bin(const unsigned char *hex, int sz, unsigned char *out);
 #else /* SQLCIPHER_PREPROCESSED */
 static void cipher_hex2bin(const unsigned char *hex, int sz, unsigned char *out){
-#endif /* SQLCIPHER_PREPROCESSED */
   int i;
   for(i = 0; i < sz; i += 2){
     out[i/2] = (cipher_hex2int(hex[i])<<4) | cipher_hex2int(hex[i+1]);
   }
 }
+#endif /* SQLCIPHER_PREPROCESSED */
 
 #if defined (SQLCIPHER_PREPROCESSED)
-void cipher_bin2hex(const unsigned char* in, int sz, char *out) {
+void cipher_bin2hex(const unsigned char* in, int sz, char *out);
 #else /* SQLCIPHER_PREPROCESSED */
 static void cipher_bin2hex(const unsigned char* in, int sz, char *out) {
-#endif /* SQLCIPHER_PREPROCESSED */
     int i;
     for(i=0; i < sz; i++) {
       sqlite3_snprintf(3, out + (i*2), "%02x ", in[i]);
     } 
 }
+#endif /* SQLCIPHER_PREPROCESSED */
 
 #if defined (SQLCIPHER_PREPROCESSED)
-int cipher_isHex(const unsigned char *hex, int sz){
+int cipher_isHex(const unsigned char *hex, int sz);
 #else /* SQLCIPHER_PREPROCESSED */
 static int cipher_isHex(const unsigned char *hex, int sz){
-#endif /* SQLCIPHER_PREPROCESSED */
   int i;
   for(i = 0; i < sz; i++) {
     unsigned char c = hex[i];
@@ -196,6 +195,7 @@ static int cipher_isHex(const unsigned char *hex, int sz){
   }
   return 1;
 }
+#endif /* SQLCIPHER_PREPROCESSED */
 
 /* extensions defined in crypto_impl.c */
 typedef struct codec_ctx codec_ctx;

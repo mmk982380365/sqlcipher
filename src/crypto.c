@@ -516,6 +516,40 @@ void sqlite3CodecGetKey(sqlite3* db, int nDb, void **zKey, int *nKey) {
   }
 }
 
+#if defined (SQLCIPHER_PREPROCESSED)
+void cipher_hex2bin(const unsigned char *hex, int sz, unsigned char *out){
+    int i;
+    for(i = 0; i < sz; i += 2){
+        out[i/2] = (cipher_hex2int(hex[i])<<4) | cipher_hex2int(hex[i+1]);
+    }
+}
+#endif /* SQLCIPHER_PREPROCESSED */
+
+#if defined (SQLCIPHER_PREPROCESSED)
+void cipher_bin2hex(const unsigned char* in, int sz, char *out) {
+    int i;
+    for(i=0; i < sz; i++) {
+        sqlite3_snprintf(3, out + (i*2), "%02x ", in[i]);
+    }
+}
+#endif /* SQLCIPHER_PREPROCESSED */
+
+#if defined (SQLCIPHER_PREPROCESSED)
+int cipher_isHex(const unsigned char *hex, int sz){
+    int i;
+    for(i = 0; i < sz; i++) {
+        unsigned char c = hex[i];
+        if ((c < '0' || c > '9') &&
+            (c < 'A' || c > 'F') &&
+            (c < 'a' || c > 'f')) {
+            return 0;
+        }
+    }
+    return 1;
+}
+#endif /* SQLCIPHER_PREPROCESSED */
+
+
 #ifndef OMIT_EXPORT
 
 /*
