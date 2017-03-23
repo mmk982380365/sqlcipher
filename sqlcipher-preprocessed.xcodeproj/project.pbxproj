@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2311206E1E8373A6008A94C3 /* sqcliphertest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2311206D1E8373A6008A94C3 /* sqcliphertest.h */; };
 		23121C081E6FFA890012B45E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23121C071E6FFA890012B45E /* Security.framework */; };
 		239325D21E836A9C00D677CC /* callback.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528941E700BCB0054D75E /* callback.c */; };
 		239325D31E836A9C00D677CC /* loadext.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528961E700BEB0054D75E /* loadext.c */; };
@@ -259,10 +260,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2311206C1E8373A6008A94C3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2311206D1E8373A6008A94C3 /* sqcliphertest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqcliphertest.h; sourceTree = "<group>"; };
 		23121AE41E6FF9110012B45E /* libsqlcipher.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsqlcipher.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		23121C071E6FFA890012B45E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		239325C81E836A7700D677CC /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		239325CB1E836A7700D677CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		239528921E700BBC0054D75E /* keywordhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keywordhash.h; sourceTree = SOURCE_ROOT; };
 		239528941E700BCB0054D75E /* callback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = callback.c; path = src/callback.c; sourceTree = SOURCE_ROOT; };
 		239528961E700BEB0054D75E /* loadext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = loadext.c; path = src/loadext.c; sourceTree = SOURCE_ROOT; };
@@ -416,11 +418,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2311206B1E8373A6008A94C3 /* sqlcipher framework */ = {
+			isa = PBXGroup;
+			children = (
+				2311206C1E8373A6008A94C3 /* Info.plist */,
+				2311206D1E8373A6008A94C3 /* sqcliphertest.h */,
+			);
+			path = "sqlcipher framework";
+			sourceTree = "<group>";
+		};
 		23121ADB1E6FF9110012B45E = {
 			isa = PBXGroup;
 			children = (
+				2311206B1E8373A6008A94C3 /* sqlcipher framework */,
 				23121B7C1E6FF93D0012B45E /* src */,
-				239325C91E836A7700D677CC /* sqlcipher */,
 				23121C061E6FFA890012B45E /* Frameworks */,
 				23121AE51E6FF9110012B45E /* Products */,
 			);
@@ -583,14 +594,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		239325C91E836A7700D677CC /* sqlcipher */ = {
-			isa = PBXGroup;
-			children = (
-				239325CB1E836A7700D677CC /* Info.plist */,
-			);
-			path = sqlcipher;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -598,6 +601,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2311206E1E8373A6008A94C3 /* sqcliphertest.h in Headers */,
 				239528FC1E700D790054D75E /* os_setup.h in Headers */,
 				239528C01E700CB60054D75E /* fts3_hash.h in Headers */,
 				2395296D1E700F6C0054D75E /* sqlite3ext.h in Headers */,
@@ -1182,7 +1186,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = sqlcipher/Info.plist;
+				INFOPLIST_FILE = "sqlcipher framework/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
@@ -1205,7 +1209,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = sqlcipher/Info.plist;
+				INFOPLIST_FILE = "sqlcipher framework/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
