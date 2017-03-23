@@ -663,9 +663,9 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		23121AE31E6FF9110012B45E /* sqlcipher-preprocessed */ = {
+		23121AE31E6FF9110012B45E /* sqlcipher lib */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 23121AE81E6FF9110012B45E /* Build configuration list for PBXNativeTarget "sqlcipher-preprocessed" */;
+			buildConfigurationList = 23121AE81E6FF9110012B45E /* Build configuration list for PBXNativeTarget "sqlcipher lib" */;
 			buildPhases = (
 				23121AE01E6FF9110012B45E /* Sources */,
 				23121AE11E6FF9110012B45E /* Frameworks */,
@@ -676,14 +676,14 @@
 			dependencies = (
 				239529A01E702D1E0054D75E /* PBXTargetDependency */,
 			);
-			name = "sqlcipher-preprocessed";
+			name = "sqlcipher lib";
 			productName = "sqlcipher-preprocessed";
 			productReference = 23121AE41E6FF9110012B45E /* libsqlcipher.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		239325C71E836A7700D677CC /* sqlcipher */ = {
+		239325C71E836A7700D677CC /* sqlcipher framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher" */;
+			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher framework" */;
 			buildPhases = (
 				239325C31E836A7700D677CC /* Sources */,
 				239325C41E836A7700D677CC /* Frameworks */,
@@ -695,7 +695,7 @@
 			dependencies = (
 				239325D11E836A9000D677CC /* PBXTargetDependency */,
 			);
-			name = sqlcipher;
+			name = "sqlcipher framework";
 			productName = sqlcipher;
 			productReference = 239325C81E836A7700D677CC /* sqlcipher.framework */;
 			productType = "com.apple.product-type.framework";
@@ -735,8 +735,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				23121AE31E6FF9110012B45E /* sqlcipher-preprocessed */,
-				239325C71E836A7700D677CC /* sqlcipher */,
+				23121AE31E6FF9110012B45E /* sqlcipher lib */,
+				239325C71E836A7700D677CC /* sqlcipher framework */,
 				2395299B1E702CF90054D75E /* preprocess */,
 			);
 		};
@@ -1187,7 +1187,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sanhuazhang.sqlcipher;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1210,7 +1210,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sanhuazhang.sqlcipher;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1256,7 +1256,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		23121AE81E6FF9110012B45E /* Build configuration list for PBXNativeTarget "sqlcipher-preprocessed" */ = {
+		23121AE81E6FF9110012B45E /* Build configuration list for PBXNativeTarget "sqlcipher lib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23121AE91E6FF9110012B45E /* Debug */,
@@ -1265,13 +1265,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher" */ = {
+		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				239325CD1E836A7700D677CC /* Debug */,
 				239325CE1E836A7700D677CC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2395299C1E702CF90054D75E /* Build configuration list for PBXLegacyTarget "preprocess" */ = {
 			isa = XCConfigurationList;
