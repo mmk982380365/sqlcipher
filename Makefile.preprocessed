@@ -1,7 +1,7 @@
 #!/usr/make
 
 SRC = \
-	opcodes.h \
+opcodes.h \
 opcodes.c \
 keywordhash.h \
 fts5.c \
