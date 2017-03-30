@@ -468,7 +468,7 @@
 			dependencies = (
 			);
 			name = preprocess;
-			passBuildSettingsInEnvironment = 1;
+			passBuildSettingsInEnvironment = 0;
 			productName = preprocess;
 		};
 /* End PBXLegacyTarget section */
