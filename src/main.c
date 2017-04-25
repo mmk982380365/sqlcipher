@@ -1437,6 +1437,9 @@ static int sqliteDefaultBusyCallback(
  void *ptr,               /* Database connection */
  int count                /* Number of times table has been busy */
 ){
+#if SQLITE_WCDB_SIGNAL_RETRY
+    return 1;
+#endif //SQLITE_WCDB_SIGNAL_RETRY
 #if SQLITE_OS_WIN || HAVE_USLEEP
   static const u8 delays[] =
      { 1, 2, 5, 10, 15, 20, 25, 25,  25,  50,  50, 100 };
