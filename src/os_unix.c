@@ -44,6 +44,13 @@
 **      plus implementations of sqlite3_os_init() and sqlite3_os_end().
 */
 #include "sqliteInt.h"
+
+#if SQLITE_WCDB_SIGNAL_RETRY
+#include "os_wcdb.h"
+#include "queue.h"
+#include "mutex_wcdb.h"
+#endif//SQLITE_WCDB_SIGNAL_RETRY
+
 #if SQLITE_OS_UNIX              /* This file is used on unix only */
 
 /*
@@ -1098,6 +1105,10 @@ struct unixInodeInfo {
   sem_t *pSem;                    /* Named POSIX semaphore */
   char aSemName[MAX_PATHNAME+2];  /* Name of that semaphore */
 #endif
+#if SQLITE_WCDB_SIGNAL_RETRY
+  Queue qWaitQueue;
+  sqlite3_condition* pCond;
+#endif //SQLITE_WCDB_SIGNAL_RETRY
 };
 
 /*
@@ -1242,6 +1253,16 @@ static void releaseInodeInfo(unixFile *pFile){
         assert( pInode->pNext->pPrev==pInode );
         pInode->pNext->pPrev = pInode->pPrev;
       }
+#if SQLITE_WCDB_SIGNAL_RETRY
+      pthreadCondFree(pInode->pCond);
+      while (!sqlite3QueueEmpty(&pInode->qWaitQueue)) {
+        WCDBWaitInfo* pInfo = sqlite3QueuePop(&pInode->qWaitQueue);
+        if (pInfo) {
+          pthreadFree(pInfo->pThread);
+          sqlite3_free(pInfo);
+        }
+      }
+#endif//SQLITE_WCDB_SIGNAL_RETRY
       sqlite3_free(pInode);
     }
   }
@@ -1328,6 +1349,13 @@ static int findInodeInfo(
     pInode->nRef = 1;
     pInode->pNext = inodeList;
     pInode->pPrev = 0;
+#if SQLITE_WCDB_SIGNAL_RETRY
+    sqlite3QueueInit(&pInode->qWaitQueue);
+    pInode->pCond = pthreadCondAlloc();
+    if (pInode->pCond==0){
+      return SQLITE_NOMEM_BKPT;
+    }
+#endif //SQLITE_WCDB_SIGNAL_RETRY
     if( inodeList ) inodeList->pPrev = pInode;
     inodeList = pInode;
   }else{
@@ -1544,6 +1572,9 @@ static int unixLock(sqlite3_file *id, int eFileLock){
   ** database. 
   */
   int rc = SQLITE_OK;
+#if SQLITE_WCDB_SIGNAL_RETRY
+  int eBusyWait = SQLITE_WAIT_NONE;
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   unixFile *pFile = (unixFile*)id;
   unixInodeInfo *pInode;
   struct flock lock;
@@ -1586,6 +1617,9 @@ static int unixLock(sqlite3_file *id, int eFileLock){
           (pInode->eFileLock>=PENDING_LOCK || eFileLock>SHARED_LOCK))
   ){
     rc = SQLITE_BUSY;
+#if SQLITE_WCDB_SIGNAL_RETRY
+    eBusyWait = SQLITE_WAIT_SHARED;
+#endif //SQLITE_WCDB_SIGNAL_RETRY
     goto end_lock;
   }
 
@@ -1667,6 +1701,9 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     /* We are trying for an exclusive lock but another thread in this
     ** same process is still holding a shared lock. */
     rc = SQLITE_BUSY;
+#if SQLITE_WCDB_SIGNAL_RETRY
+    eBusyWait = SQLITE_WAIT_EXCLUSIVE;
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   }else{
     /* The request was for a RESERVED or EXCLUSIVE lock.  It is
     ** assumed that there is a SHARED or greater lock on the file
@@ -1720,6 +1757,11 @@ static int unixLock(sqlite3_file *id, int eFileLock){
   }
 
 end_lock:
+#if SQLITE_WCDB_SIGNAL_RETRY
+  if (eBusyWait!=SQLITE_WAIT_NONE) {
+    WCDBWait(pInode, pFile, eFileLock, eBusyWait);
+  }
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   unixLeaveMutex();
   OSTRACE(("LOCK    %d %s %s (unix)\n", pFile->h, azFileLock(eFileLock), 
       rc==SQLITE_OK ? "ok" : "failed"));
@@ -1898,6 +1940,10 @@ static int posixUnlock(sqlite3_file *id, int eFileLock, int handleNFSUnlock){
       closePendingFds(pFile);
     }
   }
+  
+#if SQLITE_WCDB_SIGNAL_RETRY
+  WCDBTrySignal(pInode);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 
 end_unlock:
   unixLeaveMutex();
@@ -4047,6 +4093,10 @@ struct unixShmNode {
   u8 sharedMask;             /* Mask of shared locks held */
   u8 nextShmId;              /* Next available unixShm.id value */
 #endif
+#if SQLITE_WCDB_SIGNAL_RETRY
+  Queue qWaitQueue;
+  sqlite3_condition* pCond;
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 };
 
 /*
@@ -4184,6 +4234,16 @@ static void unixShmPurge(unixFile *pFd){
     int i;
     assert( p->pInode==pFd->pInode );
     sqlite3_mutex_free(p->mutex);
+#if SQLITE_WCDB_SIGNAL_RETRY
+    pthreadCondFree(p->pCond);
+    while (!sqlite3QueueEmpty(&p->qWaitQueue)) {
+      WCDBShmWaitInfo* pInfo = NULL;
+      if (pInfo) {
+        pthreadFree(pInfo->pThread);
+        sqlite3_free(pInfo);
+      }
+    }
+#endif// SQLITE_WCDB_SIGNAL_RETRY
     for(i=0; i<p->nRegion; i+=nShmPerMap){
       if( p->h>=0 ){
         osMunmap(p->apRegion[i], p->szRegion);
@@ -4301,6 +4361,14 @@ static int unixOpenSharedMemory(unixFile *pDbFd){
       goto shm_open_err;
     }
     }
+#if SQLITE_WCDB_SIGNAL_RETRY
+    pShmNode->pCond = pthreadCondAlloc();
+    if (pShmNode->pCond==0) {
+      rc = SQLITE_NOMEM_BKPT;
+      goto shm_open_err;
+    }
+    sqlite3QueueInit(&pShmNode->qWaitQueue);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 
     if( pInode->bProcessLock==0 ){
       int openFlags = O_RDWR | O_CREAT;
@@ -4572,6 +4640,9 @@ static int unixShmLock(
     if( rc==SQLITE_OK ){
       p->exclMask &= ~mask;
       p->sharedMask &= ~mask;
+#if SQLITE_WCDB_SIGNAL_RETRY
+      WCDBShmTrySignal(pShmNode);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
     } 
   }else if( flags & SQLITE_SHM_SHARED ){
     u16 allShared = 0;  /* Union of locks held by connections other than "p" */
@@ -4583,6 +4654,9 @@ static int unixShmLock(
     for(pX=pShmNode->pFirst; pX; pX=pX->pNext){
       if( (pX->exclMask & mask)!=0 ){
         rc = SQLITE_BUSY;
+#if SQLITE_WCDB_SIGNAL_RETRY
+        WCDBShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_SHARED);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
         break;
       }
       allShared |= pX->sharedMask;
@@ -4608,6 +4682,9 @@ static int unixShmLock(
     for(pX=pShmNode->pFirst; pX; pX=pX->pNext){
       if( (pX->exclMask & mask)!=0 || (pX->sharedMask & mask)!=0 ){
         rc = SQLITE_BUSY;
+#if SQLITE_WCDB_SIGNAL_RETRY
+        WCDBShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_EXCLUSIVE);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
         break;
       }
     }
@@ -7615,5 +7692,72 @@ int sqlite3_os_init(void){
 int sqlite3_os_end(void){ 
   return SQLITE_OK; 
 }
+
+#if SQLITE_WCDB_SIGNAL_RETRY
+Queue* WCDBInodeGetWaitQueue(unixInodeInfo* pInode)
+{
+  return &pInode->qWaitQueue;
+}
+
+sqlite3_condition* WCDBInodeGetCond(unixInodeInfo* pInode)
+{
+  return pInode->pCond;
+}
+
+int WCDBInodeGetShared(unixInodeInfo* pInode)
+{
+  return pInode->nShared;
+}
+
+unsigned char WCDBInodeGetFileLock(unixInodeInfo* pInode)
+{
+  return pInode->eFileLock;
+}
+
+Queue* WCDBShmNodeGetWaitQueue(unixShmNode* pShmNode)
+{
+  return &pShmNode->qWaitQueue;
+}
+
+sqlite3_condition* WCDBShmNodeGetCond(unixShmNode* pShmNode)
+{
+  return pShmNode->pCond;
+}
+
+unixShm* WCDBShmNodeGetShm(unixShmNode* pShmNode)
+{
+  return pShmNode->pFirst;
+}
+
+sqlite3_mutex* WCDBShmNodeGetMutex(unixShmNode* pShmNode)
+{
+  return pShmNode->mutex;
+}
+
+unixShm* WCDBShmGetNext(unixShm* pShm)
+{
+  return pShm->pNext;
+}
+
+u16 WCDBShmGetExclMask(unixShm* pShm)
+{
+  return pShm->exclMask;
+}
+
+u16 WCDBShmGetSharedMask(unixShm* pShm)
+{
+  return pShm->sharedMask;
+}
+
+unsigned char WCDBFileGetFileLock(unixFile* pFile)
+{
+  return pFile->eFileLock;
+}
+
+unixShm* WCDBFileGetShm(unixFile* pFile)
+{
+  return pFile->pShm;
+}
+#endif// SQLITE_WCDB_SIGNAL_RETRY
  
 #endif /* SQLITE_OS_UNIX */

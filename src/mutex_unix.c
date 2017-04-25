@@ -384,4 +384,11 @@ sqlite3_mutex_methods const *sqlite3DefaultMutex(void){
   return &sMutex;
 }
 
+#if SQLITE_WCDB_SIGNAL_RETRY
+pthread_mutex_t* sqlite3GetPthreadMutex(sqlite3_mutex* p)
+{
+    return &p->mutex;
+}
+#endif //SQLITE_WCDB_SIGNAL_RETRY
+
 #endif /* SQLITE_MUTEX_PTHREADS */

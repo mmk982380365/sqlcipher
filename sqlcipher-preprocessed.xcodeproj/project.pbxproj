@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		234E92241EAEF58100C5428D /* os_wcdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 234E92221EAEF58100C5428D /* os_wcdb.c */; };
+		234E92251EAEF58100C5428D /* os_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E92231EAEF58100C5428D /* os_wcdb.h */; };
+		234E92281EAEFD3B00C5428D /* mutex_wcdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 234E92261EAEFD3B00C5428D /* mutex_wcdb.c */; };
+		234E92291EAEFD3B00C5428D /* mutex_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E92271EAEFD3B00C5428D /* mutex_wcdb.h */; };
+		234E922C1EAEFF8D00C5428D /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 234E922A1EAEFF8D00C5428D /* queue.c */; };
+		234E922D1EAEFF8D00C5428D /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E922B1EAEFF8D00C5428D /* queue.h */; };
 		239325D21E836A9C00D677CC /* callback.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528941E700BCB0054D75E /* callback.c */; };
 		239325D31E836A9C00D677CC /* loadext.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528961E700BEB0054D75E /* loadext.c */; };
 		239325D41E836A9C00D677CC /* rowset.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528981E700BFE0054D75E /* rowset.c */; };
@@ -122,6 +128,12 @@
 		2311206C1E8373A6008A94C3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2311206D1E8373A6008A94C3 /* sqcliphertest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqcliphertest.h; sourceTree = "<group>"; };
 		23121C071E6FFA890012B45E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		234E92221EAEF58100C5428D /* os_wcdb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = os_wcdb.c; path = src/os_wcdb.c; sourceTree = SOURCE_ROOT; };
+		234E92231EAEF58100C5428D /* os_wcdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os_wcdb.h; path = src/os_wcdb.h; sourceTree = SOURCE_ROOT; };
+		234E92261EAEFD3B00C5428D /* mutex_wcdb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mutex_wcdb.c; path = src/mutex_wcdb.c; sourceTree = SOURCE_ROOT; };
+		234E92271EAEFD3B00C5428D /* mutex_wcdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mutex_wcdb.h; path = src/mutex_wcdb.h; sourceTree = SOURCE_ROOT; };
+		234E922A1EAEFF8D00C5428D /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = queue.c; path = src/queue.c; sourceTree = SOURCE_ROOT; };
+		234E922B1EAEFF8D00C5428D /* queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = queue.h; path = src/queue.h; sourceTree = SOURCE_ROOT; };
 		239325C81E836A7700D677CC /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		239528921E700BBC0054D75E /* keywordhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keywordhash.h; sourceTree = SOURCE_ROOT; };
 		239528941E700BCB0054D75E /* callback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = callback.c; path = src/callback.c; sourceTree = SOURCE_ROOT; };
@@ -352,6 +364,12 @@
 				239528F81E700D790054D75E /* os_common.h */,
 				239528F91E700D790054D75E /* os_setup.h */,
 				239528FA1E700D790054D75E /* os_unix.c */,
+				234E922A1EAEFF8D00C5428D /* queue.c */,
+				234E922B1EAEFF8D00C5428D /* queue.h */,
+				234E92221EAEF58100C5428D /* os_wcdb.c */,
+				234E92231EAEF58100C5428D /* os_wcdb.h */,
+				234E92261EAEFD3B00C5428D /* mutex_wcdb.c */,
+				234E92271EAEFD3B00C5428D /* mutex_wcdb.h */,
 				239528FE1E700D880054D75E /* os.c */,
 				239528FF1E700D880054D75E /* os.h */,
 				239529021E700D920054D75E /* threads.c */,
@@ -450,6 +468,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				234E92251EAEF58100C5428D /* os_wcdb.h in Headers */,
+				234E92291EAEFD3B00C5428D /* mutex_wcdb.h in Headers */,
+				234E922D1EAEFF8D00C5428D /* queue.h in Headers */,
 				239326341E836AAA00D677CC /* sqlite3.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -579,6 +600,7 @@
 				239325F11E836A9C00D677CC /* malloc.c in Sources */,
 				239325F21E836A9C00D677CC /* mem0.c in Sources */,
 				239325F31E836A9C00D677CC /* mem1.c in Sources */,
+				234E92241EAEF58100C5428D /* os_wcdb.c in Sources */,
 				239325F41E836A9C00D677CC /* mem2.c in Sources */,
 				239325F51E836A9C00D677CC /* mem3.c in Sources */,
 				239325F61E836A9C00D677CC /* mem5.c in Sources */,
@@ -595,6 +617,7 @@
 				239326011E836A9C00D677CC /* pcache1.c in Sources */,
 				239326021E836A9C00D677CC /* rtree.c in Sources */,
 				239326031E836A9C00D677CC /* complete.c in Sources */,
+				234E92281EAEFD3B00C5428D /* mutex_wcdb.c in Sources */,
 				239326041E836A9C00D677CC /* tokenize.c in Sources */,
 				239326051E836A9C00D677CC /* resolve.c in Sources */,
 				239326061E836A9C00D677CC /* parse.c in Sources */,
@@ -616,6 +639,7 @@
 				239326161E836A9C00D677CC /* vacuum.c in Sources */,
 				239326171E836A9C00D677CC /* walker.c in Sources */,
 				239326181E836A9C00D677CC /* where.c in Sources */,
+				234E922C1EAEFF8D00C5428D /* queue.c in Sources */,
 				239326191E836A9C00D677CC /* opcodes.c in Sources */,
 				2393261A1E836A9C00D677CC /* sqlite3rbu.c in Sources */,
 				2393261B1E836A9C00D677CC /* json1.c in Sources */,
@@ -730,6 +754,7 @@
 					SQLCIPHER_PREPROCESSED,
 					HAVE_USLEEP,
 					"SQLITE_MALLOC_SOFT_LIMIT=0",
+					"SQLITE_WCDB_SIGNAL_RETRY=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -817,6 +842,7 @@
 					SQLCIPHER_PREPROCESSED,
 					HAVE_USLEEP,
 					"SQLITE_MALLOC_SOFT_LIMIT=0",
+					"SQLITE_WCDB_SIGNAL_RETRY=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
