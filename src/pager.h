@@ -233,4 +233,9 @@ void *sqlite3PagerCodec(DbPage *);
 # define enable_simulated_io_errors()
 #endif
 
+#if SQLITE_WCDB_SIGNAL_RETRY
+void WCDBPagerSetWait(Pager* pPager, int bFlag);
+int WCDBPagerGetWait(Pager* pPager);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
+
 #endif /* SQLITE_PAGER_H */

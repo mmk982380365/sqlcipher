@@ -243,6 +243,9 @@
 #ifndef SQLITE_OMIT_WAL
 
 #include "wal.h"
+#if SQLITE_WCDB_SIGNAL_RETRY
+#include "os_wcdb.h"
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 
 /*
 ** Trace output macros
@@ -2304,7 +2307,14 @@ static int walTryBeginRead(Wal *pWal, int *pChanged, int useWal, int cnt){
    && (mxReadMark<mxFrame || mxI==0)
   ){
     for(i=1; i<WAL_NREADER; i++){
+#if SQLITE_WCDB_SIGNAL_RETRY
+      int bWait = WCDBOsFileGetWait(pWal->pDbFd);
+      WCDBOsFileSetWait(pWal->pDbFd, 0);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
       rc = walLockExclusive(pWal, WAL_READ_LOCK(i), 1);
+#if SQLITE_WCDB_SIGNAL_RETRY
+      WCDBOsFileSetWait(pWal->pDbFd, bWait);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
       if( rc==SQLITE_OK ){
         mxReadMark = pInfo->aReadMark[i] = mxFrame;
         mxI = i;

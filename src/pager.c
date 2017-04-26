@@ -21,6 +21,9 @@
 #ifndef SQLITE_OMIT_DISKIO
 #include "sqliteInt.h"
 #include "wal.h"
+#if SQLITE_WCDB_SIGNAL_RETRY
+#include "os_wcdb.h"
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 
 
 /******************* NOTES ON THE DESIGN OF THE PAGER ************************
@@ -3840,9 +3843,15 @@ static int pager_wait_on_lock(Pager *pPager, int locktype){
        || (pPager->eLock==RESERVED_LOCK && locktype==EXCLUSIVE_LOCK)
   );
 
+#if SQLITE_WCDB_SIGNAL_RETRY
+  WCDBPagerSetWait(pPager, 1);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   do {
     rc = pagerLockDb(pPager, locktype);
   }while( rc==SQLITE_BUSY && pPager->xBusyHandler(pPager->pBusyHandlerArg) );
+#if SQLITE_WCDB_SIGNAL_RETRY
+  WCDBPagerSetWait(pPager, 0);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   return rc;
 }
 
@@ -7411,6 +7420,17 @@ int sqlite3PagerWalFramesize(Pager *pPager){
   return sqlite3WalFramesize(pPager->pWal);
 }
 #endif
+
+#if SQLITE_WCDB_SIGNAL_RETRY
+void WCDBPagerSetWait(Pager* pPager, int bFlag)
+{
+  WCDBOsFileSetWait(pPager->fd, bFlag);
+}
+int WCDBPagerGetWait(Pager* pPager)
+{
+  return WCDBOsFileGetWait(pPager->fd);
+}
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 
 #endif /* SQLITE_OMIT_DISKIO */
 

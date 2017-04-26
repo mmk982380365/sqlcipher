@@ -260,6 +260,9 @@ struct unixFile {
   */
   char aPadding[32];
 #endif
+#if SQLITE_WCDB_SIGNAL_RETRY
+  int bWait;
+#endif //SQLITE_WCDB_SIGNAL_RETRY
 };
 
 /* This variable holds the process id (pid) from when the xRandomness()
@@ -1574,7 +1577,6 @@ static int unixLock(sqlite3_file *id, int eFileLock){
   int rc = SQLITE_OK;
 #if SQLITE_WCDB_SIGNAL_RETRY
   int eBusyWait = SQLITE_WAIT_NONE;
-  int retry = 0;
 #endif// SQLITE_WCDB_SIGNAL_RETRY
   unixFile *pFile = (unixFile*)id;
   unixInodeInfo *pInode;
@@ -1620,7 +1622,6 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
     eBusyWait = SQLITE_WAIT_SHARED;
-    retry = 1;
 #endif //SQLITE_WCDB_SIGNAL_RETRY
     goto end_lock;
   }
@@ -1705,7 +1706,6 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
     eBusyWait = SQLITE_WAIT_EXCLUSIVE;
-    retry = 1;
 #endif// SQLITE_WCDB_SIGNAL_RETRY
   }else{
     /* The request was for a RESERVED or EXCLUSIVE lock.  It is
@@ -1762,18 +1762,13 @@ static int unixLock(sqlite3_file *id, int eFileLock){
 end_lock:
 #if SQLITE_WCDB_SIGNAL_RETRY
   if (eBusyWait!=SQLITE_WAIT_NONE) {
-    WCDBWait(pInode, pFile, eFileLock, eBusyWait);
+    WCDBOsWait(pInode, pFile, eFileLock, eBusyWait);
   }
 #endif// SQLITE_WCDB_SIGNAL_RETRY
   unixLeaveMutex();
   OSTRACE(("LOCK    %d %s %s (unix)\n", pFile->h, azFileLock(eFileLock), 
       rc==SQLITE_OK ? "ok" : "failed"));
-#if SQLITE_WCDB_SIGNAL_RETRY
-  //tail call can avoid call stack over flow
-  return retry?unixLock(id, eFileLock):rc;
-#else//SQLITE_WCDB_SIGNAL_RETRY
   return rc;
-#endif//SQLITE_WCDB_SIGNAL_RETRY
 }
 
 /*
@@ -1950,7 +1945,7 @@ static int posixUnlock(sqlite3_file *id, int eFileLock, int handleNFSUnlock){
   }
   
 #if SQLITE_WCDB_SIGNAL_RETRY
-  WCDBTrySignal(pInode);
+  WCDBOsTrySignal(pInode);
 #endif// SQLITE_WCDB_SIGNAL_RETRY
 
 end_unlock:
@@ -4611,9 +4606,6 @@ static int unixShmLock(
   unixShmNode *pShmNode = p->pShmNode;  /* The underlying file iNode */
   int rc = SQLITE_OK;                   /* Result code */
   u16 mask;                             /* Mask of locks to take or release */
-#if SQLITE_WCDB_SIGNAL_RETRY
-  int retry = 0;
-#endif //SQLITE_WCDB_SIGNAL_RETRY
 
   assert( pShmNode==pDbFd->pInode->pShmNode );
   assert( pShmNode->pInode==pDbFd->pInode );
@@ -4652,7 +4644,7 @@ static int unixShmLock(
       p->exclMask &= ~mask;
       p->sharedMask &= ~mask;
 #if SQLITE_WCDB_SIGNAL_RETRY
-      WCDBShmTrySignal(pShmNode);
+      WCDBOsShmTrySignal(pShmNode);
 #endif// SQLITE_WCDB_SIGNAL_RETRY
     } 
   }else if( flags & SQLITE_SHM_SHARED ){
@@ -4666,8 +4658,7 @@ static int unixShmLock(
       if( (pX->exclMask & mask)!=0 ){
         rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
-        WCDBShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_SHARED);
-        retry = 1;
+        WCDBOsShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_SHARED);
 #endif// SQLITE_WCDB_SIGNAL_RETRY
         break;
       }
@@ -4695,8 +4686,7 @@ static int unixShmLock(
       if( (pX->exclMask & mask)!=0 || (pX->sharedMask & mask)!=0 ){
         rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
-        WCDBShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_EXCLUSIVE);
-        retry = 1;
+        WCDBOsShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_EXCLUSIVE);
 #endif// SQLITE_WCDB_SIGNAL_RETRY
         break;
       }
@@ -4716,11 +4706,7 @@ static int unixShmLock(
   sqlite3_mutex_leave(pShmNode->mutex);
   OSTRACE(("SHM-LOCK shmid-%d, pid-%d got %03x,%03x\n",
            p->id, osGetpid(0), p->sharedMask, p->exclMask));
-#if SQLITE_WCDB_SIGNAL_RETRY
-  return retry?unixShmLock(fd, ofst, n, flags):rc;
-#else//SQLITE_WCDB_SIGNAL_RETRY
   return rc;
-#endif// SQLITE_WCDB_SIGNAL_RETRY
 }
 
 /*
@@ -5348,6 +5334,9 @@ static int fillInUnixFile(
   pNew->pVfs = pVfs;
   pNew->zPath = zFilename;
   pNew->ctrlFlags = (u8)ctrlFlags;
+#if SQLITE_WCDB_SIGNAL_RETRY
+  pNew->bWait = 0;
+#endif //SQLITE_WCDB_SIGNAL_RETRY
 #if SQLITE_MAX_MMAP_SIZE>0
   pNew->mmapSizeMax = sqlite3GlobalConfig.szMmap;
 #endif
@@ -7775,6 +7764,17 @@ unixShm* WCDBFileGetShm(unixFile* pFile)
 {
   return pFile->pShm;
 }
+
+int WCDBFileGetWait(unixFile* pFile)
+{
+  return pFile->bWait;
+}
+
+void WCDBFileSetWait(unixFile* pFile, int bFlag)
+{
+  pFile->bWait = bFlag;
+}
+
 #endif// SQLITE_WCDB_SIGNAL_RETRY
  
 #endif /* SQLITE_OS_UNIX */

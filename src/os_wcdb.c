@@ -27,97 +27,102 @@
 #include "os.h"
 #include <sys/errno.h>
 
-extern Queue* WCDBInodeGetWaitQueue(unixInodeInfo* pInode);
-extern sqlite3_condition* WCDBInodeGetCond(unixInodeInfo* pInode);
-extern unsigned char WCDBInodeGetShared(unixInodeInfo* pInode);
-extern int WCDBInodeGetFileLock(unixInodeInfo* pInode);
+Queue* WCDBInodeGetWaitQueue(unixInodeInfo* pInode);
+sqlite3_condition* WCDBInodeGetCond(unixInodeInfo* pInode);
+unsigned char WCDBInodeGetShared(unixInodeInfo* pInode);
+int WCDBInodeGetFileLock(unixInodeInfo* pInode);
 
-extern Queue* WCDBShmNodeGetWaitQueue(unixShmNode* pShmNode);
-extern sqlite3_condition* WCDBShmNodeGetCond(unixShmNode* pShmNode);
-extern unixShm* WCDBShmNodeGetShm(unixShmNode* pShmNode);
-extern sqlite3_mutex* WCDBShmNodeGetMutex(unixShmNode* pShmNode);
+Queue* WCDBShmNodeGetWaitQueue(unixShmNode* pShmNode);
+sqlite3_condition* WCDBShmNodeGetCond(unixShmNode* pShmNode);
+unixShm* WCDBShmNodeGetShm(unixShmNode* pShmNode);
+sqlite3_mutex* WCDBShmNodeGetMutex(unixShmNode* pShmNode);
 
-extern unixShm* WCDBShmGetNext(unixShm* pShm);
-extern u16 WCDBShmGetExclMask(unixShm* pShm);
-extern u16 WCDBShmGetSharedMask(unixShm* pShm);
+unixShm* WCDBShmGetNext(unixShm* pShm);
+u16 WCDBShmGetExclMask(unixShm* pShm);
+u16 WCDBShmGetSharedMask(unixShm* pShm);
 
-extern unsigned char WCDBFileGetFileLock(unixFile* pFile);
-extern unixShm* WCDBFileGetShm(unixFile* pFile);
+unsigned char WCDBFileGetFileLock(unixFile* pFile);
+unixShm* WCDBFileGetShm(unixFile* pFile);
+int WCDBFileGetWait(unixFile* pFile);
+void WCDBFileSetWait(unixFile* pFile, int bFlag);
 
-void WCDBSignal(unixInodeInfo* pInode)
+void WCDBOsSignal(unixInodeInfo* pInode)
 {
-    WCDBWaitInfo* pWaitInfo = (WCDBWaitInfo*)sqlite3QueuePop(WCDBInodeGetWaitQueue(pInode));
-    if (pWaitInfo) {
-        pthreadCondSignal(WCDBInodeGetCond(pInode), pWaitInfo->pThread);
-        pthreadFree(pWaitInfo->pThread);
-        sqlite3_free(pWaitInfo);
-    }
+  WCDBWaitInfo* pWaitInfo = (WCDBWaitInfo*)sqlite3QueuePop(WCDBInodeGetWaitQueue(pInode));
+  if (pWaitInfo) {
+    pthreadCondSignal(WCDBInodeGetCond(pInode), pWaitInfo->pThread);
+    pthreadFree(pWaitInfo->pThread);
+    sqlite3_free(pWaitInfo);
+  }
 }
 
-void WCDBTrySignal(unixInodeInfo* pInode)
+void WCDBOsTrySignal(unixInodeInfo* pInode)
 {
-    int rc;
-    do {
-        rc = SQLITE_BUSY;
-        WCDBWaitInfo* pWaitInfo = (WCDBWaitInfo*)sqlite3QueueFront(WCDBInodeGetWaitQueue(pInode));
-        if (!pWaitInfo) {
-            break;
+  int rc;
+  do {
+    rc = SQLITE_BUSY;
+    WCDBWaitInfo* pWaitInfo = (WCDBWaitInfo*)sqlite3QueueFront(WCDBInodeGetWaitQueue(pInode));
+    if (!pWaitInfo) {
+      break;
+    }
+    int eFlag = pWaitInfo->eFlag;
+    int eFileLock = pWaitInfo->eFileLock;
+    unixFile* pFile = pWaitInfo->pFile;
+    switch (eFlag) {
+      case SQLITE_WAIT_SHARED: {
+        rc = SQLITE_OK;
+        if( (WCDBFileGetFileLock(pFile)!=WCDBInodeGetFileLock(pInode) &&
+             (WCDBInodeGetFileLock(pInode)>=PENDING_LOCK || eFileLock>SHARED_LOCK)) ) {
+          rc = SQLITE_BUSY;
         }
-        int eFlag = pWaitInfo->eFlag;
-        int eFileLock = pWaitInfo->eFileLock;
-        unixFile* pFile = pWaitInfo->pFile;
-        switch (eFlag) {
-            case SQLITE_WAIT_SHARED: {
-                rc = SQLITE_OK;
-                if( (WCDBFileGetFileLock(pFile)!=WCDBInodeGetFileLock(pInode) &&
-                     (WCDBInodeGetFileLock(pInode)>=PENDING_LOCK || eFileLock>SHARED_LOCK)) ) {
-                    rc = SQLITE_BUSY;
-                }
-                break;
-            }
-            case SQLITE_WAIT_EXCLUSIVE: {
-                rc = SQLITE_OK;
-                if( eFileLock==EXCLUSIVE_LOCK && WCDBInodeGetShared(pInode)>1 ) {
-                    rc = SQLITE_BUSY;
-                }
-                break;
-            }
-            default:
-                break;
+        break;
+      }
+      case SQLITE_WAIT_EXCLUSIVE: {
+        rc = SQLITE_OK;
+        if( eFileLock==EXCLUSIVE_LOCK && WCDBInodeGetShared(pInode)>1 ) {
+          rc = SQLITE_BUSY;
         }
-        if (rc==SQLITE_OK) {
-            WCDBSignal(pInode);
-        }
-    } while (rc==SQLITE_OK);
+        break;
+      }
+      default:
+        break;
+    }
+    if (rc==SQLITE_OK) {
+      WCDBOsSignal(pInode);
+    }
+  } while (rc==SQLITE_OK);
 }
 
-void WCDBWait(unixInodeInfo* pInode, unixFile* pFile, int eFileLock, int eFlag)
+void WCDBOsWait(unixInodeInfo* pInode, unixFile* pFile, int eFileLock, int eFlag)
 {
-    WCDBWaitInfo* lastInfo = (WCDBWaitInfo*)sqlite3QueueFront(WCDBInodeGetWaitQueue(pInode));
-    if (lastInfo) {
-        if ( (eFileLock==EXCLUSIVE_LOCK&&lastInfo->eFileLock>SHARED_LOCK)
-            || (lastInfo->eFileLock==EXCLUSIVE_LOCK&&eFileLock>SHARED_LOCK)) {
-            WCDBSignal(pInode);
-            return;
-        }
+  if (!WCDBFileGetWait(pFile)) {
+    return;
+  }
+  WCDBWaitInfo* lastInfo = (WCDBWaitInfo*)sqlite3QueueFront(WCDBInodeGetWaitQueue(pInode));
+  if (lastInfo) {
+    if ( (eFileLock==EXCLUSIVE_LOCK&&lastInfo->eFileLock>SHARED_LOCK)
+        || (lastInfo->eFileLock==EXCLUSIVE_LOCK&&eFileLock>SHARED_LOCK)) {
+      WCDBOsSignal(pInode);
+      return;
     }
-    WCDBWaitInfo* info = (WCDBWaitInfo*)sqlite3_malloc(sizeof(WCDBWaitInfo));
-    info->eFlag = eFlag;
-    info->eFileLock = eFileLock;
-    info->pFile = pFile;
-    info->pThread = pthreadAlloc();
-    pthreadSelf(info->pThread);
-    if (pthreadIsMain()) {
-        sqlite3QueuePushFront(WCDBInodeGetWaitQueue(pInode), info);
-    }else {
-        sqlite3QueuePush(WCDBInodeGetWaitQueue(pInode), info);
-    }
-    if (pthreadCondWait(WCDBInodeGetCond(pInode), unixVFSMutex(), 10)==ETIMEDOUT) {
-        sqlite3_log(SQLITE_WARNING, "Wait Failed With Timeout");
-    }
+  }
+  WCDBWaitInfo* info = (WCDBWaitInfo*)sqlite3_malloc(sizeof(WCDBWaitInfo));
+  info->eFlag = eFlag;
+  info->eFileLock = eFileLock;
+  info->pFile = pFile;
+  info->pThread = pthreadAlloc();
+  pthreadSelf(info->pThread);
+  if (pthreadIsMain()) {
+    sqlite3QueuePushFront(WCDBInodeGetWaitQueue(pInode), info);
+  }else {
+    sqlite3QueuePush(WCDBInodeGetWaitQueue(pInode), info);
+  }
+  if (pthreadCondWait(WCDBInodeGetCond(pInode), unixVFSMutex(), 10)==ETIMEDOUT) {
+    sqlite3_log(SQLITE_WARNING, "Wait Failed With Timeout");
+  }
 }
 
-void WCDBShmSignal(unixShmNode* pShmNode)
+void WCDBOsShmSignal(unixShmNode* pShmNode)
 {
   WCDBShmWaitInfo* pInfo = (WCDBShmWaitInfo*)sqlite3QueuePop(WCDBShmNodeGetWaitQueue(pShmNode));
   if (pInfo) {
@@ -127,7 +132,7 @@ void WCDBShmSignal(unixShmNode* pShmNode)
   }
 }
 
-void WCDBShmTrySignal(unixShmNode* pShmNode){
+void WCDBOsShmTrySignal(unixShmNode* pShmNode){
   int rc;
   do {
     rc = SQLITE_BUSY;
@@ -164,27 +169,30 @@ void WCDBShmTrySignal(unixShmNode* pShmNode){
         break;
     }
     if (rc==SQLITE_OK) {
-      WCDBShmSignal(pShmNode);
+      WCDBOsShmSignal(pShmNode);
     }
   } while (rc==SQLITE_OK);
 }
 
-void WCDBShmWait(unixShmNode* pShmNode, unixFile* pFile, int oMask, int eFlag)
+void WCDBOsShmWait(unixShmNode* pShmNode, unixFile* pFile, int oMask, int eFlag)
 {
+  if (!WCDBFileGetWait(pFile)) {
+    return;
+  }
   WCDBShmWaitInfo* lastInfo = (WCDBShmWaitInfo*)sqlite3QueueFront(WCDBShmNodeGetWaitQueue(pShmNode));
   if (lastInfo) {
     if (lastInfo->eFlag==SQLITE_SHM_EXCLUSIVE
         &&((WCDBShmGetExclMask(WCDBFileGetShm(pFile))&lastInfo->oMask)!=0
            ||(WCDBShmGetSharedMask(WCDBFileGetShm(pFile))&lastInfo->oMask)!=0)) {
-      WCDBShmSignal(pShmNode);
-      return;
-    }
+          WCDBOsShmSignal(pShmNode);
+          return;
+        }
     if (eFlag==SQLITE_SHM_EXCLUSIVE
         &&((WCDBShmGetExclMask(WCDBFileGetShm(lastInfo->pFile))&oMask)!=0
            ||(WCDBShmGetSharedMask(WCDBFileGetShm(lastInfo->pFile))&oMask)!=0)) {
-      WCDBShmSignal(pShmNode);
-      return;
-    }
+          WCDBOsShmSignal(pShmNode);
+          return;
+        }
   }
   
   WCDBShmWaitInfo* info = (WCDBShmWaitInfo*)sqlite3_malloc(sizeof(WCDBShmWaitInfo));
@@ -201,6 +209,16 @@ void WCDBShmWait(unixShmNode* pShmNode, unixFile* pFile, int oMask, int eFlag)
   if (pthreadCondWait(WCDBShmNodeGetCond(pShmNode), WCDBShmNodeGetMutex(pShmNode), 10)==ETIMEDOUT) {
     sqlite3_log(SQLITE_WARNING, "Wait Failed With Timeout");
   }
+}
+
+void WCDBOsFileSetWait(sqlite3_file* id, int bFlag)
+{
+  WCDBFileSetWait((unixFile*)id, bFlag);
+}
+
+int WCDBOsFileGetWait(sqlite3_file* id)
+{
+  return WCDBFileGetWait((unixFile*)id);
 }
 
 #endif// SQLITE_WCDB_SIGNAL_RETRY

@@ -51,13 +51,16 @@ struct WCDBShmWaitInfo {
   unixFile* pFile;
 };
 
-void WCDBSignal(unixInodeInfo* pInode);
-void WCDBTrySignal(unixInodeInfo* pInode);
-void WCDBWait(unixInodeInfo* pInode, unixFile* pFile, int eFileLock, int eFlag);
+void WCDBOsSignal(unixInodeInfo* pInode);
+void WCDBOsTrySignal(unixInodeInfo* pInode);
+void WCDBOsWait(unixInodeInfo* pInode, unixFile* pFile, int eFileLock, int eFlag);
 
-void WCDBShmSignal(unixShmNode* pShmNode);
-void WCDBShmTrySignal(unixShmNode* pShmNode);
-void WCDBShmWait(unixShmNode* pShmNode, unixFile* pFile, int oMask, int eFlag);
+void WCDBOsShmSignal(unixShmNode* pShmNode);
+void WCDBOsShmTrySignal(unixShmNode* pShmNode);
+void WCDBOsShmWait(unixShmNode* pShmNode, unixFile* pFile, int oMask, int eFlag);
+
+void WCDBOsFileSetWait(sqlite3_file* fd, int bFlag);
+int WCDBOsFileGetWait(sqlite3_file* fd);
 
 #endif// SQLITE_WCDB_SIGNAL_RETRY
 
