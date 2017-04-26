@@ -97,7 +97,6 @@ void WCDBWait(unixInodeInfo* pInode, unixFile* pFile, int eFileLock, int eFlag)
     if (lastInfo) {
         if ( (eFileLock==EXCLUSIVE_LOCK&&lastInfo->eFileLock>SHARED_LOCK)
             || (lastInfo->eFileLock==EXCLUSIVE_LOCK&&eFileLock>SHARED_LOCK)) {
-            // force signal to avoid dead load
             WCDBSignal(pInode);
             return;
         }
@@ -138,7 +137,6 @@ void WCDBShmTrySignal(unixShmNode* pShmNode){
     }
     int eFlag = pInfo->eFlag;
     int oMask = pInfo->oMask;
-    // The try lock routine below is the same as [unixShmLock]
     switch (eFlag) {
       case SQLITE_SHM_SHARED: {
         unixShm* pX;

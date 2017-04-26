@@ -1574,6 +1574,7 @@ static int unixLock(sqlite3_file *id, int eFileLock){
   int rc = SQLITE_OK;
 #if SQLITE_WCDB_SIGNAL_RETRY
   int eBusyWait = SQLITE_WAIT_NONE;
+  int retry = 0;
 #endif// SQLITE_WCDB_SIGNAL_RETRY
   unixFile *pFile = (unixFile*)id;
   unixInodeInfo *pInode;
@@ -1619,6 +1620,7 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
     eBusyWait = SQLITE_WAIT_SHARED;
+    retry = 1;
 #endif //SQLITE_WCDB_SIGNAL_RETRY
     goto end_lock;
   }
@@ -1703,6 +1705,7 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
     eBusyWait = SQLITE_WAIT_EXCLUSIVE;
+    retry = 1;
 #endif// SQLITE_WCDB_SIGNAL_RETRY
   }else{
     /* The request was for a RESERVED or EXCLUSIVE lock.  It is
@@ -1765,7 +1768,12 @@ end_lock:
   unixLeaveMutex();
   OSTRACE(("LOCK    %d %s %s (unix)\n", pFile->h, azFileLock(eFileLock), 
       rc==SQLITE_OK ? "ok" : "failed"));
+#if SQLITE_WCDB_SIGNAL_RETRY
+  //tail call can avoid call stack over flow
+  return retry?unixLock(id, eFileLock):rc;
+#else//SQLITE_WCDB_SIGNAL_RETRY
   return rc;
+#endif//SQLITE_WCDB_SIGNAL_RETRY
 }
 
 /*
@@ -4603,6 +4611,9 @@ static int unixShmLock(
   unixShmNode *pShmNode = p->pShmNode;  /* The underlying file iNode */
   int rc = SQLITE_OK;                   /* Result code */
   u16 mask;                             /* Mask of locks to take or release */
+#if SQLITE_WCDB_SIGNAL_RETRY
+  int retry = 0;
+#endif //SQLITE_WCDB_SIGNAL_RETRY
 
   assert( pShmNode==pDbFd->pInode->pShmNode );
   assert( pShmNode->pInode==pDbFd->pInode );
@@ -4656,6 +4667,7 @@ static int unixShmLock(
         rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
         WCDBShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_SHARED);
+        retry = 1;
 #endif// SQLITE_WCDB_SIGNAL_RETRY
         break;
       }
@@ -4684,6 +4696,7 @@ static int unixShmLock(
         rc = SQLITE_BUSY;
 #if SQLITE_WCDB_SIGNAL_RETRY
         WCDBShmWait(pShmNode, pDbFd, mask, SQLITE_SHM_EXCLUSIVE);
+        retry = 1;
 #endif// SQLITE_WCDB_SIGNAL_RETRY
         break;
       }
@@ -4703,7 +4716,11 @@ static int unixShmLock(
   sqlite3_mutex_leave(pShmNode->mutex);
   OSTRACE(("SHM-LOCK shmid-%d, pid-%d got %03x,%03x\n",
            p->id, osGetpid(0), p->sharedMask, p->exclMask));
+#if SQLITE_WCDB_SIGNAL_RETRY
+  return retry?unixShmLock(fd, ofst, n, flags):rc;
+#else//SQLITE_WCDB_SIGNAL_RETRY
   return rc;
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 }
 
 /*
