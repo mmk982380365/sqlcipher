@@ -120,8 +120,21 @@ void sqlcipher_activate() {
   if(sqlcipher_get_provider() == NULL) {
     sqlcipher_provider *p = sqlcipher_malloc(sizeof(sqlcipher_provider)); 
 
+#if defined(SQLCIPHER_CRYPTO_CUSTOM)
     extern int sqlcipher_custom_setup(sqlcipher_provider *p);
     sqlcipher_custom_setup(p);
+#elif defined (SQLCIPHER_CRYPTO_CC)
+    extern int sqlcipher_cc_setup(sqlcipher_provider *p);
+    sqlcipher_cc_setup(fallback_provider);
+#elif defined (SQLCIPHER_CRYPTO_LIBTOMCRYPT)
+    extern int sqlcipher_ltc_setup(sqlcipher_provider *p);
+    sqlcipher_ltc_setup(fallback_provider);
+#elif defined (SQLCIPHER_CRYPTO_OPENSSL)
+    extern int sqlcipher_openssl_setup(sqlcipher_provider *p);
+    sqlcipher_openssl_setup(fallback_provider);
+#else
+#error "NO DEFAULT SQLCIPHER CRYPTO PROVIDER DEFINED"
+#endif
 
     sqlcipher_register_provider(p);
   }

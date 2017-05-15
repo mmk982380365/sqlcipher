@@ -133,12 +133,20 @@
 static const sqlcipher_api_routines sqlcipherApis = {
   sqlcipher_register_provider,
   sqlcipher_get_provider,
-  sqlcipher_register_custom_provider,
-  sqlcipher_unregister_custom_provider,
   sqlite3_key,
   sqlite3_key_v2,
   sqlite3_rekey,
-  sqlite3_rekey_v2
+  sqlite3_rekey_v2,
+
+#ifdef SQLCIPHER_CRYPTO_CUSTOM
+  sqlcipher_register_custom_provider,
+  sqlcipher_unregister_custom_provider,
+  sqlcipher_get_fallback_provider,
+#else
+  0,
+  0,
+  0,
+#endif
 };
 #endif
 

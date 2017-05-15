@@ -377,7 +377,8 @@ SRC += \
 # Source code for crypto extensions
 #
 SRC += \
-  $(TOP)/ext/crypto/xxtea.c
+  $(TOP)/ext/crypto/xxtea.c \
+  $(TOP)/ext/crypto/devlock.c
 
 
 # Generated source code files
@@ -1067,6 +1068,9 @@ json1.lo:	$(TOP)/ext/misc/json1.c
 
 xxtea.lo: $(TOP)/ext/crypto/xxtea.c
 	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/crypto/xxtea.c
+
+devlock.lo: $(TOP)/ext/crypto/devlock.c
+	$(LTCOMPILE) -DSQLITE_CORE -c $(TOP)/ext/crypto/devlock.c
 
 # FTS5 things
 #

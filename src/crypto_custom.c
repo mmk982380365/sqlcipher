@@ -1,5 +1,24 @@
+/*
+ * Tencent is pleased to support the open source community by making
+ * WCDB available.
+ *
+ * Copyright (C) 2017 THL A29 Limited, a Tencent company.
+ * All rights reserved.
+ *
+ * Licensed under the BSD 3-Clause License (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *       https://opensource.org/licenses/BSD-3-Clause
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-#ifdef SQLITE_HAS_CODEC
+#if defined(SQLITE_HAS_CODEC) && defined(SQLCIPHER_CRYPTO_CUSTOM)
 
 #include "sqliteInt.h"
 #include "sqlcipher.h"
@@ -29,12 +48,19 @@ static sqlite3_mutex *custom_providers_mutex;
 static sqlcipher_provider *fallback_provider;
 static int activate_count = 0;
 
+static int sqlcipher_dummy_activate(void *ctx) {
+    return SQLITE_OK;
+}
+
 static void provider_overload(const sqlcipher_provider *base, sqlcipher_provider *p) {
+    if (!p->activate) p->activate = sqlcipher_dummy_activate;
+    if (!p->deactivate) p->deactivate = sqlcipher_dummy_activate;
+
     /* sqlcipher_provider is actually a pile of function pointers, which has the same size of (void *).
        We can just run a loop comparing and assigning raw pointers. */
     int n = sizeof(sqlcipher_provider) / sizeof(void *);
     int i;
-    for (i = 0; i < n; i++) {
+    for (i = 2; i < n; i++) {
         if ( ((void **) p)[i] == 0 )
             ((void **) p)[i] = ((void **) base)[i];
     }
@@ -144,6 +170,10 @@ int sqlcipher_unregister_custom_provider(const char *name) {
     return SQLITE_OK;
 }
 
+const sqlcipher_provider *sqlcipher_get_fallback_provider() {
+    return fallback_provider;
+}
+
 static int sqlcipher_custom_activate(void *ctx) {
     sqlite3_mutex *mutex = sqlite3_mutex_alloc(SQLITE_MUTEX_STATIC_MASTER);
     sqlite3_mutex_enter(mutex);
@@ -174,6 +204,12 @@ static int sqlcipher_custom_activate(void *ctx) {
         if (rc == SQLITE_OK) {
             extern int sqlcipherCryptoXxteaInit();
             rc = sqlcipherCryptoXxteaInit();
+        }
+#endif
+#ifdef SQLCIPHER_CRYPTO_DEVLOCK
+        if (rc == SQLITE_OK) {
+            extern int sqlcipherCryptoDevlockInit();
+            rc = sqlcipherCryptoDevlockInit();
         }
 #endif
         (void) rc;
@@ -361,4 +397,4 @@ int sqlcipher_custom_setup(sqlcipher_provider *p) {
     return SQLITE_OK;
 }
 
-#endif /* SQLITE_HAS_CODEC */
+#endif /* SQLITE_HAS_CODEC && SQLCIPHER_CRYPTO_CUSTOM */

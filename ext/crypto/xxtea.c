@@ -1,5 +1,25 @@
+/*
+ * Tencent is pleased to support the open source community by making
+ * WCDB available.
+ *
+ * Copyright (C) 2017 THL A29 Limited, a Tencent company.
+ * All rights reserved.
+ *
+ * Licensed under the BSD 3-Clause License (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *       https://opensource.org/licenses/BSD-3-Clause
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /* BEGIN SQLCIPHER */
-#ifdef SQLITE_HAS_CODEC 
+#if defined(SQLITE_HAS_CODEC) && defined(SQLCIPHER_CRYPTO_CUSTOM) 
 #if defined(SQLCIPHER_CRYPTO_XXTEA) || !defined(SQLITE_CORE)
 
 #include "sqlite3ext.h"
@@ -163,14 +183,10 @@ static int sqlcipher_xxtea_fips_status(void *ctx) {
     return 0;
 }
 
-static int sqlcipher_xxtea_dummy_activate(void *ctx) {
-    return SQLITE_OK;
-}
-
-static volatile int g_cipher_registered = 0;
+static volatile int g_xxtea_registered = 0;
 static const sqlcipher_provider g_xxtea_provider = {
-    sqlcipher_xxtea_dummy_activate,     /* activate */
-    sqlcipher_xxtea_dummy_activate,     /* deactivate */
+    0,                                  /* activate */
+    0,                                  /* deactivate */
     sqlcipher_xxtea_get_provider_name,  /* get_provider_name */
     0,                                  /* add_random */
     0,                                  /* random */
@@ -198,8 +214,8 @@ __declspec(dllexport)
 int sqlite3_xxtea_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi) {
     SQLITE_EXTENSION_INIT2(pApi);
 
-    if (!g_cipher_registered) {
-        g_cipher_registered = 1;
+    if (!g_xxtea_registered) {
+        g_xxtea_registered = 1;
         return sqlcipher_register_custom_provider("xxtea", &g_xxtea_provider);
     }
 
@@ -207,10 +223,10 @@ int sqlite3_xxtea_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines 
 }
 #else /* SQLITE_CORE */
 int sqlcipherCryptoXxteaInit() {
-    g_cipher_registered = 1;
+    g_xxtea_registered = 1;
     return sqlcipher_register_custom_provider("xxtea", &g_xxtea_provider);
 }
 #endif
 
 #endif /* defined(SQLCIPHER_CRYPTO_XXTEA) || !defined(SQLITE_CORE) */
-#endif /* SQLITE_HAS_CODEC */
+#endif /* SQLITE_HAS_CODEC && SQLCIPHER_CRYPTO_CUSTOM */

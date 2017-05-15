@@ -401,6 +401,7 @@ foreach file {
    json1.c
    fts5.c
    xxtea.c
+   devlock.c
 } {
   copy_file tsrc/$file
 }
