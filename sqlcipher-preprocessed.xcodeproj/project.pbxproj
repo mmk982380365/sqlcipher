@@ -125,8 +125,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2311206C1E8373A6008A94C3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2311206D1E8373A6008A94C3 /* sqcliphertest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqcliphertest.h; sourceTree = "<group>"; };
 		23121C071E6FFA890012B45E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		234E92221EAEF58100C5428D /* os_wcdb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = os_wcdb.c; path = src/os_wcdb.c; sourceTree = SOURCE_ROOT; };
 		234E92231EAEF58100C5428D /* os_wcdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os_wcdb.h; path = src/os_wcdb.h; sourceTree = SOURCE_ROOT; };
@@ -267,6 +265,7 @@
 		2395298F1E7010030054D75E /* vdbemem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vdbemem.c; path = src/vdbemem.c; sourceTree = SOURCE_ROOT; };
 		239529901E7010030054D75E /* vdbesort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vdbesort.c; path = src/vdbesort.c; sourceTree = SOURCE_ROOT; };
 		239529911E7010030054D75E /* vdbetrace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vdbetrace.c; path = src/vdbetrace.c; sourceTree = SOURCE_ROOT; };
+		239D64E61ECE9FE8008F5B61 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,19 +279,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2311206B1E8373A6008A94C3 /* sqlcipher framework */ = {
-			isa = PBXGroup;
-			children = (
-				2311206C1E8373A6008A94C3 /* Info.plist */,
-				2311206D1E8373A6008A94C3 /* sqcliphertest.h */,
-			);
-			path = "sqlcipher framework";
-			sourceTree = "<group>";
-		};
 		23121ADB1E6FF9110012B45E = {
 			isa = PBXGroup;
 			children = (
-				2311206B1E8373A6008A94C3 /* sqlcipher framework */,
+				239D64E41ECE9FE8008F5B61 /* macosx */,
 				23121B7C1E6FF93D0012B45E /* src */,
 				23121C061E6FFA890012B45E /* Frameworks */,
 				23121AE51E6FF9110012B45E /* Products */,
@@ -461,6 +451,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		239D64E41ECE9FE8008F5B61 /* macosx */ = {
+			isa = PBXGroup;
+			children = (
+				239D64E61ECE9FE8008F5B61 /* Info.plist */,
+			);
+			path = macosx;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -495,9 +493,9 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		239325C71E836A7700D677CC /* sqlcipher framework */ = {
+		239325C71E836A7700D677CC /* sqlcipher */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher framework" */;
+			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher" */;
 			buildPhases = (
 				239325C31E836A7700D677CC /* Sources */,
 				239325C41E836A7700D677CC /* Frameworks */,
@@ -509,7 +507,7 @@
 			dependencies = (
 				239325D11E836A9000D677CC /* PBXTargetDependency */,
 			);
-			name = "sqlcipher framework";
+			name = sqlcipher;
 			productName = sqlcipher;
 			productReference = 239325C81E836A7700D677CC /* sqlcipher.framework */;
 			productType = "com.apple.product-type.framework";
@@ -545,7 +543,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				239325C71E836A7700D677CC /* sqlcipher framework */,
+				239325C71E836A7700D677CC /* sqlcipher */,
 				2395299B1E702CF90054D75E /* preprocess */,
 			);
 		};
@@ -717,7 +715,6 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
@@ -764,12 +761,9 @@
 					SQLITE_OMIT_PROGRESS_CALLBACK,
 					SQLITE_OMIT_SHARED_CACHE,
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -816,7 +810,6 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
@@ -860,12 +853,9 @@
 					SQLITE_OMIT_PROGRESS_CALLBACK,
 					SQLITE_OMIT_SHARED_CACHE,
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -890,10 +880,11 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "sqlcipher framework/Info.plist";
+				INFOPLIST_FILE = macosx/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = macosx/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sanhuazhang.sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
@@ -913,10 +904,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "sqlcipher framework/Info.plist";
+				INFOPLIST_FILE = macosx/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = macosx/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sanhuazhang.sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
@@ -964,7 +956,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher framework" */ = {
+		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				239325CD1E836A7700D677CC /* Debug */,
