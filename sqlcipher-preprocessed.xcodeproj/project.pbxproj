@@ -885,7 +885,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = macosx/module.modulemap;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sanhuazhang.sqlcipher;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -909,7 +909,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = macosx/module.modulemap;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sanhuazhang.sqlcipher;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
