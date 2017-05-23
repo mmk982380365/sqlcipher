@@ -125,13 +125,13 @@ void sqlcipher_activate() {
     sqlcipher_custom_setup(p);
 #elif defined (SQLCIPHER_CRYPTO_CC)
     extern int sqlcipher_cc_setup(sqlcipher_provider *p);
-    sqlcipher_cc_setup(fallback_provider);
+    sqlcipher_cc_setup(p);
 #elif defined (SQLCIPHER_CRYPTO_LIBTOMCRYPT)
     extern int sqlcipher_ltc_setup(sqlcipher_provider *p);
-    sqlcipher_ltc_setup(fallback_provider);
+    sqlcipher_ltc_setup(p);
 #elif defined (SQLCIPHER_CRYPTO_OPENSSL)
     extern int sqlcipher_openssl_setup(sqlcipher_provider *p);
-    sqlcipher_openssl_setup(fallback_provider);
+    sqlcipher_openssl_setup(p);
 #else
 #error "NO DEFAULT SQLCIPHER CRYPTO PROVIDER DEFINED"
 #endif
