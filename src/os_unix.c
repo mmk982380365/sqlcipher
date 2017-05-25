@@ -117,7 +117,7 @@
        && (!defined(TARGET_IPHONE_SIMULATOR) || (TARGET_IPHONE_SIMULATOR==0))
 #    define HAVE_GETHOSTUUID 1
 #  else
-#    warning "gethostuuid() is disabled."
+//#    warning "gethostuuid() is disabled."
 #  endif
 #endif
 

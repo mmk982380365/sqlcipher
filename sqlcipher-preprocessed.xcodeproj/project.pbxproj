@@ -879,6 +879,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = macosx/module.modulemap;
+				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
@@ -903,6 +904,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = macosx/module.modulemap;
+				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
