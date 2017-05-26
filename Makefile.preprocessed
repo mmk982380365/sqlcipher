@@ -11,6 +11,7 @@ parse.h \
 parse.c
 
 all: $(SRC)
+install: $(SRC)
 $(SRC): Makefile
 	make opcodes.h opcodes.c keywordhash.h fts5.c fts5.h sqlite3.h parse.h parse.c
 Makefile: configure
