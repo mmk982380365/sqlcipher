@@ -1658,6 +1658,7 @@ void sqlite3RegisterPerConnectionBuiltinFunctions(sqlite3 *db){
 #ifdef SQLITE_HAS_CODEC
 #ifndef OMIT_EXPORT
   sqlite3CreateFunc(db, "sqlcipher_export", 1, SQLITE_TEXT, 0, sqlcipher_exportFunc, 0, 0, 0);
+  sqlite3CreateFunc(db, "sqlcipher_export", 2, SQLITE_TEXT, 0, sqlcipher_exportFunc, 0, 0, 0);
 #endif
 #endif
 /* END SQLCIPHER */

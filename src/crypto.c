@@ -632,7 +632,8 @@ static int sqlcipher_execExecSql(sqlite3 *db, char **pzErrMsg, const char *zSql)
 */
 void sqlcipher_exportFunc(sqlite3_context *context, int argc, sqlite3_value **argv) {
   sqlite3 *db = sqlite3_context_db_handle(context);
-  const char* attachedDb = (const char*) sqlite3_value_text(argv[0]);
+  const char* toDb = (const char*) sqlite3_value_text(argv[0]);
+  const char* fromDb = (argc > 1) ? (const char *) sqlite3_value_text(argv[1]) : "main";
   int saved_flags;        /* Saved value of the db->flags */
   int saved_nChange;      /* Saved value of db->nChange */
   int saved_nTotalChange; /* Saved value of db->nTotalChange */
@@ -653,26 +654,26 @@ void sqlcipher_exportFunc(sqlite3_context *context, int argc, sqlite3_value **ar
   ** in the temporary database.
   */
   zSql = sqlite3_mprintf(
-    "SELECT 'CREATE TABLE %s.' || substr(sql,14) "
-    "  FROM sqlite_master WHERE type='table' AND name!='sqlite_sequence'"
+    "SELECT 'CREATE TABLE %1$s.' || substr(sql,14) "
+    "  FROM %2$s.sqlite_master WHERE type='table' AND name!='sqlite_sequence'"
     "   AND rootpage>0"
-  , attachedDb);
+  , toDb, fromDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execExecSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
 
   zSql = sqlite3_mprintf(
-    "SELECT 'CREATE INDEX %s.' || substr(sql,14)"
-    "  FROM sqlite_master WHERE sql LIKE 'CREATE INDEX %%' "
-  , attachedDb);
+    "SELECT 'CREATE INDEX %1$s.' || substr(sql,14)"
+    "  FROM %2$s.sqlite_master WHERE sql LIKE 'CREATE INDEX %%' "
+  , toDb, fromDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execExecSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
 
   zSql = sqlite3_mprintf(
-    "SELECT 'CREATE UNIQUE INDEX %s.' || substr(sql,21) "
-    "  FROM sqlite_master WHERE sql LIKE 'CREATE UNIQUE INDEX %%'"
-  , attachedDb);
+    "SELECT 'CREATE UNIQUE INDEX %1$s.' || substr(sql,21) "
+    "  FROM %2$s.sqlite_master WHERE sql LIKE 'CREATE UNIQUE INDEX %%'"
+  , toDb, fromDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execExecSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
@@ -682,12 +683,12 @@ void sqlcipher_exportFunc(sqlite3_context *context, int argc, sqlite3_value **ar
   ** the contents to the temporary database.
   */
   zSql = sqlite3_mprintf(
-    "SELECT 'INSERT INTO %s.' || quote(name) "
-    "|| ' SELECT * FROM main.' || quote(name) || ';'"
-    "FROM main.sqlite_master "
+    "SELECT 'INSERT INTO %1$s.' || quote(name) "
+    "|| ' SELECT * FROM %2$s.' || quote(name) || ';'"
+    "FROM %2$s.sqlite_master "
     "WHERE type = 'table' AND name!='sqlite_sequence' "
     "  AND rootpage>0"
-  , attachedDb);
+  , toDb, fromDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execExecSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
@@ -695,18 +696,18 @@ void sqlcipher_exportFunc(sqlite3_context *context, int argc, sqlite3_value **ar
   /* Copy over the sequence table
   */
   zSql = sqlite3_mprintf(
-    "SELECT 'DELETE FROM %s.' || quote(name) || ';' "
-    "FROM %s.sqlite_master WHERE name='sqlite_sequence' "
-  , attachedDb, attachedDb);
+    "SELECT 'DELETE FROM %1$s.' || quote(name) || ';' "
+    "FROM %1$s.sqlite_master WHERE name='sqlite_sequence' "
+  , toDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execExecSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
 
   zSql = sqlite3_mprintf(
-    "SELECT 'INSERT INTO %s.' || quote(name) "
-    "|| ' SELECT * FROM main.' || quote(name) || ';' "
-    "FROM %s.sqlite_master WHERE name=='sqlite_sequence';"
-  , attachedDb, attachedDb);
+    "SELECT 'INSERT INTO %1$s.' || quote(name) "
+    "|| ' SELECT * FROM %2$s.' || quote(name) || ';' "
+    "FROM %1$s.sqlite_master WHERE name=='sqlite_sequence';"
+  , toDb, fromDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execExecSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
@@ -717,12 +718,12 @@ void sqlcipher_exportFunc(sqlite3_context *context, int argc, sqlite3_value **ar
   ** from the SQLITE_MASTER table.
   */
   zSql = sqlite3_mprintf(
-    "INSERT INTO %s.sqlite_master "
+    "INSERT INTO %1$s.sqlite_master "
     "  SELECT type, name, tbl_name, rootpage, sql"
-    "    FROM main.sqlite_master"
+    "    FROM %2$s.sqlite_master"
     "   WHERE type='view' OR type='trigger'"
     "      OR (type='table' AND rootpage=0)"
-  , attachedDb);
+  , toDb, fromDb);
   rc = (zSql == NULL) ? SQLITE_NOMEM : sqlcipher_execSql(db, &pzErrMsg, zSql); 
   if( rc!=SQLITE_OK ) goto end_of_export;
   sqlite3_free(zSql);
