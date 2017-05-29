@@ -13,6 +13,8 @@
 		234E92291EAEFD3B00C5428D /* mutex_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E92271EAEFD3B00C5428D /* mutex_wcdb.h */; };
 		234E922C1EAEFF8D00C5428D /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 234E922A1EAEFF8D00C5428D /* queue.c */; };
 		234E922D1EAEFF8D00C5428D /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E922B1EAEFF8D00C5428D /* queue.h */; };
+		2384AB4D1EDBFD48007369FF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */; };
+		2384AB4E1EDBFDE0007369FF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23121C071E6FFA890012B45E /* Security.framework */; };
 		239325D21E836A9C00D677CC /* callback.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528941E700BCB0054D75E /* callback.c */; };
 		239325D31E836A9C00D677CC /* loadext.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528961E700BEB0054D75E /* loadext.c */; };
 		239325D41E836A9C00D677CC /* rowset.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528981E700BFE0054D75E /* rowset.c */; };
@@ -99,11 +101,9 @@
 		239326251E836A9C00D677CC /* random.c in Sources */ = {isa = PBXBuildFile; fileRef = 239529741E700F870054D75E /* random.c */; };
 		239326261E836A9C00D677CC /* utf.c in Sources */ = {isa = PBXBuildFile; fileRef = 239529761E700F940054D75E /* utf.c */; };
 		239326271E836A9C00D677CC /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 239529771E700F940054D75E /* util.c */; };
-		239326281E836A9C00D677CC /* crypto_custom.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395297A1E700FA60054D75E /* crypto_custom.c */; };
 		239326291E836A9C00D677CC /* crypto_cc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395297C1E700FC60054D75E /* crypto_cc.c */; };
 		2393262A1E836A9C00D677CC /* crypto_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395297D1E700FC60054D75E /* crypto_impl.c */; };
 		2393262B1E836A9C00D677CC /* crypto_libtomcrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395297E1E700FC60054D75E /* crypto_libtomcrypt.c */; };
-		2393262C1E836A9C00D677CC /* crypto_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395297F1E700FC60054D75E /* crypto_openssl.c */; };
 		2393262D1E836A9C00D677CC /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 239529801E700FC60054D75E /* crypto.c */; };
 		2393262E1E836A9C00D677CC /* vdbe.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395298A1E7010030054D75E /* vdbe.c */; };
 		2393262F1E836A9C00D677CC /* vdbeaux.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395298C1E7010030054D75E /* vdbeaux.c */; };
@@ -132,6 +132,10 @@
 		234E92271EAEFD3B00C5428D /* mutex_wcdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mutex_wcdb.h; path = src/mutex_wcdb.h; sourceTree = SOURCE_ROOT; };
 		234E922A1EAEFF8D00C5428D /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = queue.c; path = src/queue.c; sourceTree = SOURCE_ROOT; };
 		234E922B1EAEFF8D00C5428D /* queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = queue.h; path = src/queue.h; sourceTree = SOURCE_ROOT; };
+		2384AB4A1EDBFD43007369FF /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		2384AB4F1EDBFDEC007369FF /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
+		2384AB511EDBFDF7007369FF /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
 		239325C81E836A7700D677CC /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		239528921E700BBC0054D75E /* keywordhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keywordhash.h; sourceTree = SOURCE_ROOT; };
 		239528941E700BCB0054D75E /* callback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = callback.c; path = src/callback.c; sourceTree = SOURCE_ROOT; };
@@ -249,11 +253,9 @@
 		239529741E700F870054D75E /* random.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = random.c; path = src/random.c; sourceTree = SOURCE_ROOT; };
 		239529761E700F940054D75E /* utf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = utf.c; path = src/utf.c; sourceTree = SOURCE_ROOT; };
 		239529771E700F940054D75E /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = util.c; path = src/util.c; sourceTree = SOURCE_ROOT; };
-		2395297A1E700FA60054D75E /* crypto_custom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crypto_custom.c; path = src/crypto_custom.c; sourceTree = SOURCE_ROOT; };
 		2395297C1E700FC60054D75E /* crypto_cc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crypto_cc.c; path = src/crypto_cc.c; sourceTree = SOURCE_ROOT; };
 		2395297D1E700FC60054D75E /* crypto_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crypto_impl.c; path = src/crypto_impl.c; sourceTree = SOURCE_ROOT; };
 		2395297E1E700FC60054D75E /* crypto_libtomcrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crypto_libtomcrypt.c; path = src/crypto_libtomcrypt.c; sourceTree = SOURCE_ROOT; };
-		2395297F1E700FC60054D75E /* crypto_openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crypto_openssl.c; path = src/crypto_openssl.c; sourceTree = SOURCE_ROOT; };
 		239529801E700FC60054D75E /* crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crypto.c; path = src/crypto.c; sourceTree = SOURCE_ROOT; };
 		239529811E700FC60054D75E /* crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = src/crypto.h; sourceTree = SOURCE_ROOT; };
 		239529881E700FD90054D75E /* sqlcipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlcipher.h; path = src/sqlcipher.h; sourceTree = SOURCE_ROOT; };
@@ -273,6 +275,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2384AB4E1EDBFDE0007369FF /* Security.framework in Frameworks */,
+				2384AB4D1EDBFD48007369FF /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,11 +427,9 @@
 				239529741E700F870054D75E /* random.c */,
 				239529761E700F940054D75E /* utf.c */,
 				239529771E700F940054D75E /* util.c */,
-				2395297A1E700FA60054D75E /* crypto_custom.c */,
 				2395297C1E700FC60054D75E /* crypto_cc.c */,
 				2395297D1E700FC60054D75E /* crypto_impl.c */,
 				2395297E1E700FC60054D75E /* crypto_libtomcrypt.c */,
-				2395297F1E700FC60054D75E /* crypto_openssl.c */,
 				239529801E700FC60054D75E /* crypto.c */,
 				239529811E700FC60054D75E /* crypto.h */,
 				2395298A1E7010030054D75E /* vdbe.c */,
@@ -446,6 +448,10 @@
 		23121C061E6FFA890012B45E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2384AB511EDBFDF7007369FF /* libcorecrypto.tbd */,
+				2384AB4F1EDBFDEC007369FF /* libcommonCrypto.tbd */,
+				2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */,
+				2384AB4A1EDBFD43007369FF /* libz.tbd */,
 				23121C071E6FFA890012B45E /* Security.framework */,
 			);
 			name = Frameworks;
@@ -653,11 +659,9 @@
 				239326251E836A9C00D677CC /* random.c in Sources */,
 				239326261E836A9C00D677CC /* utf.c in Sources */,
 				239326271E836A9C00D677CC /* util.c in Sources */,
-				239326281E836A9C00D677CC /* crypto_custom.c in Sources */,
 				239326291E836A9C00D677CC /* crypto_cc.c in Sources */,
 				2393262A1E836A9C00D677CC /* crypto_impl.c in Sources */,
 				2393262B1E836A9C00D677CC /* crypto_libtomcrypt.c in Sources */,
-				2393262C1E836A9C00D677CC /* crypto_openssl.c in Sources */,
 				2393262D1E836A9C00D677CC /* crypto.c in Sources */,
 				2393262E1E836A9C00D677CC /* vdbe.c in Sources */,
 				2393262F1E836A9C00D677CC /* vdbeaux.c in Sources */,
@@ -757,6 +761,7 @@
 					SQLITE_OMIT_DEPRECATED,
 					SQLITE_OMIT_PROGRESS_CALLBACK,
 					SQLITE_OMIT_SHARED_CACHE,
+					OMIT_CONSTTIME_MEM,
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -846,6 +851,7 @@
 					SQLITE_OMIT_PROGRESS_CALLBACK,
 					SQLITE_OMIT_SHARED_CACHE,
 					SQLITE_ENABLE_COLUMN_METADATA,
+					OMIT_CONSTTIME_MEM,
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -873,6 +879,10 @@
 				INFOPLIST_FILE = macosx/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = macosx/module.modulemap;
 				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
@@ -898,6 +908,10 @@
 				INFOPLIST_FILE = macosx/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = macosx/module.modulemap;
 				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
