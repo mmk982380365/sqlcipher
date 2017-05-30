@@ -181,12 +181,12 @@ void* sqlcipher_memset(void *v, unsigned char value, int len) {
   int len2 = len % sizeof(unsigned long);
   len = len / sizeof(unsigned long);
 
-  unsigned long *aa = (unsigned long *) v;
+  volatile unsigned long *aa = (unsigned long *) v;
   for (i = 0; i < len; i++) {
     *aa++ = val;
   }
-  unsigned char *a = (unsigned char *) aa;
-  for (i = 0; i < len; i++) {
+  volatile unsigned char *a = (unsigned char *) aa;
+  for (i = 0; i < len2; i++) {
     *a++ = value;
   }
 
