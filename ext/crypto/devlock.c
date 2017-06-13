@@ -52,7 +52,7 @@ static int read_cpu_serial(char *buf, int buf_len) {
             if (c != ' ' && c != '\t') break;
         }
 
-        while ((c = *++pch) != 0) {
+        while ((c = *pch++) != 0) {
             if (c == '\r' || c == '\n') break;
             if (ret >= buf_len) break;
             buf[ret++] = c;
