@@ -13,6 +13,7 @@
 		234E92291EAEFD3B00C5428D /* mutex_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E92271EAEFD3B00C5428D /* mutex_wcdb.h */; };
 		234E922C1EAEFF8D00C5428D /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 234E922A1EAEFF8D00C5428D /* queue.c */; };
 		234E922D1EAEFF8D00C5428D /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 234E922B1EAEFF8D00C5428D /* queue.h */; };
+		23577F5F1F74BF6700D31C05 /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 239528B51E700CB60054D75E /* fts3_tokenizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2384AB4D1EDBFD48007369FF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */; };
 		2384AB4E1EDBFDE0007369FF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23121C071E6FFA890012B45E /* Security.framework */; };
 		239325D21E836A9C00D677CC /* callback.c in Sources */ = {isa = PBXBuildFile; fileRef = 239528941E700BCB0054D75E /* callback.c */; };
@@ -472,6 +473,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23577F5F1F74BF6700D31C05 /* fts3_tokenizer.h in Headers */,
 				234E92251EAEF58100C5428D /* os_wcdb.h in Headers */,
 				234E92291EAEFD3B00C5428D /* mutex_wcdb.h in Headers */,
 				234E922D1EAEFF8D00C5428D /* queue.h in Headers */,
