@@ -1,5 +1,5 @@
-# pod lib lint sqlcipher.podspec --verbose --allow-warnings 
-# pod trunk push sqlcipher.podspec --verbose --allow-warnings
+# pod lib lint WCDBOptimizedSQLCipher.podspec --verbose --allow-warnings 
+# pod trunk push WCDBOptimizedSQLCipher.podspec --verbose --allow-warnings
 Pod::Spec.new do |sqlcipher|
   sqlcipher.name         = "WCDBOptimizedSQLCipher"
   sqlcipher.version      = "1.1.0"
