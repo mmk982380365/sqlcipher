@@ -1250,6 +1250,7 @@
 		23F5BC3E20887FAB000CCD37 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_CODE_COVERAGE = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1262,7 +1263,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
+				OTHER_CFLAGS = (
+					"-Wno-shorten-64-to-32",
+					"-fno-profile-instr-generate",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
@@ -1275,6 +1279,7 @@
 		23F5BC3F20887FAB000CCD37 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_CODE_COVERAGE = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1287,7 +1292,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
+				OTHER_CFLAGS = (
+					"-Wno-shorten-64-to-32",
+					"-fno-profile-instr-generate",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
