@@ -624,9 +624,9 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		239325C71E836A7700D677CC /* sqlcipher */ = {
+		239325C71E836A7700D677CC /* sqlcipher for Test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher" */;
+			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher for Test" */;
 			buildPhases = (
 				239325C31E836A7700D677CC /* Sources */,
 				239325C41E836A7700D677CC /* Frameworks */,
@@ -638,14 +638,14 @@
 			dependencies = (
 				23E737CE1FB1693400EEBC3D /* PBXTargetDependency */,
 			);
-			name = sqlcipher;
+			name = "sqlcipher for Test";
 			productName = sqlcipher;
 			productReference = 239325C81E836A7700D677CC /* sqlcipher.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		23F5BBCF20887FAB000CCD37 /* sqlcipher static */ = {
+		23F5BBCF20887FAB000CCD37 /* sqlcipher */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 23F5BC3D20887FAB000CCD37 /* Build configuration list for PBXNativeTarget "sqlcipher static" */;
+			buildConfigurationList = 23F5BC3D20887FAB000CCD37 /* Build configuration list for PBXNativeTarget "sqlcipher" */;
 			buildPhases = (
 				23F5BBD220887FAB000CCD37 /* Sources */,
 				23F5BC3620887FAB000CCD37 /* Frameworks */,
@@ -657,7 +657,7 @@
 			dependencies = (
 				23F5BBD020887FAB000CCD37 /* PBXTargetDependency */,
 			);
-			name = "sqlcipher static";
+			name = sqlcipher;
 			productName = sqlcipher;
 			productReference = 23F5BC4020887FAB000CCD37 /* sqlcipher.framework */;
 			productType = "com.apple.product-type.framework";
@@ -693,8 +693,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				239325C71E836A7700D677CC /* sqlcipher */,
-				23F5BBCF20887FAB000CCD37 /* sqlcipher static */,
+				23F5BBCF20887FAB000CCD37 /* sqlcipher */,
+				239325C71E836A7700D677CC /* sqlcipher for Test */,
 				23E737C91FB168B500EEBC3D /* preprocess */,
 			);
 		};
@@ -1327,7 +1327,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher" */ = {
+		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher for Test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				239325CD1E836A7700D677CC /* Debug */,
@@ -1345,7 +1345,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		23F5BC3D20887FAB000CCD37 /* Build configuration list for PBXNativeTarget "sqlcipher static" */ = {
+		23F5BC3D20887FAB000CCD37 /* Build configuration list for PBXNativeTarget "sqlcipher" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23F5BC3E20887FAB000CCD37 /* Debug */,
