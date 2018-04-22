@@ -1253,8 +1253,6 @@
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1264,16 +1262,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				OTHER_CFLAGS = (
-					"-Wno-shorten-64-to-32",
-					"-fno-profile-instr-generate",
-				);
+				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1285,8 +1278,6 @@
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1296,16 +1287,11 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				OTHER_CFLAGS = (
-					"-Wno-shorten-64-to-32",
-					"-fno-profile-instr-generate",
-				);
+				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
