@@ -1034,6 +1034,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wglobal-constructors";
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
@@ -1127,6 +1128,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "-Wglobal-constructors";
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
@@ -1151,7 +1153,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/macosx/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
+				OTHER_CFLAGS = (
+					"-Wno-shorten-64-to-32",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
@@ -1178,7 +1183,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/macosx/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
+				OTHER_CFLAGS = (
+					"-Wno-shorten-64-to-32",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
@@ -1274,6 +1282,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "-Wglobal-constructors";
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
@@ -1306,6 +1315,7 @@
 				OTHER_CFLAGS = (
 					"-Wno-shorten-64-to-32",
 					"-fno-profile-instr-generate",
+					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
@@ -1333,7 +1343,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/macosx/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "-Wno-shorten-64-to-32";
+				OTHER_CFLAGS = (
+					"-Wno-shorten-64-to-32",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
@@ -1451,6 +1464,7 @@
 				OTHER_CFLAGS = (
 					"-Wno-shorten-64-to-32",
 					"-fno-profile-instr-generate",
+					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
@@ -1487,6 +1501,7 @@
 				OTHER_CFLAGS = (
 					"-Wno-shorten-64-to-32",
 					"-fno-profile-instr-generate",
+					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
 				PRODUCT_MODULE_NAME = sqlcipher;
