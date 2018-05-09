@@ -624,9 +624,9 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		239325C71E836A7700D677CC /* sqlcipher for Coverage and Benchmark */ = {
+		239325C71E836A7700D677CC /* sqlcipher for Coverage */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher for Coverage and Benchmark" */;
+			buildConfigurationList = 239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher for Coverage" */;
 			buildPhases = (
 				239325C31E836A7700D677CC /* Sources */,
 				239325C41E836A7700D677CC /* Frameworks */,
@@ -638,7 +638,7 @@
 			dependencies = (
 				23E737CE1FB1693400EEBC3D /* PBXTargetDependency */,
 			);
-			name = "sqlcipher for Coverage and Benchmark";
+			name = "sqlcipher for Coverage";
 			productName = sqlcipher;
 			productReference = 239325C81E836A7700D677CC /* sqlcipher.framework */;
 			productType = "com.apple.product-type.framework";
@@ -694,7 +694,7 @@
 			projectRoot = "";
 			targets = (
 				23F5BBCF20887FAB000CCD37 /* sqlcipher */,
-				239325C71E836A7700D677CC /* sqlcipher for Coverage and Benchmark */,
+				239325C71E836A7700D677CC /* sqlcipher for Coverage */,
 				23E737C91FB168B500EEBC3D /* preprocess */,
 			);
 		};
@@ -1150,7 +1150,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/macosx/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1180,7 +1179,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/macosx/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1298,7 +1296,6 @@
 		23A2C8B9208CDBDF00C6BB6B /* WithoutBitcode */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_CODE_COVERAGE = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -1317,7 +1314,6 @@
 				MACH_O_TYPE = staticlib;
 				OTHER_CFLAGS = (
 					"-Wno-shorten-64-to-32",
-					"-fno-profile-instr-generate",
 					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
@@ -1341,7 +1337,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/macosx/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1446,7 +1441,6 @@
 		23F5BC3E20887FAB000CCD37 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_CODE_COVERAGE = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -1466,7 +1460,6 @@
 				MACH_O_TYPE = staticlib;
 				OTHER_CFLAGS = (
 					"-Wno-shorten-64-to-32",
-					"-fno-profile-instr-generate",
 					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
@@ -1483,7 +1476,6 @@
 		23F5BC3F20887FAB000CCD37 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_CODE_COVERAGE = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -1503,7 +1495,6 @@
 				MACH_O_TYPE = staticlib;
 				OTHER_CFLAGS = (
 					"-Wno-shorten-64-to-32",
-					"-fno-profile-instr-generate",
 					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Tencent.WCDB.sqlcipher;
@@ -1530,7 +1521,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher for Coverage and Benchmark" */ = {
+		239325CF1E836A7700D677CC /* Build configuration list for PBXNativeTarget "sqlcipher for Coverage" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				239325CD1E836A7700D677CC /* Debug */,
