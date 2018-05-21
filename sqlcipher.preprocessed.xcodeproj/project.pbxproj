@@ -215,23 +215,6 @@
 		23F5BC3B20887FAB000CCD37 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CF1FB082C70075F021 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		23E737CD1FB1693400EEBC3D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 23121ADC1E6FF9110012B45E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 23E737C91FB168B500EEBC3D;
-			remoteInfo = preprocess;
-		};
-		23F5BBD120887FAB000CCD37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 23121ADC1E6FF9110012B45E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 23E737C91FB168B500EEBC3D;
-			remoteInfo = preprocess;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		23121C071E6FFA890012B45E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		232DA3201FB06FFD0075F021 /* keywordhash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keywordhash.h; path = ../keywordhash.h; sourceTree = "<group>"; };
@@ -636,7 +619,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				23E737CE1FB1693400EEBC3D /* PBXTargetDependency */,
 			);
 			name = "sqlcipher for Coverage";
 			productName = sqlcipher;
@@ -655,7 +637,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				23F5BBD020887FAB000CCD37 /* PBXTargetDependency */,
 			);
 			name = sqlcipher;
 			productName = sqlcipher;
@@ -931,19 +912,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		23E737CE1FB1693400EEBC3D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 23E737C91FB168B500EEBC3D /* preprocess */;
-			targetProxy = 23E737CD1FB1693400EEBC3D /* PBXContainerItemProxy */;
-		};
-		23F5BBD020887FAB000CCD37 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 23E737C91FB168B500EEBC3D /* preprocess */;
-			targetProxy = 23F5BBD120887FAB000CCD37 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		23121AE61E6FF9110012B45E /* Debug */ = {
