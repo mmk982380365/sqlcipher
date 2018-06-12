@@ -9490,6 +9490,22 @@ int sqlite3BtreeCheckpoint(Btree *p, int eMode, int *pnLog, int *pnCkpt){
   }
   return rc;
 }
+
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+int sqlite3BtreeCheckpointHandler(Btree* p,
+                                  int(*xCheckpoint)(void *,int),
+                                  void* pArg){
+  int rc = SQLITE_OK;
+  if( p ){
+    BtShared *pBt = p->pBt;
+    sqlite3BtreeEnter(p);
+    rc = sqlite3PagerWalCheckpointHandler(pBt->pPager, xCheckpoint, pArg);
+    sqlite3BtreeLeave(p);
+  }
+  return rc;
+}
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+
 #endif
 
 /*

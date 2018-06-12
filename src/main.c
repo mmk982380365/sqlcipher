@@ -2126,6 +2126,20 @@ int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb){
   return sqlite3_wal_checkpoint_v2(db,zDb,SQLITE_CHECKPOINT_PASSIVE,0,0);
 }
 
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+int sqlite3_wal_checkpoint_handler(sqlite3 *db,
+                                   int (*xCheckpoint)(void*,int),
+                                   void* pArg){
+#ifdef SQLITE_ENABLE_API_ARMOR
+  if( !sqlite3SafetyCheckOk(db) ) return SQLITE_MISUSE_BKPT;
+#endif
+  sqlite3_mutex_enter(db->mutex);
+  int rc = sqlite3BtreeCheckpointHandler(db->aDb[0].pBt, xCheckpoint, pArg);
+  sqlite3_mutex_leave(db->mutex);
+  return rc;
+}
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+
 #ifndef SQLITE_OMIT_WAL
 /*
 ** Run a checkpoint on database iDb. This is a no-op if database iDb is

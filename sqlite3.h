@@ -7896,6 +7896,10 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
   int *pnLog,                     /* OUT: Size of WAL log in frames */
   int *pnCkpt                     /* OUT: Total number of frames checkpointed */
 );
+    
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+SQLITE_API int sqlite3_wal_checkpoint_handler(sqlite3*,int(*)(void*,int),void*);
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
 
 /*
 ** CAPI3REF: Checkpoint Mode Values

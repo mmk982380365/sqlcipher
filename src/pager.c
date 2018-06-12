@@ -7221,6 +7221,18 @@ int sqlite3PagerWalCallback(Pager *pPager){
   return sqlite3WalCallback(pPager->pWal);
 }
 
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+int sqlite3PagerWalCheckpointHandler(Pager *pPager, 
+                                     int (*xCheckpoint)(void*,int), 
+                                     void* pArg){
+  int rc = SQLITE_OK;
+  if (pPager->pWal) {
+    rc = sqlite3WalCheckpointHandler(pPager->pWal, xCheckpoint, pArg);
+  }
+  return rc;
+}
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+
 /*
 ** Return true if the underlying VFS for the given pager supports the
 ** primitives necessary for write-ahead logging.

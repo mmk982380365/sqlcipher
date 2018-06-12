@@ -423,6 +423,14 @@ struct WalCkptInfo {
   WAL_HDRSIZE + ((iFrame)-1)*(i64)((szPage)+WAL_FRAME_HDRSIZE)         \
 )
 
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+typedef struct WalCheckpointHandler WalCheckpointHandler; 
+struct WalCheckpointHandler {
+  int (*xFunc)(void *,int);  /* The checkpoint callback */
+  void *pArg;                /* First arg to checkpoint callback */
+};
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+
 /*
 ** An open write-ahead log file is represented by an instance of the
 ** following object.
@@ -457,6 +465,9 @@ struct Wal {
 #ifdef SQLITE_ENABLE_SNAPSHOT
   WalIndexHdr *pSnapshot;    /* Start transaction here if not NULL */
 #endif
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+  WalCheckpointHandler checkpointHandler; /* Checkpoint callback */
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
 };
 
 /*
@@ -1815,6 +1826,11 @@ static int walCheckpoint(
         }
       }
 
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+      if (pWal->checkpointHandler.xFunc) {
+        rc = pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg, mxSafeFrame);
+      }
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
 
       /* Iterate through the contents of the WAL, copying data to the db file */
       while( rc==SQLITE_OK && 0==walIteratorNext(pIter, &iDbpage, &iFrame) ){
@@ -3302,6 +3318,16 @@ int sqlite3WalCheckpoint(
   WALTRACE(("WAL%p: checkpoint %s\n", pWal, rc ? "failed" : "ok"));
   return (rc==SQLITE_OK && eMode!=eMode2 ? SQLITE_BUSY : rc);
 }
+
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+int sqlite3WalCheckpointHandler(Wal *pWal, 
+                                int (*xCheckpoint)(void*,int), 
+                                void* pArg){
+  pWal->checkpointHandler.xFunc = xCheckpoint;
+  pWal->checkpointHandler.pArg = pArg;
+  return SQLITE_OK;
+}
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
 
 /* Return the value to pass to a sqlite3_wal_hook callback, the
 ** number of frames in the WAL at the point of the last commit since
