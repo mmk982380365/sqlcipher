@@ -2126,7 +2126,7 @@ int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb){
   return sqlite3_wal_checkpoint_v2(db,zDb,SQLITE_CHECKPOINT_PASSIVE,0,0);
 }
 
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3_wal_checkpoint_handler(sqlite3 *db,
                                    int (*xCheckpoint)(void*,int),
                                    void* pArg){
@@ -2138,7 +2138,7 @@ int sqlite3_wal_checkpoint_handler(sqlite3 *db,
   sqlite3_mutex_leave(db->mutex);
   return rc;
 }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 #ifndef SQLITE_OMIT_WAL
 /*

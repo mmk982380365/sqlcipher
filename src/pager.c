@@ -7221,7 +7221,7 @@ int sqlite3PagerWalCallback(Pager *pPager){
   return sqlite3WalCallback(pPager->pWal);
 }
 
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3PagerWalCheckpointHandler(Pager *pPager, 
                                      int (*xCheckpoint)(void*,int), 
                                      void* pArg){
@@ -7231,7 +7231,7 @@ int sqlite3PagerWalCheckpointHandler(Pager *pPager,
   }
   return rc;
 }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 /*
 ** Return true if the underlying VFS for the given pager supports the

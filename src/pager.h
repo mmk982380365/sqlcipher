@@ -179,9 +179,9 @@ int sqlite3PagerSharedLock(Pager *pPager);
   int sqlite3PagerOpenWal(Pager *pPager, int *pisOpen);
   int sqlite3PagerCloseWal(Pager *pPager);
   int sqlite3PagerUseWal(Pager *pPager);
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3PagerWalCheckpointHandler(Pager *,int (*)(void*,int),void*);
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 # ifdef SQLITE_ENABLE_SNAPSHOT
   int sqlite3PagerSnapshotGet(Pager *pPager, sqlite3_snapshot **ppSnapshot);

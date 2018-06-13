@@ -9491,7 +9491,7 @@ int sqlite3BtreeCheckpoint(Btree *p, int eMode, int *pnLog, int *pnCkpt){
   return rc;
 }
 
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLE
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3BtreeCheckpointHandler(Btree* p,
                                   int(*xCheckpoint)(void *,int),
                                   void* pArg){
@@ -9504,7 +9504,7 @@ int sqlite3BtreeCheckpointHandler(Btree* p,
   }
   return rc;
 }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLE
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 #endif
 
