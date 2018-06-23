@@ -9495,7 +9495,7 @@ int sqlite3BtreeCheckpoint(Btree *p, int eMode, int *pnLog, int *pnCkpt){
 int sqlite3BtreeCheckpointHandler(Btree* p,
                                   int(*xCheckpoint)(void *,int),
                                   void* pArg){
-  int rc = SQLITE_OK;
+  int rc = SQLITE_MISUSE;
   if( p ){
     BtShared *pBt = p->pBt;
     sqlite3BtreeEnter(p);

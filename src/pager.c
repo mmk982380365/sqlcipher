@@ -7225,7 +7225,7 @@ int sqlite3PagerWalCallback(Pager *pPager){
 int sqlite3PagerWalCheckpointHandler(Pager *pPager, 
                                      int (*xCheckpoint)(void*,int), 
                                      void* pArg){
-  int rc = SQLITE_OK;
+  int rc = SQLITE_MISUSE;
   if (pPager->pWal) {
     rc = sqlite3WalCheckpointHandler(pPager->pWal, xCheckpoint, pArg);
   }
