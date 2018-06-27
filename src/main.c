@@ -2135,6 +2135,7 @@ int sqlite3_wal_checkpoint_handler(sqlite3 *db,
 #endif
   sqlite3_mutex_enter(db->mutex);
   int rc = sqlite3BtreeCheckpointHandler(db->aDb[0].pBt, xCheckpoint, pArg);
+  sqlite3ApiExit(db, rc);
   sqlite3_mutex_leave(db->mutex);
   return rc;
 }
