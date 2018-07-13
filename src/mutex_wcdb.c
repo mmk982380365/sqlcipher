@@ -26,6 +26,10 @@
 #include "sqlite3.h"
 
 extern pthread_mutex_t* sqlite3GetPthreadMutex(sqlite3_mutex* p);
+#if defined(SQLITE_DEBUG) || defined(SQLITE_HOMEGROWN_RECURSIVE_MUTEX)
+extern void sqlite3PthreadMutexRefIncrease(sqlite3_mutex* p);
+extern void sqlite3PthreadMutexRefDecrease(sqlite3_mutex* p);
+#endif
 
 struct sqlite3_thread {
   pthread_t thread;
@@ -52,13 +56,22 @@ void pthreadCondFree(sqlite3_condition* c)
 
 int pthreadCondWait(sqlite3_condition* c, sqlite3_mutex* p, int timeout)
 {
+  int rc;
+#if defined(SQLITE_DEBUG) || defined(SQLITE_HOMEGROWN_RECURSIVE_MUTEX)
+  sqlite3PthreadMutexRefDecrease(p);
+#endif
   if (timeout>0) {
     struct timespec relative;
     relative.tv_nsec = 0;
     relative.tv_sec = timeout;
-    return pthread_cond_timedwait_relative_np(&c->cond, sqlite3GetPthreadMutex(p), &relative);
+    rc = pthread_cond_timedwait_relative_np(&c->cond, sqlite3GetPthreadMutex(p), &relative);
+  }else {
+    rc = pthread_cond_wait(&c->cond, sqlite3GetPthreadMutex(p));
   }
-  return pthread_cond_wait(&c->cond, sqlite3GetPthreadMutex(p));
+#if defined(SQLITE_DEBUG) || defined(SQLITE_HOMEGROWN_RECURSIVE_MUTEX)
+  sqlite3PthreadMutexRefIncrease(p);
+#endif
+  return rc;
 }
 
 void pthreadCondSignal(sqlite3_condition* c, sqlite3_thread* t)

@@ -385,6 +385,34 @@ sqlite3_mutex_methods const *sqlite3DefaultMutex(void){
 }
 
 #if SQLITE_WCDB_SIGNAL_RETRY
+
+#if SQLITE_MUTEX_NREF
+void sqlite3PthreadMutexRefIncrease(sqlite3_mutex* p)
+{
+  assert( p->nRef>0 || p->owner==0 );
+#ifdef SQLITE_DEBUG
+  if( p->trace ){
+    printf("enter mutex %p (%d) with nRef=%d\n", p, p->trace, p->nRef);
+  }
+#endif
+  p->owner = pthread_self();
+  ++p->nRef;
+}
+
+void sqlite3PthreadMutexRefDecrease(sqlite3_mutex* p)
+{
+  --p->nRef;
+  if( p->nRef==0 ) p->owner = 0;
+  assert( p->nRef==0 || p->id==SQLITE_MUTEX_RECURSIVE );
+#ifdef SQLITE_DEBUG
+  if( p->trace ){
+    printf("leave mutex %p (%d) with nRef=%d\n", p, p->trace, p->nRef);
+  }
+#endif
+}
+
+#endif //SQLITE_MUTEX_NREF
+
 pthread_mutex_t* sqlite3GetPthreadMutex(sqlite3_mutex* p)
 {
     return &p->mutex;
