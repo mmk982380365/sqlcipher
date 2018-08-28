@@ -1009,7 +1009,6 @@
 					"-Wglobal-constructors",
 					"-Wno-shorten-64-to-32",
 				);
-				"OTHER_CPLUSPLUSFLAGS[sdk=iphoneos*]" = "$(OTHER_CFLAGS)";
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
@@ -1110,7 +1109,6 @@
 					"-Wglobal-constructors",
 					"-Wno-shorten-64-to-32",
 				);
-				"OTHER_CPLUSPLUSFLAGS[sdk=iphoneos*]" = "$(OTHER_CFLAGS)";
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
