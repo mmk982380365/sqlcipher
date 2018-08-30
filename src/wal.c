@@ -1826,12 +1826,6 @@ static int walCheckpoint(
         }
       }
 
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-      if (pWal->checkpointHandler.xFunc) {
-        rc = pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg, mxSafeFrame);
-      }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-
       /* Iterate through the contents of the WAL, copying data to the db file */
       while( rc==SQLITE_OK && 0==walIteratorNext(pIter, &iDbpage, &iFrame) ){
         i64 iOffset;
@@ -3240,6 +3234,15 @@ int sqlite3WalCheckpoint(
 
   if( pWal->readOnly ) return SQLITE_READONLY;
   WALTRACE(("WAL%p: checkpoint begins\n", pWal));
+    
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  if (pWal->checkpointHandler.xFunc) {
+    rc = pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg, -1);
+    if ( rc ) {
+      return rc;
+    }
+  }
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
   /* IMPLEMENTATION-OF: R-62028-47212 All calls obtain an exclusive 
   ** "checkpoint" lock on the database file. */
@@ -3316,6 +3319,13 @@ int sqlite3WalCheckpoint(
   walUnlockExclusive(pWal, WAL_CKPT_LOCK, 1);
   pWal->ckptLock = 0;
   WALTRACE(("WAL%p: checkpoint %s\n", pWal, rc ? "failed" : "ok"));
+  
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  if (pWal->checkpointHandler.xFunc) {
+    pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg, rc);
+  }
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
+
   return (rc==SQLITE_OK && eMode!=eMode2 ? SQLITE_BUSY : rc);
 }
 
