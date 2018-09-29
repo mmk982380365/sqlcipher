@@ -110,6 +110,76 @@
 		2384AB4E1EDBFDE0007369FF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23121C071E6FFA890012B45E /* Security.framework */; };
 		23E737C71FB1689500EEBC3D /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CF1FB082C70075F021 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		23E737C81FB1689A00EEBC3D /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA34A1FB070F00075F021 /* fts3_tokenizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		23F0FDA8215F2473008399FB /* keywordhash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3201FB06FFD0075F021 /* keywordhash.h */; };
+		23F0FDA9215F2473008399FB /* btreeInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3311FB0706F0075F021 /* btreeInt.h */; };
+		23F0FDAA215F2473008399FB /* btree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3321FB070730075F021 /* btree.h */; };
+		23F0FDAB215F2473008399FB /* fts5.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3341FB0708F0075F021 /* fts5.h */; };
+		23F0FDAC215F2473008399FB /* fts3_hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA33A1FB070C50075F021 /* fts3_hash.h */; };
+		23F0FDAD215F2473008399FB /* fts3.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3471FB070F00075F021 /* fts3.h */; };
+		23F0FDAE215F2473008399FB /* fts3Int.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3441FB070EF0075F021 /* fts3Int.h */; };
+		23F0FDAF215F2473008399FB /* wal.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3611FB0712A0075F021 /* wal.h */; };
+		23F0FDB0215F2473008399FB /* mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3741FB0716A0075F021 /* mutex.h */; };
+		23F0FDB1215F2473008399FB /* os_setup.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3801FB071790075F021 /* os_setup.h */; };
+		23F0FDB2215F2473008399FB /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3831FB0717D0075F021 /* queue.h */; };
+		23F0FDB3215F2473008399FB /* os_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA37C1FB071770075F021 /* os_common.h */; };
+		23F0FDB4215F2473008399FB /* os_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA37D1FB071780075F021 /* os_wcdb.h */; };
+		23F0FDB5215F2473008399FB /* mutex_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3861FB071870075F021 /* mutex_wcdb.h */; };
+		23F0FDB6215F2473008399FB /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3891FB0718E0075F021 /* os.h */; };
+		23F0FDB7215F2473008399FB /* pager.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3911FB071A60075F021 /* pager.h */; };
+		23F0FDB8215F2473008399FB /* pcache.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3941FB071AB0075F021 /* pcache.h */; };
+		23F0FDB9215F2473008399FB /* rtree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3981FB081D90075F021 /* rtree.h */; };
+		23F0FDBA215F2473008399FB /* sqlite3rtree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA39B1FB081DE0075F021 /* sqlite3rtree.h */; };
+		23F0FDBB215F2473008399FB /* parse.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3A31FB0822A0075F021 /* parse.h */; };
+		23F0FDBC215F2473008399FB /* whereInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3A91FB0824C0075F021 /* whereInt.h */; };
+		23F0FDBD215F2473008399FB /* pragma.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3B71FB082A70075F021 /* pragma.h */; };
+		23F0FDBE215F2473008399FB /* opcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CC1FB082B30075F021 /* opcodes.h */; };
+		23F0FDBF215F2473008399FB /* sqlcipher.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CE1FB082C20075F021 /* sqlcipher.h */; };
+		23F0FDC0215F2473008399FB /* sqlite3rbu.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3D01FB082DA0075F021 /* sqlite3rbu.h */; };
+		23F0FDC1215F2473008399FB /* sqlite3userauth.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3D31FB082E40075F021 /* sqlite3userauth.h */; };
+		23F0FDC2215F2473008399FB /* crypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3EE1FB0836C0075F021 /* crypto.h */; };
+		23F0FDC3215F2473008399FB /* hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3F21FB0836D0075F021 /* hash.h */; };
+		23F0FDC4215F2473008399FB /* hwtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3F11FB0836D0075F021 /* hwtime.h */; };
+		23F0FDC5215F2473008399FB /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3DB1FB083670075F021 /* sqlite3ext.h */; };
+		23F0FDC6215F2473008399FB /* sqliteInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3EC1FB0836B0075F021 /* sqliteInt.h */; };
+		23F0FDC7215F2473008399FB /* sqliteLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3F51FB0836E0075F021 /* sqliteLimit.h */; };
+		23F0FDC8215F2473008399FB /* vdbe.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3DD1FB083670075F021 /* vdbe.h */; };
+		23F0FDC9215F2473008399FB /* vdbeInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3DA1FB083670075F021 /* vdbeInt.h */; };
+		23F0FDCA215F2473008399FB /* sqliteicu.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3D71FB082FA0075F021 /* sqliteicu.h */; };
+		23F0FDCB215F2474008399FB /* keywordhash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3201FB06FFD0075F021 /* keywordhash.h */; };
+		23F0FDCC215F2474008399FB /* btreeInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3311FB0706F0075F021 /* btreeInt.h */; };
+		23F0FDCD215F2474008399FB /* btree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3321FB070730075F021 /* btree.h */; };
+		23F0FDCE215F2474008399FB /* fts5.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3341FB0708F0075F021 /* fts5.h */; };
+		23F0FDCF215F2474008399FB /* fts3_hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA33A1FB070C50075F021 /* fts3_hash.h */; };
+		23F0FDD0215F2474008399FB /* fts3.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3471FB070F00075F021 /* fts3.h */; };
+		23F0FDD1215F2474008399FB /* fts3Int.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3441FB070EF0075F021 /* fts3Int.h */; };
+		23F0FDD2215F2474008399FB /* wal.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3611FB0712A0075F021 /* wal.h */; };
+		23F0FDD3215F2474008399FB /* mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3741FB0716A0075F021 /* mutex.h */; };
+		23F0FDD4215F2474008399FB /* os_setup.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3801FB071790075F021 /* os_setup.h */; };
+		23F0FDD5215F2474008399FB /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3831FB0717D0075F021 /* queue.h */; };
+		23F0FDD6215F2474008399FB /* os_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA37C1FB071770075F021 /* os_common.h */; };
+		23F0FDD7215F2474008399FB /* os_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA37D1FB071780075F021 /* os_wcdb.h */; };
+		23F0FDD8215F2474008399FB /* mutex_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3861FB071870075F021 /* mutex_wcdb.h */; };
+		23F0FDD9215F2474008399FB /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3891FB0718E0075F021 /* os.h */; };
+		23F0FDDA215F2474008399FB /* pager.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3911FB071A60075F021 /* pager.h */; };
+		23F0FDDB215F2474008399FB /* pcache.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3941FB071AB0075F021 /* pcache.h */; };
+		23F0FDDC215F2474008399FB /* rtree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3981FB081D90075F021 /* rtree.h */; };
+		23F0FDDD215F2474008399FB /* sqlite3rtree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA39B1FB081DE0075F021 /* sqlite3rtree.h */; };
+		23F0FDDE215F2474008399FB /* parse.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3A31FB0822A0075F021 /* parse.h */; };
+		23F0FDDF215F2474008399FB /* whereInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3A91FB0824C0075F021 /* whereInt.h */; };
+		23F0FDE0215F2474008399FB /* pragma.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3B71FB082A70075F021 /* pragma.h */; };
+		23F0FDE1215F2474008399FB /* opcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CC1FB082B30075F021 /* opcodes.h */; };
+		23F0FDE2215F2474008399FB /* sqlcipher.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CE1FB082C20075F021 /* sqlcipher.h */; };
+		23F0FDE3215F2474008399FB /* sqlite3rbu.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3D01FB082DA0075F021 /* sqlite3rbu.h */; };
+		23F0FDE4215F2474008399FB /* sqlite3userauth.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3D31FB082E40075F021 /* sqlite3userauth.h */; };
+		23F0FDE5215F2474008399FB /* crypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3EE1FB0836C0075F021 /* crypto.h */; };
+		23F0FDE6215F2474008399FB /* hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3F21FB0836D0075F021 /* hash.h */; };
+		23F0FDE7215F2474008399FB /* hwtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3F11FB0836D0075F021 /* hwtime.h */; };
+		23F0FDE8215F2474008399FB /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3DB1FB083670075F021 /* sqlite3ext.h */; };
+		23F0FDE9215F2474008399FB /* sqliteInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3EC1FB0836B0075F021 /* sqliteInt.h */; };
+		23F0FDEA215F2474008399FB /* sqliteLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3F51FB0836E0075F021 /* sqliteLimit.h */; };
+		23F0FDEB215F2474008399FB /* vdbe.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3DD1FB083670075F021 /* vdbe.h */; };
+		23F0FDEC215F2474008399FB /* vdbeInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3DA1FB083670075F021 /* vdbeInt.h */; };
+		23F0FDED215F2474008399FB /* sqliteicu.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3D71FB082FA0075F021 /* sqliteicu.h */; };
 		23F5BBD320887FAB000CCD37 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3BB1FB082A80075F021 /* auth.c */; };
 		23F5BBD420887FAB000CCD37 /* vdbetrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3DC1FB083670075F021 /* vdbetrace.c */; };
 		23F5BBD520887FAB000CCD37 /* status.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3631FB071310075F021 /* status.c */; };
@@ -573,8 +643,43 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23F0FDDA215F2474008399FB /* pager.h in Headers */,
+				23F0FDE5215F2474008399FB /* crypto.h in Headers */,
+				23F0FDD9215F2474008399FB /* os.h in Headers */,
+				23F0FDE2215F2474008399FB /* sqlcipher.h in Headers */,
+				23F0FDE3215F2474008399FB /* sqlite3rbu.h in Headers */,
+				23F0FDCB215F2474008399FB /* keywordhash.h in Headers */,
+				23F0FDD7215F2474008399FB /* os_wcdb.h in Headers */,
+				23F0FDE9215F2474008399FB /* sqliteInt.h in Headers */,
+				23F0FDDD215F2474008399FB /* sqlite3rtree.h in Headers */,
+				23F0FDCF215F2474008399FB /* fts3_hash.h in Headers */,
+				23F0FDEB215F2474008399FB /* vdbe.h in Headers */,
+				23F0FDE0215F2474008399FB /* pragma.h in Headers */,
+				23F0FDD4215F2474008399FB /* os_setup.h in Headers */,
+				23F0FDD8215F2474008399FB /* mutex_wcdb.h in Headers */,
+				23F0FDDE215F2474008399FB /* parse.h in Headers */,
+				23F0FDCC215F2474008399FB /* btreeInt.h in Headers */,
+				23F0FDCE215F2474008399FB /* fts5.h in Headers */,
+				23F0FDD3215F2474008399FB /* mutex.h in Headers */,
+				23F0FDD5215F2474008399FB /* queue.h in Headers */,
+				23F0FDD0215F2474008399FB /* fts3.h in Headers */,
+				23F0FDED215F2474008399FB /* sqliteicu.h in Headers */,
+				23F0FDD1215F2474008399FB /* fts3Int.h in Headers */,
+				23F0FDDB215F2474008399FB /* pcache.h in Headers */,
+				23F0FDE6215F2474008399FB /* hash.h in Headers */,
+				23F0FDEA215F2474008399FB /* sqliteLimit.h in Headers */,
+				23F0FDD6215F2474008399FB /* os_common.h in Headers */,
+				23F0FDDC215F2474008399FB /* rtree.h in Headers */,
+				23F0FDE4215F2474008399FB /* sqlite3userauth.h in Headers */,
+				23F0FDE8215F2474008399FB /* sqlite3ext.h in Headers */,
+				23F0FDDF215F2474008399FB /* whereInt.h in Headers */,
 				23E737C81FB1689A00EEBC3D /* fts3_tokenizer.h in Headers */,
 				23E737C71FB1689500EEBC3D /* sqlite3.h in Headers */,
+				23F0FDEC215F2474008399FB /* vdbeInt.h in Headers */,
+				23F0FDE1215F2474008399FB /* opcodes.h in Headers */,
+				23F0FDCD215F2474008399FB /* btree.h in Headers */,
+				23F0FDE7215F2474008399FB /* hwtime.h in Headers */,
+				23F0FDD2215F2474008399FB /* wal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,8 +687,43 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23F0FDB7215F2473008399FB /* pager.h in Headers */,
+				23F0FDC2215F2473008399FB /* crypto.h in Headers */,
+				23F0FDB6215F2473008399FB /* os.h in Headers */,
+				23F0FDBF215F2473008399FB /* sqlcipher.h in Headers */,
+				23F0FDC0215F2473008399FB /* sqlite3rbu.h in Headers */,
+				23F0FDA8215F2473008399FB /* keywordhash.h in Headers */,
+				23F0FDB4215F2473008399FB /* os_wcdb.h in Headers */,
+				23F0FDC6215F2473008399FB /* sqliteInt.h in Headers */,
+				23F0FDBA215F2473008399FB /* sqlite3rtree.h in Headers */,
+				23F0FDAC215F2473008399FB /* fts3_hash.h in Headers */,
+				23F0FDC8215F2473008399FB /* vdbe.h in Headers */,
+				23F0FDBD215F2473008399FB /* pragma.h in Headers */,
+				23F0FDB1215F2473008399FB /* os_setup.h in Headers */,
+				23F0FDB5215F2473008399FB /* mutex_wcdb.h in Headers */,
+				23F0FDBB215F2473008399FB /* parse.h in Headers */,
+				23F0FDA9215F2473008399FB /* btreeInt.h in Headers */,
+				23F0FDAB215F2473008399FB /* fts5.h in Headers */,
+				23F0FDB0215F2473008399FB /* mutex.h in Headers */,
+				23F0FDB2215F2473008399FB /* queue.h in Headers */,
+				23F0FDAD215F2473008399FB /* fts3.h in Headers */,
+				23F0FDCA215F2473008399FB /* sqliteicu.h in Headers */,
+				23F0FDAE215F2473008399FB /* fts3Int.h in Headers */,
+				23F0FDB8215F2473008399FB /* pcache.h in Headers */,
+				23F0FDC3215F2473008399FB /* hash.h in Headers */,
+				23F0FDC7215F2473008399FB /* sqliteLimit.h in Headers */,
+				23F0FDB3215F2473008399FB /* os_common.h in Headers */,
+				23F0FDB9215F2473008399FB /* rtree.h in Headers */,
+				23F0FDC1215F2473008399FB /* sqlite3userauth.h in Headers */,
+				23F0FDC5215F2473008399FB /* sqlite3ext.h in Headers */,
+				23F0FDBC215F2473008399FB /* whereInt.h in Headers */,
 				23F5BC3A20887FAB000CCD37 /* fts3_tokenizer.h in Headers */,
 				23F5BC3B20887FAB000CCD37 /* sqlite3.h in Headers */,
+				23F0FDC9215F2473008399FB /* vdbeInt.h in Headers */,
+				23F0FDBE215F2473008399FB /* opcodes.h in Headers */,
+				23F0FDAA215F2473008399FB /* btree.h in Headers */,
+				23F0FDC4215F2473008399FB /* hwtime.h in Headers */,
+				23F0FDAF215F2473008399FB /* wal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
