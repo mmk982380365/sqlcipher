@@ -705,20 +705,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"ARCHS[sdk=iphoneos*]" = (
-					"$(ARCHS_STANDARD)",
-					armv7,
-					arm64,
-				);
-				"ARCHS[sdk=iphonesimulator*]" = (
-					"$(ARCHS_STANDARD)",
-					armv7,
-					arm64,
-				);
-				"ARCHS[sdk=macosx*]" = (
-					"$(ARCHS_STANDARD)",
-					x86_64,
-				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -800,9 +786,8 @@
 					"-Wglobal-constructors",
 					"-Wno-shorten-64-to-32",
 				);
-				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator watchos watchsimulator appletvos appletvsimulator";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALID_ARCHS = "x86_64 armv7 arm64";
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
@@ -813,20 +798,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"ARCHS[sdk=iphoneos*]" = (
-					"$(ARCHS_STANDARD)",
-					armv7,
-					arm64,
-				);
-				"ARCHS[sdk=iphonesimulator*]" = (
-					"$(ARCHS_STANDARD)",
-					armv7,
-					arm64,
-				);
-				"ARCHS[sdk=macosx*]" = (
-					"$(ARCHS_STANDARD)",
-					x86_64,
-				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -904,9 +875,8 @@
 					"-Wglobal-constructors",
 					"-Wno-shorten-64-to-32",
 				);
-				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator watchos watchsimulator appletvos appletvsimulator";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALID_ARCHS = "x86_64 armv7 arm64";
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
@@ -917,20 +887,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"ARCHS[sdk=iphoneos*]" = (
-					"$(ARCHS_STANDARD)",
-					armv7,
-					arm64,
-				);
-				"ARCHS[sdk=iphonesimulator*]" = (
-					"$(ARCHS_STANDARD)",
-					armv7,
-					arm64,
-				);
-				"ARCHS[sdk=macosx*]" = (
-					"$(ARCHS_STANDARD)",
-					x86_64,
-				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1008,9 +964,8 @@
 					"-Wglobal-constructors",
 					"-Wno-shorten-64-to-32",
 				);
-				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator watchos watchsimulator appletvos appletvsimulator";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALID_ARCHS = "x86_64 armv7 arm64";
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
