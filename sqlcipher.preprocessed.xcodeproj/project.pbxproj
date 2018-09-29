@@ -1026,7 +1026,7 @@
 				PRODUCT_MODULE_NAME = sqlcipher;
 				PRODUCT_NAME = sqlcipher;
 				SKIP_INSTALL = YES;
-				STRIP_STYLE = "non-global";
+				STRIP_STYLE = debugging;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
