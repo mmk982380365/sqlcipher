@@ -41,6 +41,9 @@
 extern "C" {
 #endif
 
+#ifdef SQLITE_WCDB_API_NO_HIDDEN
+#define SQLITE_API __attribute__((visibility("default")))
+#endif
 
 /*
 ** Provide the ability to override linkage features of the interface.
