@@ -181,4 +181,8 @@ int sqlite3HeaderSizePcache1(void);
 /* Number of dirty pages as a percentage of the configured cache size */
 int sqlite3PCachePercentDirty(PCache*);
 
+#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
+int sqlite3PCacheDirtyPageCount(PCache*);
+#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
+
 #endif /* _PCACHE_H_ */

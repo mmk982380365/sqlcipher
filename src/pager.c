@@ -7233,6 +7233,12 @@ int sqlite3PagerWalCheckpointHandler(Pager *pPager,
 }
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
+#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
+int sqlite3PagerDirtyPageCount(Pager *p){
+  return sqlite3PCacheDirtyPageCount(p->pPCache);
+}
+#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
+
 /*
 ** Return true if the underlying VFS for the given pager supports the
 ** primitives necessary for write-ahead logging.

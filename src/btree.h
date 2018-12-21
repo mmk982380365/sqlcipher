@@ -325,6 +325,10 @@ void sqlite3BtreeCursorList(Btree*);
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 #endif
 
+#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
+int sqlite3BtreeDirtyPageCount(Btree *);
+#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
+
 /*
 ** If we are not using shared cache, then there is no need to
 ** use mutexes to access the BtShared structures.  So make the

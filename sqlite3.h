@@ -7910,6 +7910,13 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
 */
 SQLITE_API int sqlite3_wal_checkpoint_handler(sqlite3*,int(*)(void*,int),void*);
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
+    
+#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
+/*
+ ** Return the number of dirty pages currently in the cache.
+ */
+SQLITE_API int sqlite3_dirty_page_count(sqlite3*);
+#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
 
 /*
 ** CAPI3REF: Checkpoint Mode Values
