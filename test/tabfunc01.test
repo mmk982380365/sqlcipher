@@ -23,10 +23,14 @@ ifcapable !vtab {
 }
 load_static_extension db series
 load_static_extension db carray
+load_static_extension db remember
 
 do_execsql_test tabfunc01-1.1 {
   SELECT *, '|' FROM generate_series WHERE start=1 AND stop=9 AND step=2;
 } {1 | 3 | 5 | 7 | 9 |}
+do_execsql_test tabfunc01-1.1b {
+  PRAGMA table_xinfo(generate_series);
+} {0 value {} 0 {} 0 0 1 start {} 0 {} 0 1 2 stop {} 0 {} 0 1 3 step {} 0 {} 0 1}
 do_execsql_test tabfunc01-1.2 {
   SELECT *, '|' FROM generate_series LIMIT 5;
 } {0 | 1 | 2 | 3 | 4 |}
@@ -107,19 +111,19 @@ do_execsql_test tabfunc01-3.1 {
   SELECT DISTINCT value FROM generate_series(1,x), t1 ORDER BY 1;
 } {1 2 3}
 
-# Eponymous virtual table exists in the "main" schema only
+# Eponymous virtual table exists in all schemas.
 #
 do_execsql_test tabfunc01-4.1 {
   SELECT * FROM main.generate_series(1,4)
 } {1 2 3 4}
-do_catchsql_test tabfunc01-4.2 {
+do_execsql_test tabfunc01-4.2 {
   SELECT * FROM temp.generate_series(1,4)
-} {1 {no such table: temp.generate_series}}
-do_catchsql_test tabfunc01-4.3 {
+} {1 2 3 4}
+do_execsql_test tabfunc01-4.3 {
   ATTACH ':memory:' AS aux1;
   CREATE TABLE aux1.t1(a,b,c);
   SELECT * FROM aux1.generate_series(1,4)
-} {1 {no such table: aux1.generate_series}}
+} {1 2 3 4}
 
 # The next series of tests is verifying that virtual table are able
 # to optimize the IN operator, even on terms that are not marked "omit".
@@ -147,47 +151,69 @@ do_execsql_test tabfunc01-600 {
 
 
 do_test tabfunc01-700 {
-  set PTR [intarray_addr 5 7 13 17 23]
+  set PTR1 [intarray_addr 5 7 13 17 23]
   db eval {
-    SELECT b FROM t600, carray($PTR,5) WHERE a=value;
+    SELECT b FROM t600, carray(inttoptr($PTR1),5) WHERE a=value;
   }
 } {(005) (007) (013) (017) (023)}
 do_test tabfunc01-701 {
   db eval {
-    SELECT b FROM t600 WHERE a IN carray($PTR,5,'int32');
+    SELECT b FROM t600 WHERE a IN carray(inttoptr($PTR1),5,'int32');
   }
 } {(005) (007) (013) (017) (023)}
 do_test tabfunc01-702 {
   db eval {
-    SELECT b FROM t600 WHERE a IN carray($PTR,4,'int32');
+    SELECT b FROM t600 WHERE a IN carray(inttoptr($PTR1),4,'int32');
   }
 } {(005) (007) (013) (017)}
 do_catchsql_test tabfunc01-710 {
-  SELECT b FROM t600 WHERE a IN carray($PTR,5,'int33');
+  SELECT b FROM t600 WHERE a IN carray(inttoptr($PTR1),5,'int33');
 } {1 {unknown datatype: 'int33'}}
 
 do_test tabfunc01-720 {
-  set PTR [int64array_addr 5 7 13 17 23]
+  set PTR2 [int64array_addr 5 7 13 17 23]
   db eval {
-    SELECT b FROM t600, carray($PTR,5,'int64') WHERE a=value;
+    SELECT b FROM t600, carray(inttoptr($PTR2),5,'int64') WHERE a=value;
   }
 } {(005) (007) (013) (017) (023)}
+do_test tabfunc01-721 {
+  db eval {
+    SELECT remember(123,inttoptr($PTR2));
+    SELECT value FROM carray(inttoptr($PTR2),5,'int64');
+  }
+} {123 123 7 13 17 23}
+do_test tabfunc01-722 {
+  set PTR3 [expr {$PTR2+16}]
+  db eval {
+    SELECT remember(987,inttoptr($PTR3));
+    SELECT value FROM carray(inttoptr($PTR2),5,'int64');
+  }
+} {987 123 7 987 17 23}
 
 do_test tabfunc01-730 {
-  set PTR [doublearray_addr 5.0 7.0 13.0 17.0 23.0]
+  set PTR4 [doublearray_addr 5.0 7.0 13.0 17.0 23.0]
   db eval {
-    SELECT b FROM t600, carray($PTR,5,'double') WHERE a=value;
+    SELECT b FROM t600, carray(inttoptr($PTR4),5,'double') WHERE a=value;
   }
 } {(005) (007) (013) (017) (023)}
 
 do_test tabfunc01-740 {
-  set PTR [textarray_addr 5 7 13 17 23]
+  set PTR5 [textarray_addr x5 x7 x13 x17 x23]
   db eval {
-    SELECT b FROM t600, carray($PTR,5,'char*') WHERE a=value;
+    SELECT b FROM t600, carray(inttoptr($PTR5),5,'char*')
+     WHERE a=trim(value,'x');
   }
 } {(005) (007) (013) (017) (023)}
 
+do_test tabfunc01-750 {
+  db eval {
+    SELECT aa.value, bb.value, '|'
+      FROM carray(inttoptr($PTR4),5,'double') AS aa
+      JOIN carray(inttoptr($PTR5),5,'char*') AS bb ON aa.rowid=bb.rowid;
+  }
+} {5.0 x5 | 7.0 x7 | 13.0 x13 | 17.0 x17 | 23.0 x23 |}
 
+# Free up memory allocations
 intarray_addr
 int64array_addr
 doublearray_addr

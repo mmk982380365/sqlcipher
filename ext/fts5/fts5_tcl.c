@@ -99,16 +99,13 @@ static int SQLITE_TCLAPI f5tDbAndApi(
     sqlite3_stmt *pStmt = 0;
     fts5_api *pApi = 0;
 
-    rc = sqlite3_prepare_v2(db, "SELECT fts5()", -1, &pStmt, 0);
+    rc = sqlite3_prepare_v2(db, "SELECT fts5(?1)", -1, &pStmt, 0);
     if( rc!=SQLITE_OK ){
       Tcl_AppendResult(interp, "error: ", sqlite3_errmsg(db), 0);
       return TCL_ERROR;
     }
-
-    if( SQLITE_ROW==sqlite3_step(pStmt) ){
-      const void *pPtr = sqlite3_column_blob(pStmt, 0);
-      memcpy((void*)&pApi, pPtr, sizeof(pApi));
-    }
+    sqlite3_bind_pointer(pStmt, 1, (void*)&pApi, "fts5_api_ptr", 0);
+    sqlite3_step(pStmt);
 
     if( sqlite3_finalize(pStmt)!=SQLITE_OK ){
       Tcl_AppendResult(interp, "error: ", sqlite3_errmsg(db), 0);
@@ -436,7 +433,7 @@ static int SQLITE_TCLAPI xF5tApi(
       int iVal;
       int bClear;
       if( Tcl_GetBooleanFromObj(interp, objv[2], &bClear) ) return TCL_ERROR;
-      iVal = ((char*)p->pApi->xGetAuxdata(p->pFts, bClear) - (char*)0);
+      iVal = (int)((char*)p->pApi->xGetAuxdata(p->pFts, bClear) - (char*)0);
       Tcl_SetObjResult(interp, Tcl_NewIntObj(iVal));
       break;
     }
@@ -485,7 +482,7 @@ static int SQLITE_TCLAPI xF5tApi(
 
       rc = p->pApi->xPhraseFirstColumn(p->pFts, iPhrase, &iter, &iCol);
       if( rc!=SQLITE_OK ){
-        Tcl_AppendResult(interp, sqlite3ErrName(rc), 0);
+        Tcl_SetResult(interp, (char*)sqlite3ErrName(rc), TCL_VOLATILE);
         return TCL_ERROR;
       }
       for( ; iCol>=0; p->pApi->xPhraseNextColumn(p->pFts, &iter, &iCol)){
@@ -927,7 +924,7 @@ static int SQLITE_TCLAPI f5tTokenizerReturn(
 
   rc = p->xToken(p->pCtx, tflags, zToken, nToken, iStart, iEnd);
   Tcl_SetResult(interp, (char*)sqlite3ErrName(rc), TCL_VOLATILE);
-  return TCL_OK;
+  return rc==SQLITE_OK ? TCL_OK : TCL_ERROR;
 
  usage:
   Tcl_WrongNumArgs(interp, 1, objv, "?-colocated? TEXT START END");

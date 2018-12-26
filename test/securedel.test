@@ -17,8 +17,12 @@ source $testdir/tester.tcl
 
 unset -nocomplain DEFAULT_SECDEL
 set DEFAULT_SECDEL 0
-ifcapable secure_delete {
-  set DEFAULT_SECDEL 1
+ifcapable fast_secure_delete {
+  set DEFAULT_SECDEL 2
+} else {
+  ifcapable secure_delete {
+    set DEFAULT_SECDEL 1
+  }
 }
 
 
@@ -49,6 +53,30 @@ do_test securedel-1.3 {
 do_test securedel-1.4 {
   db eval {
     PRAGMA secure_delete=ON;
+    PRAGMA db2.secure_delete;
+  }
+} {1 1}
+do_test securedel-1.5 {
+  db eval {
+    PRAGMA secure_delete=FAST;
+    PRAGMA db2.secure_delete;
+  }
+} {2 2}
+do_test securedel-1.6 {
+  db eval {
+    PRAGMA secure_delete=ON;
+    PRAGMA db2.secure_delete;
+  }
+} {1 1}
+do_test securedel-1.7 {
+  db eval {
+    PRAGMA main.secure_delete=FAST;
+    PRAGMA db2.secure_delete;
+  }
+} {2 1}
+do_test securedel-1.8 {
+  db eval {
+    PRAGMA main.secure_delete=ON;
     PRAGMA db2.secure_delete;
   }
 } {1 1}

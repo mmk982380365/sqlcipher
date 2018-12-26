@@ -33,22 +33,23 @@ proc do_changeset_invert_test {tn session res} {
 
 
 proc do_conflict_test {tn args} {
-  proc xConflict {args} { 
-    lappend ::xConflict $args
-    return "" 
-  }
-  proc bgerror {args} { set ::background_error $args }
-
 
   set O(-tables)    [list]
   set O(-sql)       [list]
   set O(-conflicts) [list]
+  set O(-policy)    "OMIT"
 
   array set V $args
   foreach key [array names V] {
     if {![info exists O($key)]} {error "no such option: $key"}
   }
   array set O $args
+
+  proc xConflict {args} [subst -nocommands { 
+    lappend ::xConflict [set args]
+    return $O(-policy) 
+  }]
+  proc bgerror {args} { set ::background_error $args }
 
   sqlite3session S db main
   foreach t $O(-tables) { S attach $t }
@@ -92,6 +93,23 @@ proc changeset_from_sql {sql {dbname main}} {
     error $changeset
   }
   return $changeset
+}
+
+proc patchset_from_sql {sql {dbname main}} {
+  set rc [catch {
+    sqlite3session S db $dbname
+    db eval "SELECT name FROM $dbname.sqlite_master WHERE type = 'table'" {
+      S attach $name
+    }
+    db eval $sql
+    S patchset
+  } patchset]
+  catch { S delete }
+
+  if {$rc} {
+    error $patchset
+  }
+  return $patchset
 }
 
 proc do_then_apply_sql {sql {dbname main}} {
@@ -167,4 +185,31 @@ proc changeset_to_list {c} {
   set list [list]
   sqlite3session_foreach elem $c { lappend list $elem }
   lsort $list
+}
+
+set ones {zero one two three four five six seven eight nine
+          ten eleven twelve thirteen fourteen fifteen sixteen seventeen
+          eighteen nineteen}
+set tens {{} ten twenty thirty forty fifty sixty seventy eighty ninety}
+proc number_name {n} {
+  if {$n>=1000} {
+    set txt "[number_name [expr {$n/1000}]] thousand"
+    set n [expr {$n%1000}]
+  } else {
+    set txt {}
+  }
+  if {$n>=100} {
+    append txt " [lindex $::ones [expr {$n/100}]] hundred"
+    set n [expr {$n%100}]
+  }
+  if {$n>=20} {
+    append txt " [lindex $::tens [expr {$n/10}]]"
+    set n [expr {$n%10}]
+  }
+  if {$n>0} {
+    append txt " [lindex $::ones $n]"
+  }
+  set txt [string trim $txt]
+  if {$txt==""} {set txt zero}
+  return $txt
 }

@@ -1,6 +1,8 @@
-# Run this TCL script using "testfixture" in order get a report that shows
-# how much disk space is used by a particular data to actually store data
+# Run this TCL script using an SQLite-enabled TCL interpreter to get a report
+# on how much disk space is used by a particular data to actually store data
 # versus how much space is unused.
+#
+# The dbstat virtual table is required.
 #
 
 if {[catch {
@@ -145,6 +147,17 @@ if {[catch {sqlite3 db $file_to_analyze -uri 1} msg]} {
 if {$flags(-debug)} {
   proc dbtrace {txt} {puts $txt; flush stdout;}
   db trace ::dbtrace
+}
+
+# Make sure all required compile-time options are available
+#
+if {![db exists {SELECT 1 FROM pragma_compile_options
+                WHERE compile_options='ENABLE_DBSTAT_VTAB'}]} {
+  puts "The SQLite database engine linked with this application\
+        lacks required capabilities. Recompile using the\
+        -DSQLITE_ENABLE_DBSTAT_VTAB compile-time option to fix\
+        this problem."
+  exit 1
 }
 
 db eval {SELECT count(*) FROM sqlite_master}
@@ -424,6 +437,7 @@ proc subreport {title where showFrag} {
   # avg_payload: Average payload per btree entry.
   # avg_fanout: Average fanout for internal pages.
   # avg_unused: Average unused bytes per btree entry.
+  # avg_meta: Average metadata overhead per entry.
   # ovfl_cnt_percent: Percentage of btree entries that use overflow pages.
   #
   set total_pages [expr {$leaf_pages+$int_pages+$ovfl_pages}]
@@ -433,6 +447,10 @@ proc subreport {title where showFrag} {
   set total_unused [expr {$ovfl_unused+$int_unused+$leaf_unused}]
   set avg_payload [divide $payload $nentry]
   set avg_unused [divide $total_unused $nentry]
+  set total_meta [expr {$storage - $payload - $total_unused}]
+  set total_meta [expr {$total_meta + 4*($ovfl_pages - $ovfl_cnt)}]
+  set meta_percent [percent $total_meta $storage {of metadata}]
+  set avg_meta [divide $total_meta $nentry]
   if {$int_pages>0} {
     # TODO: Is this formula correct?
     set nTab [mem eval "
@@ -460,9 +478,11 @@ proc subreport {title where showFrag} {
     statline {Bytes used after compression} $compressed_size $pct
   }
   statline {Bytes of payload} $payload $payload_percent
+  statline {Bytes of metadata} $total_meta $meta_percent
   if {$cnt==1} {statline {B-tree depth} $depth}
   statline {Average payload per entry} $avg_payload
   statline {Average unused bytes per entry} $avg_unused
+  statline {Average metadata per entry} $avg_meta
   if {[info exists avg_fanout]} {
     statline {Average fanout} $avg_fanout
   }
@@ -756,6 +776,16 @@ Bytes of payload
     part of table entries and the key part of index entries.  The percentage
     at the right is the bytes of payload divided by the bytes of storage 
     consumed.
+
+Bytes of metadata
+
+    The amount of formatting and structural information stored in the
+    table or index.  Metadata includes the btree page header, the cell pointer
+    array, the size field for each cell, the left child pointer or non-leaf
+    cells, the overflow pointers for overflow cells, and the rowid value for
+    rowid table cells.  In other words, metadata is everything that is neither
+    unused space nor content.  The record header in the payload is counted as
+    content, not metadata.
 
 Average payload per entry
 

@@ -40,7 +40,7 @@
 */
 #if defined(SQLITE_TEST) && defined(SQLITE_ENABLE_FTS5)
 
-#include <fts5.h>
+#include "fts5.h"
 #include <string.h>
 #include <assert.h>
 
@@ -182,7 +182,7 @@ static int fts5tokConnectMethod(
   Fts5tokTable *pTab = 0;
   int rc;
   char **azDequote = 0;
-  int nDequote;
+  int nDequote = 0;
 
   rc = sqlite3_declare_vtab(db, 
        "CREATE TABLE x(input HIDDEN, token, start, end, position)"
@@ -471,7 +471,8 @@ int sqlite3Fts5TestRegisterTok(sqlite3 *db, fts5_api *pApi){
      0,                           /* xRename       */
      0,                           /* xSavepoint    */
      0,                           /* xRelease      */
-     0                            /* xRollbackTo   */
+     0,                           /* xRollbackTo   */
+     0                            /* xShadowName   */
   };
   int rc;                         /* Return code */
 
