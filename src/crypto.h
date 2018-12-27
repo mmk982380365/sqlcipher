@@ -155,13 +155,13 @@ void sqlite3pager_reset(Pager *pPager);
 #endif
 
 /* utility functions */
-void sqlcipher_free(void *ptr, int sz);
-void* sqlcipher_malloc(int sz);
-void* sqlcipher_memset(void *v, unsigned char value, int len);
-int sqlcipher_ismemset(const void *v, unsigned char value, int len);
-int sqlcipher_memcmp(const void *v0, const void *v1, int len);
 void sqlcipher_free(void *, int);
-/* end extensions defined in pager.c */
+void* sqlcipher_malloc(int);
+void sqlcipher_mlock(void *, int);
+void sqlcipher_munlock(void *, int);
+void* sqlcipher_memset(void *, unsigned char, int);
+int sqlcipher_ismemset(const void *, unsigned char, int);
+int sqlcipher_memcmp(const void *, const void *, int);
  
 /*
 **  Simple shared routines for converting hex char strings to binary data
@@ -281,15 +281,9 @@ int sqlcipher_codec_ctx_get_flag(codec_ctx *ctx, unsigned int flag);
 const char* sqlcipher_codec_get_cipher_provider(codec_ctx *ctx);
 int sqlcipher_codec_ctx_migrate(codec_ctx *ctx);
 int sqlcipher_codec_add_random(codec_ctx *ctx, const char *data, int random_sz);
-#if defined (SQLCIPHER_PREPROCESSED)
 int sqlcipher_codec_get_store_pass(codec_ctx *ctx);
 void sqlcipher_codec_get_pass(codec_ctx *ctx, void **zKey, int *nKey);
 void sqlcipher_codec_set_store_pass(codec_ctx *ctx, int value);
-#else /* SQLCIPHER_PREPROCESSED */
-static int sqlcipher_codec_get_store_pass(codec_ctx *ctx);
-static void sqlcipher_codec_get_pass(codec_ctx *ctx, void **zKey, int *nKey);
-static void sqlcipher_codec_set_store_pass(codec_ctx *ctx, int value);
-#endif /* SQLCIPHER_PREPROCESSED */
 int sqlcipher_codec_fips_status(codec_ctx *ctx);
 const char* sqlcipher_codec_get_provider_version(codec_ctx *ctx);
 
