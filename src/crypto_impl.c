@@ -1152,7 +1152,7 @@ static int sqlcipher_cipher_ctx_key_derive(codec_ctx *ctx, cipher_ctx *c_ctx) {
       sqlite3_file *fd = sqlite3PagerFile(ctx->pBt->pBt->pPager);
 
       if (sqlite3OsRead(fd, ctx->kdf_salt, FILE_HEADER_SZ, 0) != SQLITE_OK &&
-        ctx->provider->random(ctx->read_ctx->provider_ctx, ctx->kdf_salt, FILE_HEADER_SZ) != SQLITE_OK) 
+        ctx->provider->random(ctx->provider_ctx, ctx->kdf_salt, FILE_HEADER_SZ) != SQLITE_OK) 
           return SQLITE_ERROR;
       ctx->need_kdf_salt = 0;
     }
