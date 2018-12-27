@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		237C900A21D4807500EE6E44 /* upsert.c in Sources */ = {isa = PBXBuildFile; fileRef = 237C900921D4807400EE6E44 /* upsert.c */; };
+		237C900C21D4815100EE6E44 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 237C900B21D4815100EE6E44 /* window.c */; };
 		23F0FDA8215F2473008399FB /* keywordhash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3201FB06FFD0075F021 /* keywordhash.h */; };
 		23F0FDA9215F2473008399FB /* btreeInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3311FB0706F0075F021 /* btreeInt.h */; };
 		23F0FDAA215F2473008399FB /* btree.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3321FB070730075F021 /* btree.h */; };
@@ -285,6 +287,8 @@
 		232DA3F31FB0836E0075F021 /* crypto_cc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crypto_cc.c; sourceTree = "<group>"; };
 		232DA3F41FB0836E0075F021 /* fault.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fault.c; sourceTree = "<group>"; };
 		232DA3F51FB0836E0075F021 /* sqliteLimit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqliteLimit.h; sourceTree = "<group>"; };
+		237C900921D4807400EE6E44 /* upsert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = upsert.c; sourceTree = "<group>"; };
+		237C900B21D4815100EE6E44 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = window.c; sourceTree = "<group>"; };
 		2384AB4A1EDBFD43007369FF /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		2384AB4F1EDBFDEC007369FF /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
@@ -451,6 +455,7 @@
 				232DA3E91FB0836B0075F021 /* random.c */,
 				232DA3DB1FB083670075F021 /* sqlite3ext.h */,
 				232DA3EC1FB0836B0075F021 /* sqliteInt.h */,
+				237C900921D4807400EE6E44 /* upsert.c */,
 				232DA3F51FB0836E0075F021 /* sqliteLimit.h */,
 				232DA3DE1FB083680075F021 /* utf.c */,
 				232DA3E21FB083690075F021 /* util.c */,
@@ -463,6 +468,7 @@
 				232DA3EF1FB0836C0075F021 /* vdbesort.c */,
 				232DA3DC1FB083670075F021 /* vdbetrace.c */,
 				232DA3D61FB082FA0075F021 /* icu.c */,
+				237C900B21D4815100EE6E44 /* window.c */,
 				232DA3D71FB082FA0075F021 /* sqliteicu.h */,
 			);
 			path = src;
@@ -688,8 +694,10 @@
 				23F5BC2A20887FAB000CCD37 /* resolve.c in Sources */,
 				23F5BC2B20887FAB000CCD37 /* crypto_cc.c in Sources */,
 				23F5BC2C20887FAB000CCD37 /* threads.c in Sources */,
+				237C900C21D4815100EE6E44 /* window.c in Sources */,
 				23F5BC2D20887FAB000CCD37 /* random.c in Sources */,
 				23F5BC2E20887FAB000CCD37 /* prepare.c in Sources */,
+				237C900A21D4807500EE6E44 /* upsert.c in Sources */,
 				23F5BC2F20887FAB000CCD37 /* os_unix.c in Sources */,
 				23F5BC3020887FAB000CCD37 /* vdbesort.c in Sources */,
 				23F5BC3120887FAB000CCD37 /* bitvec.c in Sources */,
