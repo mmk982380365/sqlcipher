@@ -302,7 +302,6 @@ foreach file {
    crypto_libtomcrypt.c
    crypto_openssl.c
    crypto_cc.c
-   crypto_custom.c
 
    global.c
    status.c
@@ -414,8 +413,6 @@ foreach file {
    sqlite3session.c
    fts5.c
    stmt.c
-   xxtea.c
-   devlock.c
 } {
   copy_file tsrc/$file
 }

@@ -644,9 +644,11 @@ typedef int (*sqlite3_loadext_entry)(
 #define sqlite3_rekey_v2               sqlite3_api->sqlcipher->rekey_v2
 #define sqlcipher_register_provider    sqlite3_api->sqlcipher->register_provider
 #define sqlcipher_get_provider         sqlite3_api->sqlcipher->get_provider
+#ifdef SQLCIPHER_CRYPTO_CUSTOM
 #define sqlcipher_register_custom_provider    sqlite3_api->sqlcipher->register_custom_provider
 #define sqlcipher_unregister_custom_provider  sqlite3_api->sqlcipher->unregister_custom_provider
 #define sqlcipher_get_fallback_provider       sqlite3_api->sqlcipher->get_fallback_provider
+#endif
 #endif
 
 #endif /* !defined(SQLITE_CORE) && !defined(SQLITE_OMIT_LOAD_EXTENSION) */

@@ -76,9 +76,6 @@ typedef struct {
 /* provider interfaces */
 int sqlcipher_register_provider(sqlcipher_provider *p);
 sqlcipher_provider* sqlcipher_get_provider();
-int sqlcipher_register_custom_provider(const char *name, const sqlcipher_provider *p);
-int sqlcipher_unregister_custom_provider(const char *name);
-const sqlcipher_provider* sqlcipher_get_fallback_provider();
 
 #endif
 #endif

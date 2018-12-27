@@ -158,6 +158,17 @@ int sqlcipher_codec_pragma(sqlite3* db, int iDb, Parse *pParse, const char *zLef
 #endif
     codec_vdbe_return_string(pParse, "cipher_version", version, P4_DYNAMIC);
   } else
+  if( sqlite3StrICmp(zLeft, "cipher")==0 ){
+    if(ctx) {
+      if( zRight ) {
+        const char* message = "PRAGMA cipher is no longer supported.";
+        codec_vdbe_return_string(pParse, "cipher", message, P4_TRANSIENT);
+        sqlite3_log(SQLITE_WARNING, message);
+      }else {
+        codec_vdbe_return_string(pParse, "cipher", sqlcipher_codec_ctx_get_cipher(ctx), P4_TRANSIENT); 
+      }
+    }
+  } else
   if( sqlite3StrICmp(zLeft, "rekey_cipher")==0 && zRight ){
     const char* message = "PRAGMA rekey_cipher is no longer supported.";
     codec_vdbe_return_string(pParse, "rekey_cipher", message, P4_TRANSIENT);
