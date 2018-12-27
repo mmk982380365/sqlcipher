@@ -7997,7 +7997,7 @@ unixShm* WCDBShmNodeGetShm(unixShmNode* pShmNode)
 
 sqlite3_mutex* WCDBShmNodeGetMutex(unixShmNode* pShmNode)
 {
-  return pShmNode->mutex;
+  return pShmNode->pShmMutex;
 }
 
 unixShm* WCDBShmGetNext(unixShm* pShm)
