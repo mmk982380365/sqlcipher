@@ -779,6 +779,7 @@
 					SQLITE_ENABLE_FTS5,
 					SQLITE_WCDB_DIRTY_PAGE_COUNT,
 					"SQLITE_PRINT_BUF_SIZE=256",
+					"SQLITE_API='__attribute__((visibility(\"default\")))'",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -875,6 +876,7 @@
 					SQLITE_WCDB_API_NO_HIDDEN,
 					SQLITE_WCDB_DIRTY_PAGE_COUNT,
 					"SQLITE_PRINT_BUF_SIZE=256",
+					"SQLITE_API='__attribute__((visibility(\"default\")))'",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -970,6 +972,7 @@
 					SQLITE_WCDB_API_NO_HIDDEN,
 					SQLITE_WCDB_DIRTY_PAGE_COUNT,
 					"SQLITE_PRINT_BUF_SIZE=256",
+					"SQLITE_API='__attribute__((visibility(\"default\")))'",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
