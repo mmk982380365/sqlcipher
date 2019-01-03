@@ -9975,7 +9975,7 @@ int sqlite3BtreeCheckpoint(Btree *p, int eMode, int *pnLog, int *pnCkpt){
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3BtreeCheckpointHandler(Btree* p,
-                                  int(*xCheckpoint)(void *,int),
+                                  void(*xCheckpoint)(void *),
                                   void* pArg){
   int rc = SQLITE_MISUSE;
   if( p ){

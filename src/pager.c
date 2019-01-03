@@ -7484,7 +7484,7 @@ int sqlite3PagerWalCallback(Pager *pPager){
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3PagerWalCheckpointHandler(Pager *pPager, 
-                                     int (*xCheckpoint)(void*,int), 
+                                     void (*xCheckpoint)(void*), 
                                      void* pArg){
   int rc = SQLITE_MISUSE;
   if (pPager->pWal) {

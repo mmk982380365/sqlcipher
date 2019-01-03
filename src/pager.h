@@ -184,7 +184,7 @@ int sqlite3PagerDirtyPageCount(Pager *);
   int sqlite3PagerOpenWal(Pager *pPager, int *pisOpen);
   int sqlite3PagerCloseWal(Pager *pPager, sqlite3*);
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-int sqlite3PagerWalCheckpointHandler(Pager *,int (*)(void*,int),void*);
+int sqlite3PagerWalCheckpointHandler(Pager *,void (*)(void*),void*);
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 # ifdef SQLITE_ENABLE_SNAPSHOT

@@ -2309,7 +2309,7 @@ int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb){
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3_wal_checkpoint_handler(sqlite3 *db,
-                                   int (*xCheckpoint)(void*,int),
+                                   void (*xCheckpoint)(void*),
                                    void* pArg){
 #ifdef SQLITE_ENABLE_API_ARMOR
   if( !sqlite3SafetyCheckOk(db) ) return SQLITE_MISUSE_BKPT;

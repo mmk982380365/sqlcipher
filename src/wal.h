@@ -111,7 +111,7 @@ int sqlite3WalCheckpoint(
 );
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-int sqlite3WalCheckpointHandler(Wal *, int (*)(void*,int), void*);
+int sqlite3WalCheckpointHandler(Wal *, void (*)(void*), void*);
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 /* Return the value to pass to a sqlite3_wal_hook callback, the

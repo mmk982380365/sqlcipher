@@ -450,7 +450,7 @@ struct WalCkptInfo {
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 typedef struct WalCheckpointHandler WalCheckpointHandler; 
 struct WalCheckpointHandler {
-  int (*xFunc)(void *,int);  /* The checkpoint callback */
+  void (*xFunc)(void *);  /* The checkpoint callback */
   void *pArg;                /* First arg to checkpoint callback */
 };
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
@@ -3591,16 +3591,7 @@ int sqlite3WalCheckpoint(
   if( pWal->readOnly ) return SQLITE_READONLY;
   WALTRACE(("WAL%p: checkpoint begins\n", pWal));
     
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-  if (pWal->checkpointHandler.xFunc) {
-    rc = pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg, -1);
-    if ( rc ) {
-      return rc;
-    }
-  }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-
-  /* IMPLEMENTATION-OF: R-62028-47212 All calls obtain an exclusive 
+  /* IMPLEMENTATION-OF: R-62028-47212 All calls obtain an exclusive
   ** "checkpoint" lock on the database file. */
   rc = walLockExclusive(pWal, WAL_CKPT_LOCK, 1);
   if( rc ){
@@ -3670,24 +3661,24 @@ int sqlite3WalCheckpoint(
     memset(&pWal->hdr, 0, sizeof(WalIndexHdr));
   }
 
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  if (rc == SQLITE_OK && pWal->checkpointHandler.xFunc) {
+    pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg);
+  }
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
+
   /* Release the locks. */
   sqlite3WalEndWriteTransaction(pWal);
   walUnlockExclusive(pWal, WAL_CKPT_LOCK, 1);
   pWal->ckptLock = 0;
   WALTRACE(("WAL%p: checkpoint %s\n", pWal, rc ? "failed" : "ok"));
   
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-  if (pWal->checkpointHandler.xFunc) {
-    pWal->checkpointHandler.xFunc(pWal->checkpointHandler.pArg, rc);
-  }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-
   return (rc==SQLITE_OK && eMode!=eMode2 ? SQLITE_BUSY : rc);
 }
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 int sqlite3WalCheckpointHandler(Wal *pWal, 
-                                int (*xCheckpoint)(void*,int), 
+                                void (*xCheckpoint)(void*),
                                 void* pArg){
   pWal->checkpointHandler.xFunc = xCheckpoint;
   pWal->checkpointHandler.pArg = pArg;
