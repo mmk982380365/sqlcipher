@@ -8617,24 +8617,6 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
   int *pnCkpt                     /* OUT: Total number of frames checkpointed */
 );
 
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-/*
- ** Register a handler when checkpoint will/did happen.
- **
- ** When checkpoint will run, this handler will be invoked with parameter -1. Checkpoint will be abort if it returns non-zero result.
- **
- ** When checkpoint did run, this handler will be invoked with the result code of the checkpoint routine, which is always greater than or equal to 0. The return value of the handler will be ignored.
- */
-SQLITE_API int sqlite3_wal_checkpoint_handler(sqlite3*,int(*)(void*,int),void*);
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-    
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-/*
- ** Return the number of dirty pages currently in the cache.
- */
-SQLITE_API int sqlite3_dirty_page_count(sqlite3*);
-#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
-
 /*
 ** CAPI3REF: Checkpoint Mode Values
 ** KEYWORDS: {checkpoint mode}

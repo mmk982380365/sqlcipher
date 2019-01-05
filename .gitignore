@@ -14,6 +14,7 @@ xcuserdata/*
 /config.status
 /keywordhash.h
 /mkkeywordhash*
+/mksourceid*
 /opcodes.c
 /opcodes.h
 /parse.c
