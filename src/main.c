@@ -2328,7 +2328,11 @@ int sqlite3_dirty_page_count(sqlite3 *db){
   if( !sqlite3SafetyCheckOk(db) ) return 0;
 #endif
   sqlite3_mutex_enter(db->mutex);
-  int count = sqlite3BtreeDirtyPageCount(db->aDb[0].pBt);
+  int count = 0;
+  int i;
+  for(i=0; i<db->nDb; i++){
+    count += sqlite3BtreeDirtyPageCount(db->aDb[i].pBt);
+  }
   sqlite3_mutex_leave(db->mutex);
   return count;
 }
