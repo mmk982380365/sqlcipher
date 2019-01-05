@@ -49,9 +49,11 @@ static volatile int default_page_size = 4096;
 static volatile int default_plaintext_header_sz = 0;
 static volatile int default_hmac_algorithm = SQLCIPHER_HMAC_SHA512;
 static volatile int default_kdf_algorithm = SQLCIPHER_PBKDF2_HMAC_SHA512;
+#ifndef OMIT_MEM_SECURITY
 static volatile int mem_security_on = 1;
 static volatile int mem_security_initialized = 0;
 static volatile int mem_security_activated = 0;
+#endif
 static volatile unsigned int sqlcipher_activate_count = 0;
 static volatile sqlite3_mem_methods default_mem_methods;
 static sqlite3_mutex* sqlcipher_provider_mutex = NULL;
@@ -98,6 +100,7 @@ struct codec_ctx {
   void *provider_ctx;
 };
 
+#ifndef OMIT_MEM_SECURITY
 static int sqlcipher_mem_init(void *pAppData) {
   return default_mem_methods.xInit(pAppData);
 }
@@ -153,6 +156,7 @@ void sqlcipher_init_memmethods() {
   }
   mem_security_initialized = 1;
 }
+#endif /* OMIT_MEM_SECURITY */
 
 int sqlcipher_register_provider(sqlcipher_provider *p) {
   CODEC_TRACE_MUTEX("sqlcipher_register_provider: entering sqlcipher provider mutex %p\n", sqlcipher_provider_mutex);
@@ -266,7 +270,7 @@ void sqlcipher_deactivate() {
    Note: As suggested by Joachim Schipper (joachim.schipper@fox-it.com)
 */
 void* sqlcipher_memset(void *v, unsigned char value, int len) {
-#ifndef OMIT_CONSTTIME_MEM
+#ifndef OMIT_MEM_SECURITY
   if (v == NULL) return v;
 
   unsigned long val = 0;
@@ -304,7 +308,7 @@ int sqlcipher_ismemset(const void *v, unsigned char value, int len) {
   int len2 = len % sizeof(unsigned long);
   len = len / sizeof(unsigned long);
 
-#ifndef OMIT_CONSTTIME_MEM
+#ifndef OMIT_MEM_SECURITY
   int result = 0;
   const unsigned long *aa = (const unsigned long *) v;
   for (i = 0; i < len; i++) {
@@ -333,7 +337,7 @@ int sqlcipher_ismemset(const void *v, unsigned char value, int len) {
 /* constant time memory comparison routine. 
    returns 0 if match, 1 if no match */
 int sqlcipher_memcmp(const void *v0, const void *v1, int len) {
-#ifndef OMIT_CONSTTIME_MEM
+#ifndef OMIT_MEM_SECURITY
   int len2 = len % sizeof(unsigned long);
   len = len / sizeof(unsigned long);
   int i, result = 0;
@@ -418,9 +422,13 @@ void sqlcipher_munlock(void *ptr, int sz) {
   * memory segment so it can be paged
   */
 void sqlcipher_free(void *ptr, int sz) {
-  CODEC_TRACE("sqlcipher_free: calling sqlcipher_memset(%p,0,%d)\n", ptr, sz);
-  sqlcipher_memset(ptr, 0, sz);
-  sqlcipher_munlock(ptr, sz);
+#ifndef OMIT_MEM_SECURITY
+  if(ptr) {
+    CODEC_TRACE("sqlcipher_free: calling sqlcipher_memset(%p,0,%d)\n", ptr, sz);
+    sqlcipher_memset(ptr, 0, sz);
+    sqlcipher_munlock(ptr, sz);
+  }
+#endif
   sqlite3_free(ptr);
 }
 
@@ -435,7 +443,9 @@ void* sqlcipher_malloc(int sz) {
   ptr = sqlite3Malloc(sz);
   CODEC_TRACE("sqlcipher_malloc: calling sqlcipher_memset(%p,0,%d)\n", ptr, sz);
   sqlcipher_memset(ptr, 0, sz);
+#ifndef OMIT_MEM_SECURITY
   sqlcipher_mlock(ptr, sz);
+#endif
   return ptr;
 }
 
@@ -856,12 +866,18 @@ int sqlcipher_get_default_pagesize() {
 }
 
 void sqlcipher_set_mem_security(int on) {
+#ifndef OMIT_MEM_SECURITY
   mem_security_on = on;
   mem_security_activated = 0;
+#endif
 }
 
 int sqlcipher_get_mem_security() {
+#ifndef OMIT_MEM_SECURITY
   return mem_security_on && mem_security_activated;
+#else
+  return 0;
+#endif
 }
 
 
