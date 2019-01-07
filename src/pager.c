@@ -464,6 +464,16 @@ struct PagerSavepoint {
 #define SPILLFLAG_ROLLBACK    0x02 /* Current rolling back, so do not spill */
 #define SPILLFLAG_NOSYNC      0x04 /* Spill is ok, but do not sync */
 
+#ifndef SQLITE_OMIT_WAL
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+typedef struct WalCheckpointHandler WalCheckpointHandler;
+struct WalCheckpointHandler {
+  void (*xFunc)(void *);  /* The checkpoint callback */
+  void *pArg;                /* First arg to checkpoint callback */
+};
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
+#endif
+
 /*
 ** An open page cache is an instance of struct Pager. A description of
 ** some of the more important member variables follows:
@@ -719,6 +729,9 @@ struct Pager {
 #ifndef SQLITE_OMIT_WAL
   Wal *pWal;                  /* Write-ahead log used by "journal_mode=wal" */
   char *zWal;                 /* File name for write-ahead log */
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  WalCheckpointHandler checkpointHandler; /* Checkpoint callback */
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 #endif
 };
 
@@ -7474,6 +7487,11 @@ int sqlite3PagerCheckpoint(
         pnLog, pnCkpt
     );
     sqlite3PagerResetLockTimeout(pPager);
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+    if (rc == SQLITE_OK && pPager->checkpointHandler.xFunc) {
+      pPager->checkpointHandler.xFunc(pPager->checkpointHandler.pArg);
+    }
+#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
   }
   return rc;
 }
@@ -7487,8 +7505,10 @@ int sqlite3PagerWalCheckpointHandler(Pager *pPager,
                                      void (*xCheckpoint)(void*), 
                                      void* pArg){
   int rc = SQLITE_MISUSE;
-  if (pPager->pWal) {
-    rc = sqlite3WalCheckpointHandler(pPager->pWal, xCheckpoint, pArg);
+  if ( pPager ) {
+    pPager->checkpointHandler.xFunc = xCheckpoint;
+    pPager->checkpointHandler.pArg = pArg;
+    rc = SQLITE_OK;
   }
   return rc;
 }
