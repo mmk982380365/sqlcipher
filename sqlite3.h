@@ -8619,11 +8619,7 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 /*
- ** Register a handler when checkpoint will/did happen.
- **
- ** When checkpoint will run, this handler will be invoked with parameter -1. Checkpoint will be abort if it returns non-zero result.
- **
- ** When checkpoint did run, this handler will be invoked with the result code of the checkpoint routine, which is always greater than or equal to 0. The return value of the handler will be ignored.
+ ** Register a handler when checkpoint did happen.
  */
 SQLITE_API int sqlite3_wal_checkpoint_handler(sqlite3*,void(*)(void*),void*);
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
