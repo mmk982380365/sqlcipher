@@ -6065,10 +6065,12 @@ static int unixOpen(
   ** the same instant might all reset the PRNG.  But multiple resets
   ** are harmless.
   */
+  unixEnterMutex();
   if( randomnessPid!=osGetpid(0) ){
     randomnessPid = osGetpid(0);
     sqlite3_randomness(0,0);
   }
+  unixLeaveMutex();
   memset(p, 0, sizeof(unixFile));
 
   if( eType==SQLITE_OPEN_MAIN_DB ){
@@ -6529,7 +6531,9 @@ static int unixRandomness(sqlite3_vfs *NotUsed, int nBuf, char *zBuf){
   ** tests repeatable.
   */
   memset(zBuf, 0, nBuf);
-  randomnessPid = osGetpid(0);  
+  unixEnterMutex();
+  randomnessPid = osGetpid(0);
+  unixLeaveMutex();
 #if !defined(SQLITE_TEST) && !defined(SQLITE_OMIT_RANDOMNESS)
   {
     int fd, got;
@@ -6538,9 +6542,11 @@ static int unixRandomness(sqlite3_vfs *NotUsed, int nBuf, char *zBuf){
       time_t t;
       time(&t);
       memcpy(zBuf, &t, sizeof(t));
+      unixEnterMutex();
       memcpy(&zBuf[sizeof(t)], &randomnessPid, sizeof(randomnessPid));
       assert( sizeof(t)+sizeof(randomnessPid)<=(size_t)nBuf );
       nBuf = sizeof(t) + sizeof(randomnessPid);
+      unixLeaveMutex();
     }else{
       do{ got = osRead(fd, zBuf, nBuf); }while( got<0 && errno==EINTR );
       robust_close(0, fd, __LINE__);
