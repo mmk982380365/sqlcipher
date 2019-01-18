@@ -22,6 +22,7 @@
 #include "sqliteInt.h"
 #include "wal.h"
 
+
 /******************* NOTES ON THE DESIGN OF THE PAGER ************************
 **
 ** This comment block describes invariants that hold when using a rollback

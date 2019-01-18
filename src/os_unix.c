@@ -44,7 +44,6 @@
 **      plus implementations of sqlite3_os_init() and sqlite3_os_end().
 */
 #include "sqliteInt.h"
-
 #if SQLITE_OS_UNIX              /* This file is used on unix only */
 
 /*
@@ -112,7 +111,7 @@
        && (!defined(TARGET_IPHONE_SIMULATOR) || (TARGET_IPHONE_SIMULATOR==0))
 #    define HAVE_GETHOSTUUID 1
 #  else
-//#    warning "gethostuuid() is disabled."
+#    warning "gethostuuid() is disabled."
 #  endif
 #endif
 
@@ -1858,7 +1857,6 @@ static int unixLock(sqlite3_file *id, int eFileLock){
 
 end_lock:
   sqlite3_mutex_leave(pInode->pLockMutex);
-  unixLeaveMutex();
   OSTRACE(("LOCK    %d %s %s (unix)\n", pFile->h, azFileLock(eFileLock), 
       rc==SQLITE_OK ? "ok" : "failed"));
   return rc;
@@ -4561,8 +4559,8 @@ static int unixOpenSharedMemory(unixFile *pDbFd){
       pShmNode->pShmMutex = sqlite3_mutex_alloc(SQLITE_MUTEX_FAST);
       if( pShmNode->pShmMutex==0 ){
         rc = SQLITE_NOMEM_BKPT;
-      goto shm_open_err;
-    }
+        goto shm_open_err;
+      }
     }
 
     if( pInode->bProcessLock==0 ){
@@ -5681,8 +5679,8 @@ static const char *unixTempFileDir(void){
      && S_ISDIR(buf.st_mode)
      && osAccess(zDir, 03)==0
     ){
-  return zDir;
-}
+      return zDir;
+    }
     if( i>=sizeof(azDirs)/sizeof(azDirs[0]) ) break;
     zDir = azDirs[i++];
   }
@@ -6103,7 +6101,7 @@ static int unixOpen(
     p->openFlags = openFlags;
   }
 #endif
-
+  
 #if defined(__APPLE__) || SQLITE_ENABLE_LOCKING_STYLE
   if( fstatfs(fd, &fsInfo) == -1 ){
     storeLastErrno(p, errno);
@@ -7882,5 +7880,5 @@ int sqlite3_os_end(void){
   unixBigLock = 0;
   return SQLITE_OK; 
 }
-
+ 
 #endif /* SQLITE_OS_UNIX */
