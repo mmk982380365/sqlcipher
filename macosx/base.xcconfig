@@ -32,7 +32,7 @@ GCC_SYMBOLS_PRIVATE_EXTERN = YES
 OTHER_CFLAGS = -Wglobal-constructors -Wno-shorten-64-to-32 -fvisibility=hidden
 
 // Language
-GCC_C_LANGUAGE_STANDARD = gnu99
+GCC_C_LANGUAGE_STANDARD = gnu11
 
 // Language - Modules
 CLANG_ENABLE_MODULES = YES
