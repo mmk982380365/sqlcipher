@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2366BB14221B9703000ED712 /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2366BB11221B9702000ED712 /* release.xcconfig */; };
-		2366BB15221B9703000ED712 /* base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2366BB12221B9703000ED712 /* base.xcconfig */; };
-		2366BB16221B9703000ED712 /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2366BB13221B9703000ED712 /* debug.xcconfig */; };
 		237C900A21D4807500EE6E44 /* upsert.c in Sources */ = {isa = PBXBuildFile; fileRef = 237C900921D4807400EE6E44 /* upsert.c */; };
 		237C900C21D4815100EE6E44 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 237C900B21D4815100EE6E44 /* window.c */; };
 		23F0FDA8215F2473008399FB /* keywordhash.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3201FB06FFD0075F021 /* keywordhash.h */; };
@@ -278,9 +275,6 @@
 		232DA3F31FB0836E0075F021 /* crypto_cc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crypto_cc.c; sourceTree = "<group>"; };
 		232DA3F41FB0836E0075F021 /* fault.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fault.c; sourceTree = "<group>"; };
 		232DA3F51FB0836E0075F021 /* sqliteLimit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqliteLimit.h; sourceTree = "<group>"; };
-		2366BB11221B9702000ED712 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
-		2366BB12221B9703000ED712 /* base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = base.xcconfig; sourceTree = "<group>"; };
-		2366BB13221B9703000ED712 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		237C900921D4807400EE6E44 /* upsert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = upsert.c; sourceTree = "<group>"; };
 		237C900B21D4815100EE6E44 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = window.c; sourceTree = "<group>"; };
 		2384AB4A1EDBFD43007369FF /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -290,6 +284,9 @@
 		239D64E61ECE9FE8008F5B61 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23F0FE9A215F3018008399FB /* sqlcipher.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = sqlcipher.modulemap; sourceTree = "<group>"; };
 		23F5BC4020887FAB000CCD37 /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		39FFA7EC22366BD600735F05 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
+		39FFA7ED22366BD600735F05 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
+		39FFA7EE22366BD600735F05 /* base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = base.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -477,9 +474,9 @@
 		239D64E41ECE9FE8008F5B61 /* macosx */ = {
 			isa = PBXGroup;
 			children = (
-				2366BB12221B9703000ED712 /* base.xcconfig */,
-				2366BB13221B9703000ED712 /* debug.xcconfig */,
-				2366BB11221B9702000ED712 /* release.xcconfig */,
+				39FFA7EE22366BD600735F05 /* base.xcconfig */,
+				39FFA7ED22366BD600735F05 /* debug.xcconfig */,
+				39FFA7EC22366BD600735F05 /* release.xcconfig */,
 				23F0FE9A215F3018008399FB /* sqlcipher.modulemap */,
 				239D64E61ECE9FE8008F5B61 /* Info.plist */,
 			);
@@ -557,7 +554,7 @@
 		23121ADC1E6FF9110012B45E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = sanhuazhang;
 			};
 			buildConfigurationList = 23121ADF1E6FF9110012B45E /* Build configuration list for PBXProject "sqlcipher.preprocessed" */;
@@ -582,9 +579,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2366BB14221B9703000ED712 /* release.xcconfig in Resources */,
-				2366BB16221B9703000ED712 /* debug.xcconfig in Resources */,
-				2366BB15221B9703000ED712 /* base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -719,21 +713,21 @@
 		};
 		23A2C8B9208CDBDF00C6BB6B /* Bitcode */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2366BB11221B9702000ED712 /* release.xcconfig */;
+			baseConfigurationReference = 39FFA7EC22366BD600735F05 /* release.xcconfig */;
 			buildSettings = {
 			};
 			name = Bitcode;
 		};
 		23F5BC3E20887FAB000CCD37 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2366BB13221B9703000ED712 /* debug.xcconfig */;
+			baseConfigurationReference = 39FFA7ED22366BD600735F05 /* debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		23F5BC3F20887FAB000CCD37 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2366BB11221B9702000ED712 /* release.xcconfig */;
+			baseConfigurationReference = 39FFA7EC22366BD600735F05 /* release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
