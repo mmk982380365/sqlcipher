@@ -1441,6 +1441,10 @@ struct sqlite3 {
 #ifndef SQLITE_OMIT_WAL
   int (*xWalCallback)(void *, sqlite3 *, const char *, int);
   void *pWalArg;
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  void (*xCheckpointCallback)(void *, sqlite3 *, const char *);
+  void *pCheckpointArg;
+#endif
 #endif
   void(*xCollNeeded)(void*,sqlite3*,int eTextRep,const char*);
   void(*xCollNeeded16)(void*,sqlite3*,int eTextRep,const void*);

@@ -2314,17 +2314,26 @@ int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb){
 }
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-int sqlite3_wal_checkpoint_handler(sqlite3 *db,
-                                   void (*xCheckpoint)(void*),
+void *sqlite3_wal_checkpoint_handler(sqlite3 *db,
+                                   void (*xCallback)(void*, sqlite3*, const char *),
                                    void* pArg){
+#ifndef SQLITE_OMIT_WAL
+  void *pRet;
 #ifdef SQLITE_ENABLE_API_ARMOR
-  if( !sqlite3SafetyCheckOk(db) ) return SQLITE_MISUSE_BKPT;
+  if( !sqlite3SafetyCheckOk(db) ){
+    (void)SQLITE_MISUSE_BKPT;
+    return 0;
+  }
 #endif
   sqlite3_mutex_enter(db->mutex);
-  int rc = sqlite3BtreeCheckpointHandler(db->aDb[0].pBt, xCheckpoint, pArg);
-  sqlite3ApiExit(db, rc);
+  pRet = db->pCheckpointArg;
+  db->xCheckpointCallback = xCallback;
+  db->pCheckpointArg = pArg;
   sqlite3_mutex_leave(db->mutex);
-  return rc;
+  return pRet;
+#else
+  return 0;
+#endif
 }
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
@@ -2383,6 +2392,9 @@ int sqlite3Checkpoint(sqlite3 *db, int iDb, int eMode, int *pnLog, int *pnCkpt){
       if( rc==SQLITE_BUSY ){
         bBusy = 1;
         rc = SQLITE_OK;
+      }
+      if( rc==SQLITE_OK && db->xCheckpointCallback) {
+        db->xCheckpointCallback(db->pCheckpointArg, db, db->aDb[i].zDbSName);
       }
     }
   }

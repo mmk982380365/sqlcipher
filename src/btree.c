@@ -10121,21 +10121,6 @@ int sqlite3BtreeCheckpoint(Btree *p, int eMode, int *pnLog, int *pnCkpt){
   return rc;
 }
 
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-int sqlite3BtreeCheckpointHandler(Btree* p,
-                                  void(*xCheckpoint)(void *),
-                                  void* pArg){
-  int rc = SQLITE_MISUSE;
-  if( p ){
-    BtShared *pBt = p->pBt;
-    sqlite3BtreeEnter(p);
-    rc = sqlite3PagerWalCheckpointHandler(pBt->pPager, xCheckpoint, pArg);
-    sqlite3BtreeLeave(p);
-  }
-  return rc;
-}
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-
 #endif
 
 #ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT

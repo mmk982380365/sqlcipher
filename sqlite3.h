@@ -8666,7 +8666,7 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
 /*
  ** Register a handler when checkpoint did happen.
  */
-SQLITE_API int sqlite3_wal_checkpoint_handler(sqlite3*,void(*)(void*),void*);
+SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *, void (*xCallback)(void*, sqlite3*, const char *), void*);
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
     
 #ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
