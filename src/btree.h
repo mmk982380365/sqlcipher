@@ -315,6 +315,7 @@ i64 sqlite3BtreeOffset(BtCursor*);
 int sqlite3BtreePayload(BtCursor*, u32 offset, u32 amt, void*);
 const void *sqlite3BtreePayloadFetch(BtCursor*, u32 *pAmt);
 u32 sqlite3BtreePayloadSize(BtCursor*);
+sqlite3_int64 sqlite3BtreeMaxRecordSize(BtCursor*);
 
 char *sqlite3BtreeIntegrityCheck(Btree*, int *aRoot, int nRoot, int, int*);
 struct Pager *sqlite3BtreePager(Btree*);
@@ -347,9 +348,6 @@ void sqlite3BtreeCursorList(Btree*);
 
 #ifndef SQLITE_OMIT_WAL
   int sqlite3BtreeCheckpoint(Btree*, int, int *, int *);
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-  int sqlite3BtreeCheckpointHandler(Btree*, void(*)(void *), void*);
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 #endif
 
 #ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT

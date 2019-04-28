@@ -461,16 +461,6 @@ struct PagerSavepoint {
 #define SPILLFLAG_ROLLBACK    0x02 /* Current rolling back, so do not spill */
 #define SPILLFLAG_NOSYNC      0x04 /* Spill is ok, but do not sync */
 
-#ifndef SQLITE_OMIT_WAL
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-typedef struct WalCheckpointHandler WalCheckpointHandler;
-struct WalCheckpointHandler {
-  void (*xFunc)(void *);  /* The checkpoint callback */
-  void *pArg;                /* First arg to checkpoint callback */
-};
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-#endif
-
 /*
 ** An open page cache is an instance of struct Pager. A description of
 ** some of the more important member variables follows:
@@ -726,9 +716,6 @@ struct Pager {
 #ifndef SQLITE_OMIT_WAL
   Wal *pWal;                  /* Write-ahead log used by "journal_mode=wal" */
   char *zWal;                 /* File name for write-ahead log */
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-  WalCheckpointHandler checkpointHandler; /* Checkpoint callback */
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 #endif
 };
 
@@ -3852,7 +3839,10 @@ int sqlite3PagerMaxPageCount(Pager *pPager, int mxPage){
     pPager->mxPgno = mxPage;
   }
   assert( pPager->eState!=PAGER_OPEN );      /* Called only by OP_MaxPgcnt */
-  assert( pPager->mxPgno>=pPager->dbSize );  /* OP_MaxPgcnt enforces this */
+  /* assert( pPager->mxPgno>=pPager->dbSize ); */
+  /* OP_MaxPgcnt ensures that the parameter passed to this function is not
+  ** less than the total number of valid pages in the database. But this
+  ** may be less than Pager.dbSize, and so the assert() above is not valid */
   return pPager->mxPgno;
 }
 
@@ -7478,11 +7468,6 @@ int sqlite3PagerCheckpoint(
         pnLog, pnCkpt
     );
     sqlite3PagerResetLockTimeout(pPager);
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-    if (rc == SQLITE_OK && pPager->checkpointHandler.xFunc) {
-      pPager->checkpointHandler.xFunc(pPager->checkpointHandler.pArg);
-    }
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
   }
   return rc;
 }
@@ -7490,20 +7475,6 @@ int sqlite3PagerCheckpoint(
 int sqlite3PagerWalCallback(Pager *pPager){
   return sqlite3WalCallback(pPager->pWal);
 }
-
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-int sqlite3PagerWalCheckpointHandler(Pager *pPager, 
-                                     void (*xCheckpoint)(void*), 
-                                     void* pArg){
-  int rc = SQLITE_MISUSE;
-  if ( pPager ) {
-    pPager->checkpointHandler.xFunc = xCheckpoint;
-    pPager->checkpointHandler.pArg = pArg;
-    rc = SQLITE_OK;
-  }
-  return rc;
-}
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
 /*
 ** Return true if the underlying VFS for the given pager supports the
