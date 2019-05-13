@@ -1685,6 +1685,20 @@ void sqlite3_interrupt(sqlite3 *db){
   db->u1.isInterrupted = 1;
 }
 
+void sqlite3_suspend(sqlite3 *db, int suspend){
+#ifdef SQLITE_ENABLE_API_ARMOR
+  if( !sqlite3SafetyCheckOk(db) && (db==0 || db->magic!=SQLITE_MAGIC_ZOMBIE) ){
+    (void)SQLITE_MISUSE_BKPT;
+    return;
+  }
+#endif
+  if (suspend != 0) {
+    ++db->suspended;
+  }else {
+    --db->suspended;
+  }
+  sqlite3_interrupt(db);
+}
 
 /*
 ** This function is exactly the same as sqlite3_create_function(), except
