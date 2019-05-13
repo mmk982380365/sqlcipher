@@ -1462,7 +1462,10 @@ struct sqlite3 {
     volatile int isInterrupted; /* True if sqlite3_interrupt has been called */
     double notUsed1;            /* Spacer */
   } u1;
-  atomic_int suspended;       /* True if sqlite_suspend has been called */
+#if SQLITE_WCDB_SUSPEND
+  atomic_int suspended;         /* True if sqlite_suspend has been called */
+  int unimpeded;                /* True if interrupt and suspend are ignorable */
+#endif
   Lookaside lookaside;          /* Lookaside malloc configuration */
 #ifndef SQLITE_OMIT_AUTHORIZATION
   sqlite3_xauth xAuth;          /* Access authorization function */
