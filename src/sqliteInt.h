@@ -1464,7 +1464,7 @@ struct sqlite3 {
   } u1;
 #if SQLITE_WCDB_SUSPEND
   atomic_int suspended;         /* True if sqlite_suspend has been called */
-  int unimpeded;                /* True if interrupt and suspend are ignorable */
+  atomic_int unimpeded;                /* True if interrupt and suspend are ignorable */
 #endif
   Lookaside lookaside;          /* Lookaside malloc configuration */
 #ifndef SQLITE_OMIT_AUTHORIZATION
