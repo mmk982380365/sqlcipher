@@ -166,13 +166,20 @@
 */
 #include "sqlite3.h"
 
-#if SQLITE_WCDB_SUSPEND
+#if SQLITE_WCDB_USE_ATOMIC
 #if __STDC_VERSION__ >= 201112L
 #include <stdatomic.h>
 #else
 #error "C11 is not supported."
 #endif
 #endif
+
+#if SQLITE_WCDB_SUSPEND
+#if !SQLITE_WCDB_USE_ATOMIC
+#error "Atomic is not supported."
+#endif
+#endif
+
 
 /*
 ** Include the configuration header output by 'configure' if we're using the
@@ -1459,12 +1466,16 @@ struct sqlite3 {
   void *pCollNeededArg;
   sqlite3_value *pErr;          /* Most recent error message */
   union {
+#if SQLITE_WCDB_USE_ATOMIC
+    atomic_int isInterrupted;
+#else
     volatile int isInterrupted; /* True if sqlite3_interrupt has been called */
     double notUsed1;            /* Spacer */
+#endif
   } u1;
 #if SQLITE_WCDB_SUSPEND
   atomic_int suspended;         /* True if sqlite_suspend has been called */
-  int unimpeded;                /* True if interrupt and suspend are ignorable */
+  atomic_int unimpeded;                /* True if interrupt and suspend are ignorable */
 #endif
   Lookaside lookaside;          /* Lookaside malloc configuration */
 #ifndef SQLITE_OMIT_AUTHORIZATION
