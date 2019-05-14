@@ -2427,6 +2427,20 @@ SQLITE_API int sqlite3_total_changes(sqlite3*);
 ** that are started after the sqlite3_interrupt() call returns.
 */
 SQLITE_API void sqlite3_interrupt(sqlite3*);
+  
+#if SQLITE_WCDB_SUSPEND
+/*
+ ** Suspend any operations, including pending one and subsequent operations, until undoed.
+ **
+ ** It's thread safe and should be invoked in pairs.
+ */
+SQLITE_API void sqlite3_suspend(sqlite3*, int);
+  
+/*
+ ** True if `suspend` and `interrupt` are ignorable.
+ */
+SQLITE_API void sqlite3_unimpeded(sqlite3*, int);
+#endif
 
 /*
 ** CAPI3REF: Determine If An SQL Statement Is Complete

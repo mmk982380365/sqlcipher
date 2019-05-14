@@ -166,6 +166,14 @@
 */
 #include "sqlite3.h"
 
+#if SQLITE_WCDB_SUSPEND
+#if __STDC_VERSION__ >= 201112L
+#include <stdatomic.h>
+#else
+#error "C11 is not supported."
+#endif
+#endif
+
 /*
 ** Include the configuration header output by 'configure' if we're using the
 ** autoconf-based build
@@ -1454,6 +1462,10 @@ struct sqlite3 {
     volatile int isInterrupted; /* True if sqlite3_interrupt has been called */
     double notUsed1;            /* Spacer */
   } u1;
+#if SQLITE_WCDB_SUSPEND
+  atomic_int suspended;         /* True if sqlite_suspend has been called */
+  int unimpeded;                /* True if interrupt and suspend are ignorable */
+#endif
   Lookaside lookaside;          /* Lookaside malloc configuration */
 #ifndef SQLITE_OMIT_AUTHORIZATION
   sqlite3_xauth xAuth;          /* Access authorization function */
