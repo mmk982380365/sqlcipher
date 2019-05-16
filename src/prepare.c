@@ -701,10 +701,10 @@ static int sqlite3LockAndPrepare(
 #ifdef SQLITE_ENABLE_API_ARMOR
   if( ppStmt==0 ) return SQLITE_MISUSE_BKPT;
 #endif
-#if SQLITE_WCDB_SUSPEND
-  if(db->suspended > 0 && db->unimpeded == 0) return SQLITE_INTERRUPT;
-#endif
   *ppStmt = 0;
+#if SQLITE_WCDB_SUSPEND
+    if(db->suspended > 0 && db->unimpeded == 0) return SQLITE_INTERRUPT;
+#endif
   if( !sqlite3SafetyCheckOk(db)||zSql==0 ){
     return SQLITE_MISUSE_BKPT;
   }
