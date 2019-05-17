@@ -691,10 +691,6 @@ int sqlite3_step(sqlite3_stmt *pStmt){
   }
   db = v->db;
 
-#if SQLITE_WCDB_SUSPEND
-  if(db->suspended > 0 && db->unimpeded == 0) return SQLITE_INTERRUPT;
-#endif
-
   sqlite3_mutex_enter(db->mutex);
   v->doingRerun = 0;
   while( (rc = sqlite3Step(v))==SQLITE_SCHEMA
