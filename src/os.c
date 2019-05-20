@@ -37,6 +37,37 @@ int sqlite3_diskfull = 0;
 int sqlite3_open_file_count = 0;
 #endif /* defined(SQLITE_TEST) */
 
+#ifdef SQLITE_WCDB_OS_HOOK
+struct sqlite3_os_callbacks {
+  void (*xPreLock)(const char*, int);
+  void (*xPostUnlock)(const char*, int);
+  void (*xPreShmLock)(const char*, int, int, int);
+  void (*xPostShmUnlock)(const char*, int, int, int);
+};
+typedef struct sqlite3_os_callbacks sqlite3_os_callbacks;
+
+/*
+ ** The os hook.
+ */
+static sqlite3_os_callbacks SQLITE_WSD osCallbacks = { 0 };
+#define osCallbacks GLOBAL(sqlite3_os_callbacks *, osCallbacks)
+
+int sqlite3_os_hook(void (*xPreLock)(const char*, int), // path, lock type
+                     void (*xPostUnlock)(const char*, int), // path, lock type
+                     // path, offset, n, lock type
+                     void (*xPreShmLock)(const char*, int, int, int),
+                     // path, offset, n, lock type
+                     void (*xPostShmUnlock)(const char*, int, int, int))
+{
+  if( sqlite3GlobalConfig.isInit ) return SQLITE_MISUSE_BKPT;
+  osCallbacks.xPreLock = xPreLock;
+  osCallbacks.xPostUnlock = xPostUnlock;
+  osCallbacks.xPreShmLock = xPreShmLock;
+  osCallbacks.xPostShmUnlock = xPostShmUnlock;
+  return SQLITE_OK;
+}
+#endif
+
 /*
 ** The default SQLite sqlite3_vfs implementations do not allocate
 ** memory (actually, os_unix.c allocates a small amount of memory
@@ -106,10 +137,41 @@ int sqlite3OsFileSize(sqlite3_file *id, i64 *pSize){
 }
 int sqlite3OsLock(sqlite3_file *id, int lockType){
   DO_OS_MALLOC_TEST(id);
-  return id->pMethods->xLock(id, lockType);
+  
+#ifdef SQLITE_WCDB_OS_HOOK
+  if (osCallbacks.xPreLock != NULL) {
+    const char* path = NULL;
+    sqlite3OsFileControlHint(id, SQLITE_FCNTL_PATH, &path);
+    osCallbacks.xPreLock(path, lockType);
+  }
+#endif
+  
+  int rc = id->pMethods->xLock(id, lockType);
+  
+#ifdef SQLITE_WCDB_OS_HOOK
+  if (rc != SQLITE_OK
+      && osCallbacks.xPostUnlock != NULL
+      && osCallbacks.xPreLock != NULL) {
+    const char* path = NULL;
+    sqlite3OsFileControlHint(id, SQLITE_FCNTL_PATH, &path);
+    osCallbacks.xPostUnlock(path, lockType);
+  }
+#endif
+  
+  return rc;
 }
 int sqlite3OsUnlock(sqlite3_file *id, int lockType){
-  return id->pMethods->xUnlock(id, lockType);
+  int rc = id->pMethods->xUnlock(id, lockType);
+  
+#ifdef SQLITE_WCDB_OS_HOOK
+  if (osCallbacks.xPostUnlock != NULL) {
+    const char* path = NULL;
+    sqlite3OsFileControlHint(id, SQLITE_FCNTL_PATH, &path);
+    osCallbacks.xPostUnlock(path, lockType);
+  }
+#endif
+  
+  return rc;
 }
 int sqlite3OsCheckReservedLock(sqlite3_file *id, int *pResOut){
   DO_OS_MALLOC_TEST(id);
@@ -158,7 +220,31 @@ int sqlite3OsDeviceCharacteristics(sqlite3_file *id){
 }
 #ifndef SQLITE_OMIT_WAL
 int sqlite3OsShmLock(sqlite3_file *id, int offset, int n, int flags){
-  return id->pMethods->xShmLock(id, offset, n, flags);
+#ifdef SQLITE_WCDB_OS_HOOK
+  if ((flags & SQLITE_SHM_LOCK) != 0 && osCallbacks.xPreShmLock != NULL) {
+    const char* path = NULL;
+    sqlite3OsFileControlHint(id, SQLITE_FCNTL_PATH, &path);
+    osCallbacks.xPreShmLock(path, offset, n,
+                            flags & (SQLITE_SHM_SHARED | SQLITE_SHM_EXCLUSIVE));
+  }
+#endif
+
+  int rc = id->pMethods->xShmLock(id, offset, n, flags);
+  
+#ifdef SQLITE_WCDB_OS_HOOK
+  if (osCallbacks.xPostShmUnlock != NULL) {
+    if (((flags & SQLITE_SHM_LOCK) != 0 && osCallbacks.xPreShmLock != NULL)
+        || (flags & SQLITE_SHM_UNLOCK) != 0) {
+      const char* path = NULL;
+      sqlite3OsFileControlHint(id, SQLITE_FCNTL_PATH, &path);
+      osCallbacks
+      .xPostShmUnlock(path, offset, n,
+                      flags & (SQLITE_SHM_SHARED | SQLITE_SHM_EXCLUSIVE));
+    }
+  }
+#endif
+  
+  return rc;
 }
 void sqlite3OsShmBarrier(sqlite3_file *id){
   id->pMethods->xShmBarrier(id);

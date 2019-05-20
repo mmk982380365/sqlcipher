@@ -209,4 +209,17 @@ int sqlite3OsCurrentTimeInt64(sqlite3_vfs *, sqlite3_int64*);
 int sqlite3OsOpenMalloc(sqlite3_vfs *, const char *, sqlite3_file **, int,int*);
 void sqlite3OsCloseFree(sqlite3_file *);
 
+#ifdef SQLITE_WCDB_OS_HOOK
+/*
+** Register a callback to be invoked each time a (shm) lock will be held
+** or a (shm) lock did be unheld.
+ */
+int sqlite3_os_hook(void (*xPreLock)(const char*, int), // path, lock type
+                    void (*xPostUnlock)(const char*, int), // path, lock type
+                    // path, offset, n, lock type
+                    void (*xPreShmLock)(const char*, int, int, int),
+                    // path, offset, n, lock type
+                    void (*xPostShmUnlock)(const char*, int, int, int));
+#endif
+
 #endif /* _SQLITE_OS_H_ */
