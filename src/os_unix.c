@@ -4033,12 +4033,6 @@ static int unixFileControl(sqlite3_file *id, int op, void *pArg){
       return proxyFileControl(id,op,pArg);
     }
 #endif /* SQLITE_ENABLE_LOCKING_STYLE && defined(__APPLE__) */
-#ifdef SQLITE_WCDB_FCNTL_PATH
-    case SQLITE_FCNTL_PATH: {
-      *(const char**)pArg = pFile->zPath;
-      return SQLITE_OK;
-    }
-#endif
   }
   return SQLITE_NOTFOUND;
 }
