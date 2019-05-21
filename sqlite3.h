@@ -675,19 +675,6 @@ typedef struct sqlite3_file sqlite3_file;
 struct sqlite3_file {
   const struct sqlite3_io_methods *pMethods;  /* Methods for an open file */
 };
-  
-#ifdef SQLITE_WCDB_OS_HOOK
-/*
- ** Register a callback to be invoked each time a (shm) lock will be held
- ** or a (shm) lock did be unheld.
- */
-int sqlite3_os_hook(void (*xPreLock)(const char*, int), // path, lock type
-                    void (*xPostUnlock)(const char*, int), // path, lock type
-                    // path, offset, n, lock type
-                    void (*xPreShmLock)(const char*, int, int, int),
-                    // path, offset, n, lock type
-                    void (*xPostShmUnlock)(const char*, int, int, int));
-#endif
 
 /*
 ** CAPI3REF: OS Interface File Virtual Methods Object
