@@ -702,6 +702,9 @@ static int sqlite3LockAndPrepare(
   if( ppStmt==0 ) return SQLITE_MISUSE_BKPT;
 #endif
   *ppStmt = 0;
+#ifdef SQLITE_WCDB_SUSPEND
+    if(db->suspended > 0 && db->unimpeded == 0) return SQLITE_INTERRUPT;
+#endif
   if( !sqlite3SafetyCheckOk(db)||zSql==0 ){
     return SQLITE_MISUSE_BKPT;
   }

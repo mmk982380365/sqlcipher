@@ -675,6 +675,15 @@ typedef struct sqlite3_file sqlite3_file;
 struct sqlite3_file {
   const struct sqlite3_io_methods *pMethods;  /* Methods for an open file */
 };
+  
+#ifdef SQLITE_WCDB_LOCK_HOOK
+int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath, int eLock),
+                      void (*xLockDidChange)(void *pArg, const char* zPath, int eLock),
+                      void (*xWillShmLock)(void *pArg, const char* zPath, int flags, int mask),
+                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int sharedMask, int exclMask),
+                      void *pArg);
+#endif
+
 
 /*
 ** CAPI3REF: OS Interface File Virtual Methods Object
@@ -2428,7 +2437,7 @@ SQLITE_API int sqlite3_total_changes(sqlite3*);
 */
 SQLITE_API void sqlite3_interrupt(sqlite3*);
   
-#if SQLITE_WCDB_SUSPEND
+#ifdef SQLITE_WCDB_SUSPEND
 /*
  ** Suspend any operations, including pending one and subsequent operations, until undoed.
  **

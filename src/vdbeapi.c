@@ -690,6 +690,7 @@ int sqlite3_step(sqlite3_stmt *pStmt){
     return SQLITE_MISUSE_BKPT;
   }
   db = v->db;
+
   sqlite3_mutex_enter(db->mutex);
   v->doingRerun = 0;
   while( (rc = sqlite3Step(v))==SQLITE_SCHEMA
