@@ -1361,6 +1361,11 @@ static void releaseInodeInfo(unixFile *pFile){
         assert( pInode->pNext->pPrev==pInode );
         pInode->pNext->pPrev = pInode->pPrev;
       }
+#ifdef SQLITE_WCDB_LOCK_HOOK
+      if (unixLockHook.xLockDidChange != NULL) {
+        unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, NO_LOCK);
+      }
+#endif
       sqlite3_mutex_free(pInode->pLockMutex);
       sqlite3_free(pInode);
     }
@@ -1888,7 +1893,7 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     pInode->eFileLock = eFileLock;
 #ifdef SQLITE_WCDB_LOCK_HOOK
     if (unixLockHook.xLockDidChange != NULL) {
-      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, eFileLock);
+      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
     }
 #endif
   }else if( eFileLock==EXCLUSIVE_LOCK ){
@@ -1896,7 +1901,7 @@ static int unixLock(sqlite3_file *id, int eFileLock){
     pInode->eFileLock = PENDING_LOCK;
 #ifdef SQLITE_WCDB_LOCK_HOOK
     if (unixLockHook.xLockDidChange != NULL) {
-      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, PENDING_LOCK);
+      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
     }
 #endif
   }
@@ -2045,6 +2050,11 @@ static int posixUnlock(sqlite3_file *id, int eFileLock, int handleNFSUnlock){
     lock.l_len = 2L;  assert( PENDING_BYTE+1==RESERVED_BYTE );
     if( unixFileLock(pFile, &lock)==0 ){
       pInode->eFileLock = SHARED_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+      if (unixLockHook.xLockDidChange != NULL) {
+        unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+      }
+#endif
     }else{
       rc = SQLITE_IOERR_UNLOCK;
       storeLastErrno(pFile, errno);
@@ -2063,11 +2073,21 @@ static int posixUnlock(sqlite3_file *id, int eFileLock, int handleNFSUnlock){
       lock.l_start = lock.l_len = 0L;
       if( unixFileLock(pFile, &lock)==0 ){
         pInode->eFileLock = NO_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+        if (unixLockHook.xLockDidChange != NULL) {
+          unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+        }
+#endif
       }else{
         rc = SQLITE_IOERR_UNLOCK;
         storeLastErrno(pFile, errno);
         pInode->eFileLock = NO_LOCK;
         pFile->eFileLock = NO_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+        if (unixLockHook.xLockDidChange != NULL) {
+          unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+        }
+#endif
       }
     }
 
@@ -5005,6 +5025,11 @@ static int unixShmUnmap(
   *pp = p->pNext;
 
   /* Free the connection p */
+#ifdef SQLITE_WCDB_LOCK_HOOK
+  if (unixLockHook.xShmLockDidChange != NULL) {
+    unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, 0, 0);
+  }
+#endif
   sqlite3_free(p);
   pDbFd->pShm = 0;
   sqlite3_mutex_leave(pShmNode->pShmMutex);
