@@ -178,6 +178,34 @@
 */
 #define IS_LOCK_ERROR(x)  ((x != SQLITE_OK) && (x != SQLITE_BUSY))
 
+#ifdef SQLITE_WCDB_LOCK_HOOK
+struct UnixLockHook {
+  void (*xWillLock)(void *parameter, const char* path, int lock);
+  void (*xLockDidChange)(void *parameter, const char* path, int lock);
+  void (*xWillShmLock)(void *parameter, const char* path, int flags, int mask);
+  void (*xShmLockDidChange)(void *parameter, const char* path, void* id, int flags, int mask);
+  void *pArg;
+};
+typedef struct UnixLockHook UnixLockHook;
+
+SQLITE_WSD static UnixLockHook unixLockHook = { 0 };
+#define unixLockHook GLOBAL(UnixLockHook *, unixLockHook)
+
+int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath, int eLock),
+                      void (*xLockDidChange)(void *pArg, const char* zPath, int eLock),
+                      void (*xWillShmLock)(void *pArg, const char* zPath, int flags, int mask),
+                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int flags, int mask),
+                      void *pArg) {
+  if( sqlite3GlobalConfig.isInit ) return SQLITE_MISUSE_BKPT;
+  unixLockHook.xWillLock = xWillLock;
+  unixLockHook.xLockDidChange = xLockDidChange;
+  unixLockHook.xWillShmLock = xWillShmLock;
+  unixLockHook.xShmLockDidChange = xShmLockDidChange;
+  unixLockHook.pArg = pArg;
+  return SQLITE_OK;
+}
+#endif
+
 /* Forward references */
 typedef struct unixShm unixShm;               /* Connection shared memory */
 typedef struct unixShmNode unixShmNode;       /* Shared memory instance */
@@ -1712,6 +1740,12 @@ static int unixLock(sqlite3_file *id, int eFileLock){
   assert( eFileLock!=PENDING_LOCK );
   assert( eFileLock!=RESERVED_LOCK || pFile->eFileLock==SHARED_LOCK );
 
+#ifdef SQLITE_WCDB_LOCK_HOOK
+  if (unixLockHook.xWillLock != NULL) {
+    unixLockHook.xWillLock(unixLockHook.pArg, pFile->zPath, eFileLock);
+  }
+#endif
+    
   /* This mutex is needed because pFile->pInode is shared across threads
   */
   pInode = pFile->pInode;
@@ -1852,9 +1886,19 @@ static int unixLock(sqlite3_file *id, int eFileLock){
   if( rc==SQLITE_OK ){
     pFile->eFileLock = eFileLock;
     pInode->eFileLock = eFileLock;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+    if (unixLockHook.xLockDidChange != NULL) {
+      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, eFileLock);
+    }
+#endif
   }else if( eFileLock==EXCLUSIVE_LOCK ){
     pFile->eFileLock = PENDING_LOCK;
     pInode->eFileLock = PENDING_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+    if (unixLockHook.xLockDidChange != NULL) {
+      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, PENDING_LOCK);
+    }
+#endif
   }
 
 end_lock:
@@ -4808,6 +4852,16 @@ static int unixShmLock(
 
   mask = (1<<(ofst+n)) - (1<<ofst);
   assert( n>1 || mask==(1<<ofst) );
+  
+#ifdef SQLITE_WCDB_LOCK_HOOK
+  if (unixLockHook.xWillShmLock != NULL && (flags & SQLITE_SHM_LOCK) != 0) {
+    unixLockHook.xWillShmLock(unixLockHook.pArg,
+                              pDbFd->zPath,
+                              flags & (SQLITE_SHM_SHARED | SQLITE_SHM_EXCLUSIVE),
+                              mask);
+  }
+#endif
+    
   sqlite3_mutex_enter(pShmNode->pShmMutex);
   if( flags & SQLITE_SHM_UNLOCK ){
     u16 allMask = 0; /* Mask of locks held by siblings */
@@ -4830,7 +4884,12 @@ static int unixShmLock(
     if( rc==SQLITE_OK ){
       p->exclMask &= ~mask;
       p->sharedMask &= ~mask;
-    } 
+#ifdef SQLITE_WCDB_LOCK_HOOK
+      if (unixLockHook.xShmLockDidChange != NULL) {
+        unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, flags, mask);
+      }
+#endif
+    }
   }else if( flags & SQLITE_SHM_SHARED ){
     u16 allShared = 0;  /* Union of locks held by connections other than "p" */
 
@@ -4858,6 +4917,11 @@ static int unixShmLock(
     /* Get the local shared locks */
     if( rc==SQLITE_OK ){
       p->sharedMask |= mask;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+      if (unixLockHook.xShmLockDidChange != NULL) {
+          unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, flags, mask);
+      }
+#endif
     }
   }else{
     /* Make sure no sibling connections hold locks that will block this
@@ -4878,6 +4942,11 @@ static int unixShmLock(
       if( rc==SQLITE_OK ){
         assert( (p->sharedMask & mask)==0 );
         p->exclMask |= mask;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+        if (unixLockHook.xShmLockDidChange != NULL) {
+            unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, flags, mask);
+        }
+#endif
       }
     }
   }
