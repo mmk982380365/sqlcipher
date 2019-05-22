@@ -680,7 +680,7 @@ struct sqlite3_file {
 int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath, int eLock),
                       void (*xLockDidChange)(void *pArg, const char* zPath, int eLock),
                       void (*xWillShmLock)(void *pArg, const char* zPath, int flags, int mask),
-                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int flags, int mask),
+                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int sharedMask, int exclMask),
                       void *pArg);
 #endif
 

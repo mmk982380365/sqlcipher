@@ -183,7 +183,7 @@ struct UnixLockHook {
   void (*xWillLock)(void *parameter, const char* path, int lock);
   void (*xLockDidChange)(void *parameter, const char* path, int lock);
   void (*xWillShmLock)(void *parameter, const char* path, int flags, int mask);
-  void (*xShmLockDidChange)(void *parameter, const char* path, void* id, int flags, int mask);
+  void (*xShmLockDidChange)(void *parameter, const char* path, void* id, int sharedMask, int exclMask);
   void *pArg;
 };
 typedef struct UnixLockHook UnixLockHook;
@@ -194,7 +194,7 @@ SQLITE_WSD static UnixLockHook unixLockHook = { 0 };
 int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath, int eLock),
                       void (*xLockDidChange)(void *pArg, const char* zPath, int eLock),
                       void (*xWillShmLock)(void *pArg, const char* zPath, int flags, int mask),
-                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int flags, int mask),
+                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int sharedMask, int exclMask),
                       void *pArg) {
   if( sqlite3GlobalConfig.isInit ) return SQLITE_MISUSE_BKPT;
   unixLockHook.xWillLock = xWillLock;
@@ -4886,7 +4886,7 @@ static int unixShmLock(
       p->sharedMask &= ~mask;
 #ifdef SQLITE_WCDB_LOCK_HOOK
       if (unixLockHook.xShmLockDidChange != NULL) {
-        unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, flags, mask);
+        unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, p->sharedMask, p->exclMask);
       }
 #endif
     }
@@ -4919,7 +4919,7 @@ static int unixShmLock(
       p->sharedMask |= mask;
 #ifdef SQLITE_WCDB_LOCK_HOOK
       if (unixLockHook.xShmLockDidChange != NULL) {
-          unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, flags, mask);
+          unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, p->sharedMask, p->exclMask);
       }
 #endif
     }
@@ -4944,7 +4944,7 @@ static int unixShmLock(
         p->exclMask |= mask;
 #ifdef SQLITE_WCDB_LOCK_HOOK
         if (unixLockHook.xShmLockDidChange != NULL) {
-            unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, flags, mask);
+            unixLockHook.xShmLockDidChange(unixLockHook.pArg, pDbFd->zPath, p, p->sharedMask, p->exclMask);
         }
 #endif
       }
