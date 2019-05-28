@@ -2994,6 +2994,12 @@ static int afpLock(sqlite3_file *id, int eFileLock){
   assert( eFileLock!=PENDING_LOCK );
   assert( eFileLock!=RESERVED_LOCK || pFile->eFileLock==SHARED_LOCK );
   
+#ifdef SQLITE_WCDB_LOCK_HOOK
+  if (unixLockHook.xWillLock != NULL) {
+    unixLockHook.xWillLock(unixLockHook.pArg, pFile->zPath, eFileLock);
+  }
+#endif
+
   /* This mutex is needed because pFile->pInode is shared across threads
   */
   pInode = pFile->pInode;
@@ -3127,9 +3133,19 @@ static int afpLock(sqlite3_file *id, int eFileLock){
   if( rc==SQLITE_OK ){
     pFile->eFileLock = eFileLock;
     pInode->eFileLock = eFileLock;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+    if (unixLockHook.xLockDidChange != NULL) {
+      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+    }
+#endif
   }else if( eFileLock==EXCLUSIVE_LOCK ){
     pFile->eFileLock = PENDING_LOCK;
     pInode->eFileLock = PENDING_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+    if (unixLockHook.xLockDidChange != NULL) {
+      unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+    }
+#endif
   }
   
 afp_end_lock:
@@ -3210,6 +3226,11 @@ static int afpUnlock(sqlite3_file *id, int eFileLock) {
     }
     if( rc==SQLITE_OK && (eFileLock==SHARED_LOCK || pInode->nShared>1)){
       pInode->eFileLock = SHARED_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+      if (unixLockHook.xLockDidChange != NULL) {
+        unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+      }
+#endif
     }
   }
   if( rc==SQLITE_OK && eFileLock==NO_LOCK ){
@@ -3230,6 +3251,11 @@ static int afpUnlock(sqlite3_file *id, int eFileLock) {
       if( !rc ){
         pInode->eFileLock = NO_LOCK;
         pFile->eFileLock = NO_LOCK;
+#ifdef SQLITE_WCDB_LOCK_HOOK
+        if (unixLockHook.xLockDidChange != NULL) {
+          unixLockHook.xLockDidChange(unixLockHook.pArg, pFile->zPath, pInode->eFileLock);
+        }
+#endif
       }
     }
     if( rc==SQLITE_OK ){
