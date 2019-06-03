@@ -174,13 +174,6 @@
 #endif
 #endif
 
-#ifdef SQLITE_WCDB_SUSPEND
-#ifndef SQLITE_WCDB_USE_ATOMIC
-#error "Atomic is not supported."
-#endif
-#endif
-
-
 /*
 ** Include the configuration header output by 'configure' if we're using the
 ** autoconf-based build
@@ -1473,10 +1466,6 @@ struct sqlite3 {
     double notUsed1;            /* Spacer */
 #endif
   } u1;
-#ifdef SQLITE_WCDB_SUSPEND
-  atomic_int suspended;         /* True if sqlite_suspend has been called */
-  atomic_int unimpeded;                /* True if interrupt and suspend are ignorable */
-#endif
   Lookaside lookaside;          /* Lookaside malloc configuration */
 #ifndef SQLITE_OMIT_AUTHORIZATION
   sqlite3_xauth xAuth;          /* Access authorization function */
