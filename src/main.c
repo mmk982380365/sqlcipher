@@ -1685,36 +1685,6 @@ void sqlite3_interrupt(sqlite3 *db){
   db->u1.isInterrupted = 1;
 }
 
-void sqlite3_suspend(sqlite3 *db, int suspend){
-#ifdef SQLITE_ENABLE_API_ARMOR
-  if( !sqlite3SafetyCheckOk(db) && (db==0 || db->magic!=SQLITE_MAGIC_ZOMBIE) ){
-    (void)SQLITE_MISUSE_BKPT;
-    return;
-  }
-#endif
-  if (suspend != 0) {
-    ++db->suspended;
-  }else {
-    --db->suspended;
-  }
-  sqlite3_interrupt(db);
-}
-
-void sqlite3_unimpeded(sqlite3 *db, int unimpeded)
-{
-#ifdef SQLITE_ENABLE_API_ARMOR
-  if( !sqlite3SafetyCheckOk(db) && (db==0 || db->magic!=SQLITE_MAGIC_ZOMBIE) ){
-    (void)SQLITE_MISUSE_BKPT;
-    return;
-  }
-#endif
-  if (unimpeded != 0) {
-    ++db->unimpeded;
-  }else {
-    --db->unimpeded;
-  }
-}
-
 /*
 ** This function is exactly the same as sqlite3_create_function(), except
 ** that it is designed to be called by internal code. The difference is
@@ -2422,9 +2392,11 @@ int sqlite3Checkpoint(sqlite3 *db, int iDb, int eMode, int *pnLog, int *pnCkpt){
         bBusy = 1;
         rc = SQLITE_OK;
       }
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
       if( rc==SQLITE_OK && db->xCheckpointCallback) {
         db->xCheckpointCallback(db->pCheckpointArg, db, db->aDb[i].zDbSName);
       }
+#endif
     }
   }
 
