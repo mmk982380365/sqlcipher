@@ -2422,9 +2422,11 @@ int sqlite3Checkpoint(sqlite3 *db, int iDb, int eMode, int *pnLog, int *pnCkpt){
         bBusy = 1;
         rc = SQLITE_OK;
       }
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
       if( rc==SQLITE_OK && db->xCheckpointCallback) {
         db->xCheckpointCallback(db->pCheckpointArg, db, db->aDb[i].zDbSName);
       }
+#endif
     }
   }
 
