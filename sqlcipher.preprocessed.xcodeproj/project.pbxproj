@@ -141,6 +141,7 @@
 		23F5BC3820887FAB000CCD37 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */; };
 		23F5BC3A20887FAB000CCD37 /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA34A1FB070F00075F021 /* fts3_tokenizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		23F5BC3B20887FAB000CCD37 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CF1FB082C70075F021 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39C115B822AF3070001B49D4 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 39C115B722AF3070001B49D4 /* config.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -284,6 +285,7 @@
 		239D64E61ECE9FE8008F5B61 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23F0FE9A215F3018008399FB /* sqlcipher.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = sqlcipher.modulemap; sourceTree = "<group>"; };
 		23F5BC4020887FAB000CCD37 /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		39C115B722AF3070001B49D4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = SOURCE_ROOT; };
 		39FFA7EC22366BD600735F05 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		39FFA7ED22366BD600735F05 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		39FFA7EE22366BD600735F05 /* base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = base.xcconfig; sourceTree = "<group>"; };
@@ -323,6 +325,7 @@
 		23121B7C1E6FF93D0012B45E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				39C115B722AF3070001B49D4 /* config.h */,
 				232DA3201FB06FFD0075F021 /* keywordhash.h */,
 				232DA3211FB070090075F021 /* callback.c */,
 				232DA3231FB070110075F021 /* loadext.c */,
@@ -524,6 +527,7 @@
 				23F0FDAA215F2473008399FB /* btree.h in Headers */,
 				23F0FDC4215F2473008399FB /* hwtime.h in Headers */,
 				23F0FDAF215F2473008399FB /* wal.h in Headers */,
+				39C115B822AF3070001B49D4 /* config.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
