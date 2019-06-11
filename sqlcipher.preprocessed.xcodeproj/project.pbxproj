@@ -285,10 +285,11 @@
 		239D64E61ECE9FE8008F5B61 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23F0FE9A215F3018008399FB /* sqlcipher.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = sqlcipher.modulemap; sourceTree = "<group>"; };
 		23F5BC4020887FAB000CCD37 /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		391F9C3922AF4D31008E82FA /* SQLite.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SQLite.xcconfig; sourceTree = "<group>"; };
 		39C115B722AF3070001B49D4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = SOURCE_ROOT; };
-		39FFA7EC22366BD600735F05 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
-		39FFA7ED22366BD600735F05 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
-		39FFA7EE22366BD600735F05 /* base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = base.xcconfig; sourceTree = "<group>"; };
+		39FFA7EC22366BD600735F05 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		39FFA7ED22366BD600735F05 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		39FFA7EE22366BD600735F05 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -477,9 +478,10 @@
 		239D64E41ECE9FE8008F5B61 /* macosx */ = {
 			isa = PBXGroup;
 			children = (
-				39FFA7EE22366BD600735F05 /* base.xcconfig */,
-				39FFA7ED22366BD600735F05 /* debug.xcconfig */,
-				39FFA7EC22366BD600735F05 /* release.xcconfig */,
+				39FFA7EE22366BD600735F05 /* Base.xcconfig */,
+				391F9C3922AF4D31008E82FA /* SQLite.xcconfig */,
+				39FFA7ED22366BD600735F05 /* Debug.xcconfig */,
+				39FFA7EC22366BD600735F05 /* Release.xcconfig */,
 				23F0FE9A215F3018008399FB /* sqlcipher.modulemap */,
 				239D64E61ECE9FE8008F5B61 /* Info.plist */,
 			);
@@ -700,26 +702,27 @@
 /* Begin XCBuildConfiguration section */
 		23121AE61E6FF9110012B45E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 39FFA7ED22366BD600735F05 /* Debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		23121AE71E6FF9110012B45E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 39FFA7EC22366BD600735F05 /* Release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		23F5BC3E20887FAB000CCD37 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 39FFA7ED22366BD600735F05 /* debug.xcconfig */;
+			baseConfigurationReference = 391F9C3922AF4D31008E82FA /* SQLite.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		23F5BC3F20887FAB000CCD37 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 39FFA7EC22366BD600735F05 /* release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
