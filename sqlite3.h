@@ -675,15 +675,6 @@ typedef struct sqlite3_file sqlite3_file;
 struct sqlite3_file {
   const struct sqlite3_io_methods *pMethods;  /* Methods for an open file */
 };
-  
-#ifdef SQLITE_WCDB_LOCK_HOOK
-int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath, int eLock),
-                      void (*xLockDidChange)(void *pArg, const char* zPath, int eLock),
-                      void (*xWillShmLock)(void *pArg, const char* zPath, int flags, int mask),
-                      void (*xShmLockDidChange)(void *pArg, const char* zPath, void* id, int sharedMask, int exclMask),
-                      void *pArg);
-#endif
-
 
 /*
 ** CAPI3REF: OS Interface File Virtual Methods Object
@@ -2436,7 +2427,7 @@ SQLITE_API int sqlite3_total_changes(sqlite3*);
 ** that are started after the sqlite3_interrupt() call returns.
 */
 SQLITE_API void sqlite3_interrupt(sqlite3*);
-  
+
 /*
 ** CAPI3REF: Determine If An SQL Statement Is Complete
 **
@@ -8670,20 +8661,6 @@ SQLITE_API int sqlite3_wal_checkpoint_v2(
   int *pnLog,                     /* OUT: Size of WAL log in frames */
   int *pnCkpt                     /* OUT: Total number of frames checkpointed */
 );
-
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-/*
- ** Register a handler when checkpoint did happen.
- */
-SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *, void (*xCallback)(void*, sqlite3*, const char *), void*);
-#endif //SQLITE_WCDB_CHECKPOINT_HANDLER
-    
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-/*
- ** Return the number of dirty pages currently in the cache.
- */
-SQLITE_API int sqlite3_dirty_page_count(sqlite3*);
-#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
 
 /*
 ** CAPI3REF: Checkpoint Mode Values
