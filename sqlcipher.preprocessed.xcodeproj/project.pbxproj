@@ -141,6 +141,7 @@
 		23F5BC3820887FAB000CCD37 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2384AB4C1EDBFD48007369FF /* CoreFoundation.framework */; };
 		23F5BC3A20887FAB000CCD37 /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA34A1FB070F00075F021 /* fts3_tokenizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		23F5BC3B20887FAB000CCD37 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3CF1FB082C70075F021 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3931F95922B9C35E00CF64F2 /* sqlite3_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 3931F95822B9C35A00CF64F2 /* sqlite3_wcdb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		39C115B822AF3070001B49D4 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 39C115B722AF3070001B49D4 /* config.h */; };
 /* End PBXBuildFile section */
 
@@ -286,6 +287,7 @@
 		23F0FE9A215F3018008399FB /* sqlcipher.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = sqlcipher.modulemap; sourceTree = "<group>"; };
 		23F5BC4020887FAB000CCD37 /* sqlcipher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		391F9C3922AF4D31008E82FA /* SQLite.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SQLite.xcconfig; sourceTree = "<group>"; };
+		3931F95822B9C35A00CF64F2 /* sqlite3_wcdb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite3_wcdb.h; sourceTree = "<group>"; };
 		39C115B722AF3070001B49D4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = SOURCE_ROOT; };
 		39FFA7EC22366BD600735F05 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		39FFA7ED22366BD600735F05 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -422,6 +424,7 @@
 				232DA3CC1FB082B30075F021 /* opcodes.h */,
 				232DA3CE1FB082C20075F021 /* sqlcipher.h */,
 				232DA3CF1FB082C70075F021 /* sqlite3.h */,
+				3931F95822B9C35A00CF64F2 /* sqlite3_wcdb.h */,
 				232DA3D11FB082DA0075F021 /* sqlite3rbu.c */,
 				232DA3D01FB082DA0075F021 /* sqlite3rbu.h */,
 				232DA3D31FB082E40075F021 /* sqlite3userauth.h */,
@@ -495,6 +498,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3931F95922B9C35E00CF64F2 /* sqlite3_wcdb.h in Headers */,
 				23F0FDB7215F2473008399FB /* pager.h in Headers */,
 				23F0FDC2215F2473008399FB /* crypto.h in Headers */,
 				23F0FDB6215F2473008399FB /* os.h in Headers */,
