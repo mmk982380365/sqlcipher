@@ -720,7 +720,6 @@
 		};
 		23F5BC3E20887FAB000CCD37 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 391F9C3922AF4D31008E82FA /* SQLite.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
