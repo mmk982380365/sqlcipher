@@ -42,14 +42,6 @@ SQLITE_API int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath
 SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *, void (*xCallback)(void*, sqlite3*, const char *), void*);
 #endif // SQLITE_WCDB_CHECKPOINT_HANDLER
 
-
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-/*
- ** Return the number of dirty pages currently in the cache.
- */
-SQLITE_API int sqlite3_dirty_page_count(sqlite3*);
-#endif // SQLITE_WCDB_DIRTY_PAGE_COUNT
-
 #endif // SQLITE_WCDB
 
 #endif /* SQLITE3_WCDB_H */

@@ -173,10 +173,6 @@ int sqlite3PagerOpenSavepoint(Pager *pPager, int n);
 int sqlite3PagerSavepoint(Pager *pPager, int op, int iSavepoint);
 int sqlite3PagerSharedLock(Pager *pPager);
 
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-int sqlite3PagerDirtyPageCount(Pager *);
-#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
-
 #ifndef SQLITE_OMIT_WAL
   int sqlite3PagerCheckpoint(Pager *pPager, sqlite3*, int, int*, int*);
   int sqlite3PagerWalSupported(Pager *pPager);
