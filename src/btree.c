@@ -10123,19 +10123,6 @@ int sqlite3BtreeCheckpoint(Btree *p, int eMode, int *pnLog, int *pnCkpt){
 
 #endif
 
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-int sqlite3BtreeDirtyPageCount(Btree *p){
-  int count = 0;
-  if (p) {
-    BtShared *pBt = p->pBt;
-    sqlite3BtreeEnter(p);
-    count = sqlite3PagerDirtyPageCount(pBt->pPager);
-    sqlite3BtreeLeave(p);
-  }
-  return count;
-}
-#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
-
 /*
 ** Return non-zero if a read (or write) transaction is active.
 */

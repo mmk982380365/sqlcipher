@@ -7438,12 +7438,6 @@ void sqlite3PagerClearCache(Pager *pPager){
 }
 #endif
 
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-int sqlite3PagerDirtyPageCount(Pager *p){
-    return sqlite3PCacheDirtyPageCount(p->pPCache);
-}
-#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
-
 #ifndef SQLITE_OMIT_WAL
 /*
 ** This function is called when the user invokes "PRAGMA wal_checkpoint",

@@ -2336,23 +2336,6 @@ void *sqlite3_wal_checkpoint_handler(sqlite3 *db,
 }
 #endif //SQLITE_WCDB_CHECKPOINT_HANDLER
 
-#ifdef SQLITE_WCDB_DIRTY_PAGE_COUNT
-int sqlite3_dirty_page_count(sqlite3 *db){
-#ifdef SQLITE_ENABLE_API_ARMOR
-  if( !sqlite3SafetyCheckOk(db) ) return 0;
-#endif
-  sqlite3_mutex_enter(db->mutex);
-  int count = 0;
-  int i;
-  for(i=0; i<db->nDb; i++){
-    count += sqlite3BtreeDirtyPageCount(db->aDb[i].pBt);
-  }
-  sqlite3_mutex_leave(db->mutex);
-  return count;
-}
-#endif //SQLITE_WCDB_DIRTY_PAGE_COUNT
-
-
 #ifndef SQLITE_OMIT_WAL
 /*
 ** Run a checkpoint on database iDb. This is a no-op if database iDb is
