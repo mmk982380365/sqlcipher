@@ -42,6 +42,14 @@ SQLITE_API int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath
 SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *, void (*xCallback)(void*, sqlite3*, const char *), void*);
 #endif // SQLITE_WCDB_CHECKPOINT_HANDLER
 
+#ifdef SQLITE_WCDB_SUSPEND
+/*
+ ** Suspend a handler to interrupt and prevent all operations.
+ */
+void sqlite3_suspend(sqlite3 *db, int suspend);
+void sqlite3_unimpeded(sqlite3 *db, int unimpeded);
+#endif
+
 #endif // SQLITE_WCDB
 
 #endif /* SQLITE3_WCDB_H */

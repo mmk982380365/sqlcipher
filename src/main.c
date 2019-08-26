@@ -1672,6 +1672,7 @@ int sqlite3_busy_timeout(sqlite3 *db, int ms){
   return SQLITE_OK;
 }
 
+
 /*
 ** Cause any pending operation to stop at its earliest opportunity.
 */
@@ -1684,6 +1685,38 @@ void sqlite3_interrupt(sqlite3 *db){
 #endif
   db->u1.isInterrupted = 1;
 }
+
+#ifdef SQLITE_WCDB_SUSPEND
+void sqlite3_suspend(sqlite3 *db, int suspend){
+#ifdef SQLITE_ENABLE_API_ARMOR
+  if( !sqlite3SafetyCheckOk(db) && (db==0 || db->magic!=SQLITE_MAGIC_ZOMBIE) ){
+    (void)SQLITE_MISUSE_BKPT;
+    return;
+  }
+#endif
+  if (suspend != 0) {
+    ++db->suspended;
+    sqlite3_interrupt(db);
+  }else {
+    --db->suspended;
+  }
+}
+
+void sqlite3_unimpeded(sqlite3 *db, int unimpeded)
+{
+#ifdef SQLITE_ENABLE_API_ARMOR
+  if( !sqlite3SafetyCheckOk(db) && (db==0 || db->magic!=SQLITE_MAGIC_ZOMBIE) ){
+    (void)SQLITE_MISUSE_BKPT;
+    return;
+  }
+#endif
+  if (unimpeded != 0) {
+    ++db->unimpeded;
+  }else {
+    --db->unimpeded;
+  }
+}
+#endif
 
 /*
 ** This function is exactly the same as sqlite3_create_function(), except
