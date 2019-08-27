@@ -1930,7 +1930,7 @@ int sqlite3VdbeList(
   }
 
   if( rc==SQLITE_OK ){
-    if( (db->u1.isInterrupted || db->suspended > 0) && db->unimpeded == 0 ){
+    if( (db->u1.isInterrupted || db->suspended) && !db->unimpeded ){
       p->rc = SQLITE_INTERRUPT;
       rc = SQLITE_ERROR;
       sqlite3VdbeError(p, sqlite3ErrStr(p->rc));

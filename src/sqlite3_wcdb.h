@@ -47,6 +47,10 @@ SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *, void (*xCallback)(voi
  ** Suspend a handler to interrupt and prevent all operations.
  */
 void sqlite3_suspend(sqlite3 *db, int suspend);
+
+/*
+ ** Ignore suspend and interrupt
+ */
 void sqlite3_unimpeded(sqlite3 *db, int unimpeded);
 #endif
 

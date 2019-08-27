@@ -1694,12 +1694,7 @@ void sqlite3_suspend(sqlite3 *db, int suspend){
     return;
   }
 #endif
-  if (suspend != 0) {
-    ++db->suspended;
-    sqlite3_interrupt(db);
-  }else {
-    --db->suspended;
-  }
+  db->suspended = !!suspend;
 }
 
 void sqlite3_unimpeded(sqlite3 *db, int unimpeded)
@@ -1710,11 +1705,7 @@ void sqlite3_unimpeded(sqlite3 *db, int unimpeded)
     return;
   }
 #endif
-  if (unimpeded != 0) {
-    ++db->unimpeded;
-  }else {
-    --db->unimpeded;
-  }
+  db->unimpeded = !!unimpeded;
 }
 #endif
 

@@ -1871,7 +1871,7 @@ static int walCheckpoint(
       while( rc==SQLITE_OK && 0==walIteratorNext(pIter, &iDbpage, &iFrame) ){
         i64 iOffset;
         assert( walFramePgno(pWal, iFrame)==iDbpage );
-        if( (db->u1.isInterrupted || db->suspended > 0) && db->unimpeded == 0 ){
+        if( (db->u1.isInterrupted || db->suspended ) && !db->unimpeded ){
           rc = db->mallocFailed ? SQLITE_NOMEM_BKPT : SQLITE_INTERRUPT;
           break;
         }
