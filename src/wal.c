@@ -262,9 +262,9 @@ int sqlite3WalTrace = 0;
 ** WAL mode depends on atomic aligned 32-bit loads and stores in a few
 ** places.  The following macros try to make this explicit.
 */
-#if GCC_VESRION>=5004000
+#if GCC_VERSION>=5004000 || defined(SQLITE_HAS_STDATOMIC)
 # define AtomicLoad(PTR)       __atomic_load_n((PTR),__ATOMIC_RELAXED)
-# define AtomicStore(PTR,VAL)  __atomic_store_n((PTR),(VAL),__ATOMIC_RELAXED)
+# define AtomicStore(PTR,VAL)  (__atomic_store_n((PTR),(VAL),__ATOMIC_RELAXED), (VAL))
 #else
 # define AtomicLoad(PTR)       (*(PTR))
 # define AtomicStore(PTR,VAL)  (*(PTR) = (VAL))
