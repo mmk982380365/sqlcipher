@@ -166,12 +166,9 @@
 */
 #include "sqlite3.h"
 
-#ifdef SQLITE_HAS_ATOMIC
 #if __STDC_VERSION__ >= 201112L
 #include <stdatomic.h>
-#else
-#error "C11 is not supported."
-#endif
+#define SQLITE_HAS_STDATOMIC
 #endif
 
 
@@ -1460,14 +1457,14 @@ struct sqlite3 {
   void *pCollNeededArg;
   sqlite3_value *pErr;          /* Most recent error message */
   union {
-#ifdef SQLITE_HAS_ATOMIC
+#ifdef SQLITE_HAS_STDATOMIC
     atomic_int isInterrupted;
 #else
     volatile int isInterrupted; /* True if sqlite3_interrupt has been called */
     double notUsed1;            /* Spacer */
 #endif
   } u1;
-#ifdef SQLITE_HAS_ATOMIC
+#ifdef SQLITE_HAS_STDATOMIC
   atomic_int suspended;         /* True if sqlite_suspend has been called */
   atomic_int unimpeded;         /* True if interrupt and suspend are ignorable */
 #else
