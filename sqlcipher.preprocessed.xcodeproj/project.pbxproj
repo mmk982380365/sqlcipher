@@ -569,11 +569,11 @@
 			};
 			buildConfigurationList = 23121ADF1E6FF9110012B45E /* Build configuration list for PBXProject "sqlcipher.preprocessed" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = 23121ADB1E6FF9110012B45E;
 			productRefGroup = 23121AE51E6FF9110012B45E /* Products */;
