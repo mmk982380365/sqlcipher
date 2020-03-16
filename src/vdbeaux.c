@@ -2516,10 +2516,23 @@ static int vdbeCommit(sqlite3 *db, Vdbe *p){
   if( 0==sqlite3Strlen30(sqlite3BtreeGetFilename(db->aDb[0].pBt))
    || nTrans<=1
   ){
-    for(i=0; rc==SQLITE_OK && i<db->nDb; i++){
-      Btree *pBt = db->aDb[i].pBt;
-      if( pBt ){
-        rc = sqlite3BtreeCommitPhaseOne(pBt, 0);
+#ifdef SQLITE_WCDB
+    if(db->revertCommit){
+      for(i=db->nDb-1; rc==SQLITE_OK && i>=0; i--){
+        Btree *pBt = db->aDb[i].pBt;
+        if( pBt ){
+          rc = sqlite3BtreeCommitPhaseOne(pBt, 0);
+        }
+      }
+      db->revertCommit = 0;
+    }else
+#endif
+    {
+      for(i=0; rc==SQLITE_OK && i<db->nDb; i++){
+        Btree *pBt = db->aDb[i].pBt;
+        if( pBt ){
+          rc = sqlite3BtreeCommitPhaseOne(pBt, 0);
+        }
       }
     }
 

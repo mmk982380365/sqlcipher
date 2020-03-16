@@ -54,6 +54,8 @@ void sqlite3_suspend(sqlite3 *db, int suspend);
 void sqlite3_unimpeded(sqlite3 *db, int unimpeded);
 #endif
 
+void sqlite3_revertCommitOrder(sqlite3 *db);
+
 #endif // SQLITE_WCDB
 
 #endif /* SQLITE3_WCDB_H */

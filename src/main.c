@@ -1709,6 +1709,14 @@ void sqlite3_unimpeded(sqlite3 *db, int unimpeded)
 }
 #endif
 
+void sqlite3_revertCommitOrder(sqlite3 *db)
+{
+    if(db == NULL){
+        return;
+    }
+    db->revertCommit = 1;
+}
+
 /*
 ** This function is exactly the same as sqlite3_create_function(), except
 ** that it is designed to be called by internal code. The difference is
