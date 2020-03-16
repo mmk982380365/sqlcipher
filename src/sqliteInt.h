@@ -1519,6 +1519,9 @@ struct sqlite3 {
 #ifdef SQLITE_USER_AUTHENTICATION
   sqlite3_userauth auth;        /* User authentication information */
 #endif
+#ifdef SQLITE_WCDB
+  u8 revertCommit;
+#endif
 };
 
 /*
