@@ -21,6 +21,13 @@
 #ifndef SQLITE3_WCDB_H
 #define SQLITE3_WCDB_H
 
+/*
+ * Make sure we can call this stuff from C++.
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef SQLITE_WCDB
 
 #ifdef SQLITE_WCDB_LOCK_HOOK
@@ -59,3 +66,7 @@ void sqlite3_revertCommitOrder(sqlite3 *db);
 #endif // SQLITE_WCDB
 
 #endif /* SQLITE3_WCDB_H */
+
+#ifdef __cplusplus
+}
+#endif
