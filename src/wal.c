@@ -1131,7 +1131,7 @@ static int walIndexAppend(Wal *pWal, u32 iFrame, u32 iPage){
 ** that this thread is running recovery.  If unable to establish
 ** the necessary locks, this routine returns SQLITE_BUSY.
 */
-static int walIndexRecover(Wal *pWal){
+static int walIndexRecover(Wal *pWal, int nBackFill){
   int rc;                         /* Return Code */
   i64 nSize;                      /* Size of log file */
   u32 aFrameCksum[2] = {0, 0};
@@ -1275,7 +1275,7 @@ finished:
     ** checkpointers.
     */
     pInfo = walCkptInfo(pWal);
-    pInfo->nBackfill = 0;
+    pInfo->nBackfill = nBackFill <= pWal->hdr.mxFrame ? nBackFill : 0;
     pInfo->nBackfillAttempted = pWal->hdr.mxFrame;
     pInfo->aReadMark[0] = 0;
     for(i=1; i<WAL_NREADER; i++) pInfo->aReadMark[i] = READMARK_NOT_USED;
@@ -1894,9 +1894,9 @@ static int walCheckpoint(
           i64 szDb = pWal->hdr.nPage*(i64)szPage;
           testcase( IS_BIG_INT(szDb) );
           rc = sqlite3OsTruncate(pWal->pDbFd, szDb);
-          if( rc==SQLITE_OK ){
-            rc = sqlite3OsSync(pWal->pDbFd, CKPT_SYNC_FLAGS(sync_flags));
-          }
+        }
+        if( rc==SQLITE_OK ){
+          rc = sqlite3OsSync(pWal->pDbFd, CKPT_SYNC_FLAGS(sync_flags));
         }
         if( rc==SQLITE_OK ){
           pInfo->nBackfill = mxSafeFrame;
@@ -2110,6 +2110,89 @@ static int walIndexTryHdr(Wal *pWal, int *pChanged){
 */
 #define WAL_RETRY  (-1)
 
+#ifdef SQLITE_WCDB
+extern void unixCheckOpenShm(sqlite3_file *file, int *opened);
+extern int  unixEnterMutexAndLockShm(sqlite3_file *pDbFd);
+extern void unixLeaveMutexAndUnLockShm(int shmFd);
+extern int  unixReadShmFile(int shmFd, sqlite3_int64 offset, void *pBuf, int cnt);
+
+static int tryRecoverBackfill(Wal *pWal)
+{
+  int bPersist = -1;
+  sqlite3OsFileControlHint(
+      pWal->pDbFd, SQLITE_FCNTL_PERSIST_WAL, &bPersist
+  );
+  if( bPersist!=1 ){
+    return 0;
+  }
+  int opened = 0;
+  unixCheckOpenShm(pWal->pDbFd, &opened);
+  if(opened){
+    return 0;
+  }
+  
+  i64 nSize = 0;
+  int rc = sqlite3OsFileSize(pWal->pWalFd, &nSize);
+  if( rc!=SQLITE_OK || nSize < WAL_HDRSIZE){
+    return 0;
+  }
+  
+  int nBackFill = 0;
+  int shmFd = -1;
+  
+  shmFd = unixEnterMutexAndLockShm(pWal->pDbFd);
+  if(shmFd < 0){
+    goto recover_backfill_finish;
+  }
+  
+  u8 shmBuf[WALINDEX_HDR_SIZE];
+  u32 aCksum[2];                  /* Checksum on the header content */
+  WalCkptInfo *pInfo;             /* Checkpoint information in wal-index */
+  int shmHdrSize = sizeof(WalIndexHdr);
+  rc = unixReadShmFile(shmFd, 0, shmBuf, WALINDEX_HDR_SIZE);
+  if(rc != SQLITE_OK){
+    goto recover_backfill_finish;
+  }
+  
+  WalIndexHdr *h1, *h2;             /* Two copies of the header content */
+  h1 = (WalIndexHdr *)shmBuf;
+  h2 = (WalIndexHdr *)&shmBuf[shmHdrSize];
+  if( memcmp(h1, h2, shmHdrSize)!=0 ){
+    goto recover_backfill_finish;   /* Dirty read */
+  }
+  
+  if( h1->isInit==0 || h1->iVersion!=WALINDEX_MAX_VERSION){
+    goto recover_backfill_finish;   /* Malformed header - probably all zeros */
+  }
+  
+  walChecksumBytes(1, (u8*)h1, shmHdrSize-sizeof(h1->aCksum), 0, aCksum);
+  if( aCksum[0]!=h1->aCksum[0] || aCksum[1]!=h1->aCksum[1] ){
+    goto recover_backfill_finish;   /* Checksum does not match */
+  }
+  
+  u8 walBuf[WAL_HDRSIZE];           /* Buffer to load WAL header into */
+  rc = sqlite3OsRead(pWal->pWalFd, walBuf, WAL_HDRSIZE, 0);
+  if( rc!=SQLITE_OK ){
+    goto recover_backfill_finish;
+  }
+  if(memcmp(h1->aSalt, &walBuf[16], 8) ){
+    goto recover_backfill_finish;
+  }
+  
+  pInfo = (WalCkptInfo *)&shmBuf[2*shmHdrSize];
+  if(pInfo->nBackfillAttempted > h1->mxFrame || pInfo->nBackfill >pInfo->nBackfillAttempted){
+    goto recover_backfill_finish; /* Invalid checkpoint info*/
+  }
+  nBackFill = pInfo->nBackfill;
+  
+  recover_backfill_finish:
+  unixLeaveMutexAndUnLockShm(shmFd);
+  return nBackFill;
+}
+#else
+#define tryRecoverBackfill 0;
+#endif
+
 /*
 ** Read the wal-index header from the wal-index and into pWal->hdr.
 ** If the wal-header appears to be corrupt, try to reconstruct the
@@ -2130,6 +2213,7 @@ static int walIndexReadHdr(Wal *pWal, int *pChanged){
   /* Ensure that page 0 of the wal-index (the page that contains the 
   ** wal-index header) is mapped. Return early if an error occurs here.
   */
+  int nBackFill = tryRecoverBackfill(pWal);
   assert( pChanged );
   rc = walIndexPage(pWal, 0, &page0);
   if( rc!=SQLITE_OK ){
@@ -2183,7 +2267,7 @@ static int walIndexReadHdr(Wal *pWal, int *pChanged){
           ** a WRITE lock, it can only mean that the header is corrupted and
           ** needs to be reconstructed.  So run recovery to do exactly that.
           */
-          rc = walIndexRecover(pWal);
+          rc = walIndexRecover(pWal, nBackFill);
           *pChanged = 1;
         }
       }

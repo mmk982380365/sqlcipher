@@ -5078,12 +5078,185 @@ static int unixShmUnmap(
   return SQLITE_OK;
 }
 
+#ifdef SQLITE_WCDB
+void unixCheckOpenShm(unixFile *file, int *opened)
+{
+  if(file->pInode == 0){
+    /*
+    ** pInode should be assigned before the call of this routine.
+    ** Set opened to 1 to avoid further operations.
+     */
+    *opened = 1;
+  }else if(file->pInode->pShmNode){
+    *opened = 1;
+  }else{
+    *opened = 0;
+  }
+}
+
+int unixEnterMutexAndLockShm(unixFile *pDbFd)
+{
+  unixEnterMutex();
+  int shmFd = -1;                    /* File Descriptpr of SHM file */
+  
+  int opened = 0;
+  unixCheckOpenShm(pDbFd, &opened);
+  if(opened){
+    return shmFd;
+  }
+  
+  int nShmFileNameLength;            /* Size of the SHM filename in bytes */
+  char* shmFileName = 0;             /* Path of SHM file*/
+  struct stat sStat;                 /* fstat() info for database file */
+  
+  /* Call fstat() to figure out the permissions on the database file. If
+  ** a new *-shm file is created, an attempt will be made to create it
+  ** with the same permissions.
+  */
+  if(pDbFd->h>=0 && osFstat(pDbFd->h, &sStat) ){
+    goto shm_lock_finish;
+  }
+#ifdef SQLITE_SHM_DIRECTORY
+  nShmFileNameLength = sizeof(SQLITE_SHM_DIRECTORY) + 31;
+#else
+  const char *zBasePath = pDbFd->zPath;
+  nShmFileNameLength = 6 + (int)strlen(zBasePath);
+#endif
+  shmFileName = sqlite3_malloc64(nShmFileNameLength);
+  
+#ifdef SQLITE_SHM_DIRECTORY
+  sqlite3_snprintf(nShmFilename, shmFileName,
+                   SQLITE_SHM_DIRECTORY "/sqlite-shm-%x-%x",
+                   (u32)sStat.st_ino, (u32)sStat.st_dev);
+#else
+  sqlite3_snprintf(nShmFileNameLength, shmFileName, "%s-shm", zBasePath);
+  sqlite3FileSuffix3(pDbFd->zPath, zShm);
+#endif
+  
+  shmFd = robust_open(shmFileName, O_RDONLY, (sStat.st_mode&0777));
+  if(shmFd<0){
+    goto shm_lock_finish;
+  }
+  /* If this process is running as root, make sure that the SHM file
+  ** is owned by the same user that owns the original database.  Otherwise,
+  ** the original owner will not be able to connect.
+  */
+  robustFchown(shmFd, sStat.st_uid, sStat.st_gid);
+  
+  struct flock f;        /* The posix advisory locking structure */
+  f.l_type = F_WRLCK;
+  f.l_whence = SEEK_SET;
+  f.l_start = UNIX_SHM_DMS;
+  f.l_len = 1;
+  if(osSetPosixAdvisoryLock(shmFd, &f, pFile)!=SQLITE_OK){
+    robust_close(0, shmFd, __LINE__);
+    shmFd = -1;
+  }
+  
+shm_lock_finish:
+  if(shmFileName != 0){
+    sqlite3_free(shmFileName);
+  }
+  return shmFd;
+}
+
+void unixLeaveMutexAndUnLockShm(int shmFd)
+{
+  if(shmFd>=0){
+    struct flock f;        /* The posix advisory locking structure */
+    f.l_type = F_UNLCK;
+    f.l_whence = SEEK_SET;
+    f.l_start = UNIX_SHM_DMS;
+    f.l_len = 1;
+    osSetPosixAdvisoryLock(shmFd, &f, pFile);
+    robust_close(0, shmFd, __LINE__);
+    shmFd = -1;
+  }
+  unixLeaveMutex();
+}
+
+int unixReadShmFile(int shmFd, sqlite3_int64 offset, void *pBuf, int cnt)
+{
+  int rc = SQLITE_OK;                /* Result code */
+  struct stat statBuf;
+  rc = osFstat(shmFd, &statBuf);
+  SimulateIOError( rc=1 );
+  if( rc!=0 ){
+    rc = SQLITE_IOERR_FSTAT;
+    goto shm_read_finish;
+  }
+  if(statBuf.st_size == 1 || statBuf.st_size<offset+cnt){
+    rc = SQLITE_IOERR_SHORT_READ;
+    goto shm_read_finish;
+  }
+
+  /* When opening a zero-size database, the findInodeInfo() procedure
+  ** writes a single byte into that file in order to work around a bug
+  ** in the OS-X msdos filesystem.  In o gbzrder to avoid problems with upper
+  ** layers, we need to report this file size as zero even though it is
+  ** really 1.   Ticket #3260.
+  */
+  int got;
+  int prior = 0;
+  int readLength = cnt;
+  char* readBuf = pBuf;
+#if (!defined(USE_PREAD) && !defined(USE_PREAD64))
+  i64 newOffset;
+#endif
+  assert( readLength==(readLength&0x1ffff) );
+  assert( shmFd>2 );
+  do{
+#if defined(USE_PREAD)
+    got = osPread(shmFd, readBuf, readLength, offset);
+    SimulateIOError( got = -1 );
+#elif defined(USE_PREAD64)
+    got = osPread64(shmFd, readBuf, readLength, offset);
+    SimulateIOError( got = -1 );
+#else
+    newOffset = lseek(shmFd, offset, SEEK_SET);
+    SimulateIOError( newOffset = -1 );
+    if( newOffset<0 ){
+      rc = -1;
+      goto shm_read_finish;
+    }
+    got = osRead(shmFd, readBuf, readLength);
+#endif
+    if( got==readLength ) break;
+    if( got<0 ){
+      if( errno==EINTR ){ got = 1; continue; }
+      prior = 0;
+      break;
+    }else if( got>0 ){
+      readLength -= got;
+      offset += got;
+      prior += got;
+      readBuf = (void*)(got + readBuf);
+    }
+  }while( got>0 );
+  if(got+prior == cnt){
+    rc = SQLITE_OK;
+  }else if(got+prior < 0){
+    rc = SQLITE_IOERR_READ;
+  }else{
+    /* Unread parts of the buffer must be zero-filled */
+    memset(&((char*)pBuf)[got+prior], 0, cnt-got-prior);
+    rc = SQLITE_IOERR_SHORT_READ;
+  }
+  
+shm_read_finish:
+  return rc;
+}
+#endif
 
 #else
-# define unixShmMap     0
-# define unixShmLock    0
-# define unixShmBarrier 0
-# define unixShmUnmap   0
+# define unixShmMap                   0
+# define unixShmLock                  0
+# define unixShmBarrier               0
+# define unixShmUnmap                 0
+# define unixCheckOpenShm             0
+# define unixEnterMutexAndLockShm     0
+# define unixLeaveMutexAndUnLockShm   0
+# define unixReadShmFile              0
 #endif /* #ifndef SQLITE_OMIT_WAL */
 
 #if SQLITE_MAX_MMAP_SIZE>0
