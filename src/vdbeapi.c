@@ -65,7 +65,11 @@ static SQLITE_NOINLINE void invokeProfileCallback(sqlite3 *db, Vdbe *p){
   assert( (db->mTrace & (SQLITE_TRACE_PROFILE|SQLITE_TRACE_XPROFILE))!=0 );
   assert( db->init.busy==0 );
   assert( p->zSql!=0 );
+#ifdef SQLITE_WCDB
+  sqlite3OsCurrentCpuTimeInt64(&iNow);
+#else
   sqlite3OsCurrentTimeInt64(db->pVfs, &iNow);
+#endif
   iElapse = (iNow - p->startTime)*1000000;
 #ifndef SQLITE_OMIT_DEPRECATED  	
   if( db->xProfile ){
@@ -606,7 +610,11 @@ static int sqlite3Step(Vdbe *p){
 #ifndef SQLITE_OMIT_TRACE
     if( (db->mTrace & (SQLITE_TRACE_PROFILE|SQLITE_TRACE_XPROFILE))!=0
         && !db->init.busy && p->zSql ){
-      sqlite3OsCurrentTimeInt64(db->pVfs, &p->startTime);
+#ifdef SQLITE_WCDB
+        sqlite3OsCurrentCpuTimeInt64(&p->startTime);
+#else
+        sqlite3OsCurrentTimeInt64(db->pVfs, &p->startTime);
+#endif
     }else{
       assert( p->startTime==0 );
     }
