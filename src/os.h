@@ -202,10 +202,6 @@ int sqlite3OsSleep(sqlite3_vfs *, int);
 int sqlite3OsGetLastError(sqlite3_vfs*);
 int sqlite3OsCurrentTimeInt64(sqlite3_vfs *, sqlite3_int64*);
 
-#ifdef SQLITE_WCDB
-int sqlite3OsCurrentCpuTimeInt64(sqlite3_int64*);
-#endif
-
 /*
 ** Convenience functions for opening and closing files using 
 ** sqlite3_malloc() to obtain space for the file-handle structure.

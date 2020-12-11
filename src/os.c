@@ -14,10 +14,6 @@
 ** architectures.
 */
 #include "sqliteInt.h"
-#ifdef SQLITE_WCDB
-#include <mach/mach_host.h>
-#include <mach/thread_act.h>
-#endif
 
 /*
 ** If we compile with the SQLITE_TEST macro set, then the following block
@@ -287,27 +283,6 @@ int sqlite3OsCurrentTimeInt64(sqlite3_vfs *pVfs, sqlite3_int64 *pTimeOut){
   }
   return rc;
 }
-
-#ifdef SQLITE_WCDB
-int sqlite3OsCurrentCpuTimeInt64(sqlite3_int64 *pTimeOut)
-{
-  kern_return_t error;
-  mach_msg_type_number_t count;
-  thread_basic_info_t thi;
-  thread_basic_info_data_t thi_data;
-  // just get time of this thread
-  count = THREAD_BASIC_INFO_COUNT;
-  thi = &thi_data;
-  error = thread_info(mach_thread_self(), THREAD_BASIC_INFO, (thread_info_t)thi, &count);
-  if( error == KERN_SUCCESS ){
-    *pTimeOut = thi->user_time.seconds * 1e3 + thi->user_time.microseconds * 1e-3;
-    *pTimeOut += thi->system_time.seconds * 1e3 + thi->system_time.microseconds * 1e-3;
-    return SQLITE_OK;
-  }else{
-    return SQLITE_ERROR;
-  }
-}
-#endif
 
 int sqlite3OsOpenMalloc(
   sqlite3_vfs *pVfs,
