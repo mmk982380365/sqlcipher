@@ -1303,7 +1303,7 @@ static int unixLogErrorAtLine(
 ** and move on.
 */
 static void robust_close(unixFile *pFile, int h, int lineno){
-  if( osClose(h) ){
+  if( close(h) ){
     unixLogErrorAtLine(SQLITE_IOERR_CLOSE, "close",
                        pFile ? pFile->zPath : 0, lineno);
   }
@@ -3483,7 +3483,7 @@ static int seekAndWriteFd(
   TIMER_START;
 
 #if defined(USE_PREAD)
-  do{ rc = (int)osPwrite(fd, pBuf, nBuf, iOff); }while( rc<0 && errno==EINTR );
+  do{ rc = (int)pwrite(fd, pBuf, nBuf, iOff); }while( rc<0 && errno==EINTR );
 #elif defined(USE_PREAD64)
   do{ rc = (int)osPwrite64(fd, pBuf, nBuf, iOff);}while( rc<0 && errno==EINTR);
 #else
@@ -3494,7 +3494,7 @@ static int seekAndWriteFd(
       rc = -1;
       break;
     }
-    rc = osWrite(fd, pBuf, nBuf);
+    rc = write(fd, pBuf, nBuf);
   }while( rc<0 && errno==EINTR );
 #endif
 
