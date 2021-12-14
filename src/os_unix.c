@@ -394,6 +394,30 @@ static int posixOpen(const char *zFile, int flags, int mode){
   return open(zFile, flags, mode);
 }
 
+/*
+** Some hook mechanisms will change the address of these functions at runtime.
+** Using wrapper function can enable these functions to support hook.
+*/
+static int posixClose(int fd){
+    return close(fd);
+}
+
+static size_t posixWrite(int fd, const void* buf,size_t nbyte){
+  return write(fd, buf, nbyte);
+}
+
+static size_t posixPWrite(int fd, const void * buf, size_t nbyte, off_t offset){
+  return pwrite(fd, buf, nbyte, offset);
+}
+
+static void* posixMMap(void *p, size_t size, int srcMode, int option, int srcFD, off_t offset){
+  return mmap(p, size, srcMode, option, srcFD, offset);
+}
+
+static int posixMunmap(void *p, size_t size){
+    return munmap(p, size);
+}
+
 /* Forward reference */
 static int openDirectory(const char*, int*);
 static int unixGetpagesize(void);
@@ -412,7 +436,7 @@ static struct unix_syscall {
   { "open",         (sqlite3_syscall_ptr)posixOpen,  0  },
 #define osOpen      ((int(*)(const char*,int,int))aSyscall[0].pCurrent)
 
-  { "close",        (sqlite3_syscall_ptr)close,      0  },
+  { "close",        (sqlite3_syscall_ptr)posixClose,      0  },
 #define osClose     ((int(*)(int))aSyscall[1].pCurrent)
 
   { "access",       (sqlite3_syscall_ptr)access,     0  },
@@ -466,11 +490,11 @@ static struct unix_syscall {
 #endif
 #define osPread64 ((ssize_t(*)(int,void*,size_t,off64_t))aSyscall[10].pCurrent)
 
-  { "write",        (sqlite3_syscall_ptr)write,      0  },
+  { "write",        (sqlite3_syscall_ptr)posixWrite, 0  },
 #define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[11].pCurrent)
 
 #if defined(USE_PREAD) || SQLITE_ENABLE_LOCKING_STYLE
-  { "pwrite",       (sqlite3_syscall_ptr)pwrite,     0  },
+  { "pwrite",       (sqlite3_syscall_ptr)posixPWrite,0  },
 #else
   { "pwrite",       (sqlite3_syscall_ptr)0,          0  },
 #endif
@@ -522,14 +546,14 @@ static struct unix_syscall {
 #define osGeteuid   ((uid_t(*)(void))aSyscall[21].pCurrent)
 
 #if !defined(SQLITE_OMIT_WAL) || SQLITE_MAX_MMAP_SIZE>0
-  { "mmap",         (sqlite3_syscall_ptr)mmap,            0 },
+  { "mmap",         (sqlite3_syscall_ptr)posixMMap,       0 },
 #else
   { "mmap",         (sqlite3_syscall_ptr)0,               0 },
 #endif
 #define osMmap ((void*(*)(void*,size_t,int,int,int,off_t))aSyscall[22].pCurrent)
 
 #if !defined(SQLITE_OMIT_WAL) || SQLITE_MAX_MMAP_SIZE>0
-  { "munmap",       (sqlite3_syscall_ptr)munmap,          0 },
+  { "munmap",       (sqlite3_syscall_ptr)posixMunmap,     0 },
 #else
   { "munmap",       (sqlite3_syscall_ptr)0,               0 },
 #endif
@@ -1303,7 +1327,7 @@ static int unixLogErrorAtLine(
 ** and move on.
 */
 static void robust_close(unixFile *pFile, int h, int lineno){
-  if( close(h) ){
+  if( osClose(h) ){
     unixLogErrorAtLine(SQLITE_IOERR_CLOSE, "close",
                        pFile ? pFile->zPath : 0, lineno);
   }
@@ -3483,7 +3507,7 @@ static int seekAndWriteFd(
   TIMER_START;
 
 #if defined(USE_PREAD)
-  do{ rc = (int)pwrite(fd, pBuf, nBuf, iOff); }while( rc<0 && errno==EINTR );
+  do{ rc = (int)osPwrite(fd, pBuf, nBuf, iOff); }while( rc<0 && errno==EINTR );
 #elif defined(USE_PREAD64)
   do{ rc = (int)osPwrite64(fd, pBuf, nBuf, iOff);}while( rc<0 && errno==EINTR);
 #else
@@ -3494,7 +3518,7 @@ static int seekAndWriteFd(
       rc = -1;
       break;
     }
-    rc = write(fd, pBuf, nBuf);
+    rc = osWrite(fd, pBuf, nBuf);
   }while( rc<0 && errno==EINTR );
 #endif
 
