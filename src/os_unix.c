@@ -6236,7 +6236,7 @@ static int unixOpen(
   unixFile *p = (unixFile *)pFile;
   int fd = -1;                   /* File descriptor returned by open() */
   int openFlags = 0;             /* Flags to pass to open() */
-  int eType = flags&0xFFFFFF00;  /* Type of file to open */
+  int eType = flags&0xFFF00;  /* Type of file to open */
   int noLock;                    /* True to omit locking primitives */
   int rc = SQLITE_OK;            /* Function Return Code */
   int ctrlFlags = 0;             /* UNIXFILE_* flags */
@@ -6244,8 +6244,8 @@ static int unixOpen(
   int isExclusive  = (flags & SQLITE_OPEN_EXCLUSIVE);
   int isDelete     = (flags & SQLITE_OPEN_DELETEONCLOSE);
   int isCreate     = (flags & SQLITE_OPEN_CREATE);
-  int isReadonly   = (flags & SQLITE_OPEN_READONLY);
-  int isReadWrite  = (flags & SQLITE_OPEN_READWRITE);
+  int isReadonly   = (flags & SQLITE_OPEN_READONLY || flags & SQLITE_OPEN_MAINDB_READONLY);
+  int isReadWrite  = (flags & SQLITE_OPEN_READWRITE && !(flags & SQLITE_OPEN_MAINDB_READONLY));
 #if SQLITE_ENABLE_LOCKING_STYLE
   int isAutoProxy  = (flags & SQLITE_OPEN_AUTOPROXY);
 #endif
@@ -6277,7 +6277,7 @@ static int unixOpen(
   **   (d) if DELETEONCLOSE is set, then CREATE must also be set.
   */
   assert((isReadonly==0 || isReadWrite==0) && (isReadWrite || isReadonly));
-  assert(isCreate==0 || isReadWrite);
+//  assert(isCreate==0 || isReadWrite);
   assert(isExclusive==0 || isCreate);
   assert(isDelete==0 || isCreate);
 
