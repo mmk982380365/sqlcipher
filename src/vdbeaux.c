@@ -1524,7 +1524,7 @@ static char *displayP4(Op *pOp, char *zTemp, int nTemp){
       break;
     }
     case P4_REAL: {
-      sqlite3_str_appendf(&x, "%.16g", *pOp->p4.pReal);
+      sqlite3_str_appendf(&x, "%.17g", *pOp->p4.pReal);
       break;
     }
     case P4_MEM: {
@@ -1534,7 +1534,7 @@ static char *displayP4(Op *pOp, char *zTemp, int nTemp){
       }else if( pMem->flags & MEM_Int ){
         sqlite3_str_appendf(&x, "%lld", pMem->u.i);
       }else if( pMem->flags & MEM_Real ){
-        sqlite3_str_appendf(&x, "%.16g", pMem->u.r);
+        sqlite3_str_appendf(&x, "%.17g", pMem->u.r);
       }else if( pMem->flags & MEM_Null ){
         zP4 = "NULL";
       }else{
