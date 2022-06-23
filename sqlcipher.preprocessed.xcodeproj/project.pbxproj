@@ -708,11 +708,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 39FFA7ED22366BD600735F05 /* Debug.xcconfig */;
 			buildSettings = {
-                VALID_ARCHS = "arm64e arm64 x86_64";
 				ARCHS = (
 					"$(ARCHS_STANDARD)",
 					arm64e,
 				);
+				VALID_ARCHS = "arm64e arm64 x86_64";
+				"VALID_ARCHS[sdk=watchos*]" = "arm64_32 armv7k";
+				"VALID_ARCHS[sdk=watchsimulator*]" = i386;
 			};
 			name = Debug;
 		};
@@ -720,11 +722,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 39FFA7EC22366BD600735F05 /* Release.xcconfig */;
 			buildSettings = {
-                VALID_ARCHS = "arm64e arm64 x86_64";
 				ARCHS = (
 					"$(ARCHS_STANDARD)",
 					arm64e,
 				);
+				VALID_ARCHS = "arm64e arm64 x86_64";
+				"VALID_ARCHS[sdk=watchos*]" = "arm64_32 armv7k";
+				"VALID_ARCHS[sdk=watchsimulator*]" = i386;
 			};
 			name = Release;
 		};
