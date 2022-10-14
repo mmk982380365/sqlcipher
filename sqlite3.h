@@ -2025,6 +2025,7 @@ struct sqlite3_mem_methods {
 #define SQLITE_CONFIG_SMALL_MALLOC        27  /* boolean */
 #define SQLITE_CONFIG_SORTERREF_SIZE      28  /* int nByte */
 #define SQLITE_CONFIG_MEMDB_MAXSIZE       29  /* sqlite3_int64 */
+#define SQLITE_CONFIG_USE_NEW_CHECKPOINT  30  /*new checkpoint logic*/
 
 /*
 ** CAPI3REF: Database Connection Configuration Options

@@ -660,6 +660,13 @@ int sqlite3_config(int op, ...){
     }
 #endif /* SQLITE_ENABLE_DESERIALIZE */
 
+#ifdef SQLITE_WCDB
+    case SQLITE_CONFIG_USE_NEW_CHECKPOINT: {
+      sqlite3GlobalConfig.useNewCheckPoint = va_arg(ap, int);
+      break;
+    }
+#endif
+
     default: {
       rc = SQLITE_ERROR;
       break;
