@@ -3462,6 +3462,7 @@ struct Sqlite3Config {
   int bInternalFunctions;           /* Internal SQL functions are visible */
   int iOnceResetThreshold;          /* When to reset OP_Once counters */
   u32 szSorterRef;                  /* Min size in bytes to use sorter-refs */
+  int useNewCheckPoint;
 };
 
 /*
