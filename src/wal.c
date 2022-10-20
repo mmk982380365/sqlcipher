@@ -1214,6 +1214,10 @@ static int walIndexRecover(Wal *pWal, int nBackFill){
     ){
       goto finished;
     }
+#ifdef SQLITE_WCDB
+    aFrameCksum[0] = pWal->hdr.aFrameCksum[0];
+    aFrameCksum[1] = pWal->hdr.aFrameCksum[1];
+#endif
 
     /* Verify that the version number on the WAL format is one that
     ** are able to understand */
