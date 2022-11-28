@@ -63,6 +63,10 @@ void sqlite3_unimpeded(sqlite3 *db, int unimpeded);
 
 void sqlite3_revertCommitOrder(sqlite3 *db);
 
+void* sqlite3_getCipherContext(sqlite3 *db, const char* schema);
+
+void* sqlite3Codec(void *iCtx, void *data, unsigned int pgno, int mode);
+
 #endif // SQLITE_WCDB
 
 #endif /* SQLITE3_WCDB_H */
