@@ -65,6 +65,8 @@ void sqlite3_revertCommitOrder(sqlite3 *db);
 
 void* sqlite3_getCipherContext(sqlite3 *db, const char* schema);
 
+int sqlcipher_codec_ctx_get_reservesize(void *ctx);
+
 void* sqlite3Codec(void *iCtx, void *data, unsigned int pgno, int mode);
 
 #endif // SQLITE_WCDB
