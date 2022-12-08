@@ -1943,10 +1943,17 @@ static int walCheckpoint(
           i64 szDb = pWal->hdr.nPage*(i64)szPage;
           testcase( IS_BIG_INT(szDb) );
           rc = sqlite3OsTruncate(pWal->pDbFd, szDb);
+#ifndef SQLITE_WCDB_RECOVER_NBACKFILL
+          if( rc==SQLITE_OK ){
+            rc = sqlite3OsSync(pWal->pDbFd, CKPT_SYNC_FLAGS(sync_flags));
+          }
+#endif
         }
+#ifdef SQLITE_WCDB_RECOVER_NBACKFILL
         if( rc==SQLITE_OK ){
           rc = sqlite3OsSync(pWal->pDbFd, CKPT_SYNC_FLAGS(sync_flags));
         }
+#endif
         if( rc==SQLITE_OK ){
           pInfo->nBackfill = mxSafeFrame;
         }
@@ -2296,7 +2303,11 @@ static int walIndexReadHdr(Wal *pWal, int *pChanged){
   /* Ensure that page 0 of the wal-index (the page that contains the 
   ** wal-index header) is mapped. Return early if an error occurs here.
   */
+#ifdef SQLITE_WCDB_RECOVER_NBACKFILL
   int nBackFill = tryRecoverBackfill(pWal);
+#else
+  int nBackFill = 0;
+#endif
   assert( pChanged );
   rc = walIndexPage(pWal, 0, &page0);
   if( rc!=SQLITE_OK ){
