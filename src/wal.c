@@ -1943,13 +1943,13 @@ static int walCheckpoint(
           i64 szDb = pWal->hdr.nPage*(i64)szPage;
           testcase( IS_BIG_INT(szDb) );
           rc = sqlite3OsTruncate(pWal->pDbFd, szDb);
-#ifndef SQLITE_WCDB_RECOVER_NBACKFILL
+#ifndef SQLITE_WCDB_IMPROVED_CHECKPOINT
           if( rc==SQLITE_OK ){
             rc = sqlite3OsSync(pWal->pDbFd, CKPT_SYNC_FLAGS(sync_flags));
           }
 #endif
         }
-#ifdef SQLITE_WCDB_RECOVER_NBACKFILL
+#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
         if( rc==SQLITE_OK ){
           rc = sqlite3OsSync(pWal->pDbFd, CKPT_SYNC_FLAGS(sync_flags));
         }
@@ -2006,9 +2006,8 @@ static int walCheckpoint(
       }
     }
   }
-#ifdef SQLITE_WCDB
+#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
   else if(rc==SQLITE_OK
-            && sqlite3GlobalConfig.useNewCheckPoint
             && eMode==SQLITE_CHECKPOINT_PASSIVE
             && pInfo->nBackfill>0
             && pInfo->nBackfill==pWal->hdr.mxFrame
@@ -2303,7 +2302,7 @@ static int walIndexReadHdr(Wal *pWal, int *pChanged){
   /* Ensure that page 0 of the wal-index (the page that contains the 
   ** wal-index header) is mapped. Return early if an error occurs here.
   */
-#ifdef SQLITE_WCDB_RECOVER_NBACKFILL
+#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
   int nBackFill = tryRecoverBackfill(pWal);
 #else
   int nBackFill = 0;
@@ -3535,21 +3534,17 @@ int sqlite3WalFrames(
   */
   iFrame = pWal->hdr.mxFrame;
   if( iFrame==0 ){
-#ifdef SQLITE_WCDB
-    if( sqlite3GlobalConfig.useNewCheckPoint ){
-      if( pChange) {
-        rc = walWriteHeader(pWal, szPage, sync_flags);
-      } else {
-        i64 nSize = 0;
-        rc = sqlite3OsFileSize(pWal->pWalFd, &nSize);
-        if( rc==SQLITE_OK && nSize<WAL_HDRSIZE){
-          rc = walWriteHeader(pWal, szPage, sync_flags);
-        } else if (pWal->szPage == 0){
-          pWal->szPage = szPage;
-        }
-      }
-    } else {
+#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
+    if( pChange) {
       rc = walWriteHeader(pWal, szPage, sync_flags);
+    } else {
+      i64 nSize = 0;
+      rc = sqlite3OsFileSize(pWal->pWalFd, &nSize);
+      if( rc==SQLITE_OK && nSize<WAL_HDRSIZE){
+        rc = walWriteHeader(pWal, szPage, sync_flags);
+      } else if (pWal->szPage == 0){
+        pWal->szPage = szPage;
+      }
     }
 #else
     rc = walWriteHeader(pWal, szPage, sync_flags);
