@@ -5103,8 +5103,9 @@ static int unixShmUnmap(
 }
 
 #ifdef SQLITE_WCDB
-void unixCheckOpenShm(unixFile *file, int *opened)
+void unixCheckOpenShm(sqlite3_file *fd, int *opened)
 {
+  unixFile *file = (unixFile*)fd;
   if(file->pInode == 0){
     /*
     ** pInode should be assigned before the call of this routine.
@@ -5118,17 +5119,18 @@ void unixCheckOpenShm(unixFile *file, int *opened)
   }
 }
 
-int unixEnterMutexAndLockShm(unixFile *pDbFd)
+int unixEnterMutexAndLockShm(sqlite3_file *fd)
 {
   unixEnterMutex();
   int shmFd = -1;                    /* File Descriptpr of SHM file */
   
   int opened = 0;
-  unixCheckOpenShm(pDbFd, &opened);
+  unixCheckOpenShm(fd, &opened);
   if(opened){
     return shmFd;
   }
   
+  unixFile *pDbFd = (unixFile*)fd;
   int nShmFileNameLength;            /* Size of the SHM filename in bytes */
   char* shmFileName = 0;             /* Path of SHM file*/
   struct stat sStat;                 /* fstat() info for database file */

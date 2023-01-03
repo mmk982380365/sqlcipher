@@ -2199,7 +2199,7 @@ static int walIndexTryHdr(Wal *pWal, int *pChanged){
 */
 #define WAL_RETRY  (-1)
 
-#ifdef SQLITE_WCDB
+#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
 extern void unixCheckOpenShm(sqlite3_file *file, int *opened);
 extern int  unixEnterMutexAndLockShm(sqlite3_file *pDbFd);
 extern void unixLeaveMutexAndUnLockShm(int shmFd);
