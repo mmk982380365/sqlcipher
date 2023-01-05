@@ -1578,6 +1578,9 @@ static int sqliteDefaultBusyCallback(
 ** returns 0, the operation aborts with an SQLITE_BUSY error.
 */
 int sqlite3InvokeBusyHandler(BusyHandler *p, sqlite3_file *pFile){
+#if SQLITE_WCDB_SIGNAL_RETRY
+  return 1;
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   int rc;
   if( p->xBusyHandler==0 || p->nBusy<0 ) return 0;
   if( p->bExtraFileArg ){

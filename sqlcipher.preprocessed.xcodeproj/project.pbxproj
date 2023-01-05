@@ -19,7 +19,10 @@
 		23F0FDAF215F2473008399FB /* wal.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3611FB0712A0075F021 /* wal.h */; };
 		23F0FDB0215F2473008399FB /* mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3741FB0716A0075F021 /* mutex.h */; };
 		23F0FDB1215F2473008399FB /* os_setup.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3801FB071790075F021 /* os_setup.h */; };
+		23F0FDB2215F2473008399FB /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3831FB0717D0075F021 /* queue.h */; };
 		23F0FDB3215F2473008399FB /* os_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA37C1FB071770075F021 /* os_common.h */; };
+		23F0FDB4215F2473008399FB /* os_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA37D1FB071780075F021 /* os_wcdb.h */; };
+		23F0FDB5215F2473008399FB /* mutex_wcdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3861FB071870075F021 /* mutex_wcdb.h */; };
 		23F0FDB6215F2473008399FB /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3891FB0718E0075F021 /* os.h */; };
 		23F0FDB7215F2473008399FB /* pager.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3911FB071A60075F021 /* pager.h */; };
 		23F0FDB8215F2473008399FB /* pcache.h in Headers */ = {isa = PBXBuildFile; fileRef = 232DA3941FB071AB0075F021 /* pcache.h */; };
@@ -50,6 +53,7 @@
 		23F5BBD920887FAB000CCD37 /* parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3A21FB0822A0075F021 /* parse.c */; };
 		23F5BBDA20887FAB000CCD37 /* date.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3E71FB0836A0075F021 /* date.c */; };
 		23F5BBDB20887FAB000CCD37 /* fts3_unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA34B1FB070F10075F021 /* fts3_unicode.c */; };
+		23F5BBDC20887FAB000CCD37 /* mutex_wcdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3871FB071870075F021 /* mutex_wcdb.c */; };
 		23F5BBDD20887FAB000CCD37 /* sqlite3rbu.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3D11FB082DA0075F021 /* sqlite3rbu.c */; };
 		23F5BBDE20887FAB000CCD37 /* fts3_tokenizer.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3451FB070EF0075F021 /* fts3_tokenizer.c */; };
 		23F5BBDF20887FAB000CCD37 /* fts3_write.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3491FB070F00075F021 /* fts3_write.c */; };
@@ -58,6 +62,7 @@
 		23F5BBE220887FAB000CCD37 /* wal.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3601FB071290075F021 /* wal.c */; };
 		23F5BBE320887FAB000CCD37 /* fts3_porter.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA33F1FB070D60075F021 /* fts3_porter.c */; };
 		23F5BBE420887FAB000CCD37 /* memjournal.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3761FB0716A0075F021 /* memjournal.c */; };
+		23F5BBE520887FAB000CCD37 /* os_wcdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA37E1FB071780075F021 /* os_wcdb.c */; };
 		23F5BBE620887FAB000CCD37 /* os.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA38A1FB0718E0075F021 /* os.c */; };
 		23F5BBE720887FAB000CCD37 /* vdbeaux.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3D91FB083660075F021 /* vdbeaux.c */; };
 		23F5BBE820887FAB000CCD37 /* mutex.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3751FB0716A0075F021 /* mutex.c */; };
@@ -105,6 +110,7 @@
 		23F5BC1220887FAB000CCD37 /* fts3_expr.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3381FB070C00075F021 /* fts3_expr.c */; };
 		23F5BC1320887FAB000CCD37 /* tokenize.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA39E1FB082030075F021 /* tokenize.c */; };
 		23F5BC1420887FAB000CCD37 /* pager.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3901FB071A60075F021 /* pager.c */; };
+		23F5BC1520887FAB000CCD37 /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3841FB0717D0075F021 /* queue.c */; };
 		23F5BC1620887FAB000CCD37 /* update.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3BC1FB082A80075F021 /* update.c */; };
 		23F5BC1720887FAB000CCD37 /* ctime.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3E51FB083690075F021 /* ctime.c */; };
 		23F5BC1820887FAB000CCD37 /* opcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 232DA3CB1FB082B30075F021 /* opcodes.c */; };
@@ -197,8 +203,14 @@
 		232DA3761FB0716A0075F021 /* memjournal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memjournal.c; sourceTree = "<group>"; };
 		232DA3771FB0716A0075F021 /* mutex_noop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mutex_noop.c; sourceTree = "<group>"; };
 		232DA37C1FB071770075F021 /* os_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os_common.h; sourceTree = "<group>"; };
+		232DA37D1FB071780075F021 /* os_wcdb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os_wcdb.h; sourceTree = "<group>"; };
+		232DA37E1FB071780075F021 /* os_wcdb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = os_wcdb.c; sourceTree = "<group>"; };
 		232DA37F1FB071780075F021 /* os_unix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = os_unix.c; sourceTree = "<group>"; };
 		232DA3801FB071790075F021 /* os_setup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os_setup.h; sourceTree = "<group>"; };
+		232DA3831FB0717D0075F021 /* queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = queue.h; sourceTree = "<group>"; };
+		232DA3841FB0717D0075F021 /* queue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = queue.c; sourceTree = "<group>"; };
+		232DA3861FB071870075F021 /* mutex_wcdb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mutex_wcdb.h; sourceTree = "<group>"; };
+		232DA3871FB071870075F021 /* mutex_wcdb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mutex_wcdb.c; sourceTree = "<group>"; };
 		232DA3891FB0718E0075F021 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
 		232DA38A1FB0718E0075F021 /* os.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = os.c; sourceTree = "<group>"; };
 		232DA38C1FB071970075F021 /* threads.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = threads.c; sourceTree = "<group>"; };
@@ -375,8 +387,14 @@
 				232DA3731FB071690075F021 /* mutex_unix.c */,
 				232DA3741FB0716A0075F021 /* mutex.h */,
 				232DA3801FB071790075F021 /* os_setup.h */,
+				232DA3841FB0717D0075F021 /* queue.c */,
+				232DA3831FB0717D0075F021 /* queue.h */,
 				232DA37F1FB071780075F021 /* os_unix.c */,
+				232DA37E1FB071780075F021 /* os_wcdb.c */,
 				232DA37C1FB071770075F021 /* os_common.h */,
+				232DA37D1FB071780075F021 /* os_wcdb.h */,
+				232DA3871FB071870075F021 /* mutex_wcdb.c */,
+				232DA3861FB071870075F021 /* mutex_wcdb.h */,
 				232DA38A1FB0718E0075F021 /* os.c */,
 				232DA3891FB0718E0075F021 /* os.h */,
 				232DA38C1FB071970075F021 /* threads.c */,
@@ -496,16 +514,19 @@
 				23F0FDBF215F2473008399FB /* sqlcipher.h in Headers */,
 				23F0FDC0215F2473008399FB /* sqlite3rbu.h in Headers */,
 				23F0FDA8215F2473008399FB /* keywordhash.h in Headers */,
+				23F0FDB4215F2473008399FB /* os_wcdb.h in Headers */,
 				23F0FDC6215F2473008399FB /* sqliteInt.h in Headers */,
 				23F0FDBA215F2473008399FB /* sqlite3rtree.h in Headers */,
 				23F0FDAC215F2473008399FB /* fts3_hash.h in Headers */,
 				23F0FDC8215F2473008399FB /* vdbe.h in Headers */,
 				23F0FDBD215F2473008399FB /* pragma.h in Headers */,
 				23F0FDB1215F2473008399FB /* os_setup.h in Headers */,
+				23F0FDB5215F2473008399FB /* mutex_wcdb.h in Headers */,
 				23F0FDBB215F2473008399FB /* parse.h in Headers */,
 				23F0FDA9215F2473008399FB /* btreeInt.h in Headers */,
 				23F0FDAB215F2473008399FB /* fts5.h in Headers */,
 				23F0FDB0215F2473008399FB /* mutex.h in Headers */,
+				23F0FDB2215F2473008399FB /* queue.h in Headers */,
 				23F0FDAD215F2473008399FB /* fts3.h in Headers */,
 				23F0FDCA215F2473008399FB /* sqliteicu.h in Headers */,
 				23F0FDAE215F2473008399FB /* fts3Int.h in Headers */,
@@ -598,6 +619,7 @@
 				23F5BBD920887FAB000CCD37 /* parse.c in Sources */,
 				23F5BBDA20887FAB000CCD37 /* date.c in Sources */,
 				23F5BBDB20887FAB000CCD37 /* fts3_unicode.c in Sources */,
+				23F5BBDC20887FAB000CCD37 /* mutex_wcdb.c in Sources */,
 				23F5BBDD20887FAB000CCD37 /* sqlite3rbu.c in Sources */,
 				23F5BBDE20887FAB000CCD37 /* fts3_tokenizer.c in Sources */,
 				23F5BBDF20887FAB000CCD37 /* fts3_write.c in Sources */,
@@ -606,6 +628,7 @@
 				23F5BBE220887FAB000CCD37 /* wal.c in Sources */,
 				23F5BBE320887FAB000CCD37 /* fts3_porter.c in Sources */,
 				23F5BBE420887FAB000CCD37 /* memjournal.c in Sources */,
+				23F5BBE520887FAB000CCD37 /* os_wcdb.c in Sources */,
 				23F5BBE620887FAB000CCD37 /* os.c in Sources */,
 				23F5BBE720887FAB000CCD37 /* vdbeaux.c in Sources */,
 				23F5BBE820887FAB000CCD37 /* mutex.c in Sources */,
@@ -653,6 +676,7 @@
 				23F5BC1220887FAB000CCD37 /* fts3_expr.c in Sources */,
 				23F5BC1320887FAB000CCD37 /* tokenize.c in Sources */,
 				23F5BC1420887FAB000CCD37 /* pager.c in Sources */,
+				23F5BC1520887FAB000CCD37 /* queue.c in Sources */,
 				23F5BC1620887FAB000CCD37 /* update.c in Sources */,
 				23F5BC1720887FAB000CCD37 /* ctime.c in Sources */,
 				23F5BC1820887FAB000CCD37 /* opcodes.c in Sources */,

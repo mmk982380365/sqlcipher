@@ -3380,6 +3380,9 @@ int sqlite3BtreeBeginTrans(Btree *p, int wrflag, int *pSchemaVersion){
 
   pBt->btsFlags &= ~BTS_INITIALLY_EMPTY;
   if( pBt->nPage==0 ) pBt->btsFlags |= BTS_INITIALLY_EMPTY;
+#if SQLITE_WCDB_SIGNAL_RETRY
+  WCDBPagerSetWait(pBt->pPager, 1);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
   do {
     /* Call lockBtree() until either pBt->pPage1 is populated or
     ** lockBtree() returns something other than SQLITE_OK. lockBtree()
@@ -3412,6 +3415,10 @@ int sqlite3BtreeBeginTrans(Btree *p, int wrflag, int *pSchemaVersion){
   }while( (rc&0xFF)==SQLITE_BUSY && pBt->inTransaction==TRANS_NONE &&
           btreeInvokeBusyHandler(pBt) );
   sqlite3PagerResetLockTimeout(pBt->pPager);
+  
+#if SQLITE_WCDB_SIGNAL_RETRY
+  WCDBPagerSetWait(pBt->pPager, 0);
+#endif// SQLITE_WCDB_SIGNAL_RETRY
 
   if( rc==SQLITE_OK ){
     if( p->inTrans==TRANS_NONE ){
