@@ -713,9 +713,6 @@
 					arm64e,
 				);
 				DEAD_CODE_STRIPPING = YES;
-				VALID_ARCHS = "arm64e arm64 x86_64";
-				"VALID_ARCHS[sdk=watchos*]" = "arm64_32 armv7k";
-				"VALID_ARCHS[sdk=watchsimulator*]" = i386;
 			};
 			name = Debug;
 		};
@@ -728,9 +725,6 @@
 					arm64e,
 				);
 				DEAD_CODE_STRIPPING = YES;
-				VALID_ARCHS = "arm64e arm64 x86_64";
-				"VALID_ARCHS[sdk=watchos*]" = "arm64_32 armv7k";
-				"VALID_ARCHS[sdk=watchsimulator*]" = i386;
 			};
 			name = Release;
 		};
