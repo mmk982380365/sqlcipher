@@ -1592,6 +1592,10 @@ static int unixCheckReservedLock(sqlite3_file *id, int *pResOut){
   return rc;
 }
 
+#if WCDB_WECHAT_IOS
+// iOS微信内不使用 shm lock
+#define osSetPosixAdvisoryLock(h,x,t) SQLITE_OK
+#else
 /*
 ** Set a posix-advisory-lock.
 **
@@ -1605,30 +1609,29 @@ static int unixCheckReservedLock(sqlite3_file *id, int *pResOut){
 ** If SQLITE_ENABLE_SETLK_TIMEOUT is not defined, then do a non-blocking
 ** attempt to set the lock.
 */
-//#ifndef SQLITE_ENABLE_SETLK_TIMEOUT
-//# define osSetPosixAdvisoryLock(h,x,t) osFcntl(h,F_SETLK,x)
-//#else
-//static int osSetPosixAdvisoryLock(
-//  int h,                /* The file descriptor on which to take the lock */
-//  struct flock *pLock,  /* The description of the lock */
-//  unixFile *pFile       /* Structure holding timeout value */
-//){
-//  int rc = osFcntl(h,F_SETLK,pLock);
-//  while( rc<0 && pFile->iBusyTimeout>0 ){
-//    /* On systems that support some kind of blocking file lock with a timeout,
-//    ** make appropriate changes here to invoke that blocking file lock.  On
-//    ** generic posix, however, there is no such API.  So we simply try the
-//    ** lock once every millisecond until either the timeout expires, or until
-//    ** the lock is obtained. */
-//    usleep(1000);
-//    rc = osFcntl(h,F_SETLK,pLock);
-//    pFile->iBusyTimeout--;
-//  }
-//  return rc;
-//}
-//#endif /* SQLITE_ENABLE_SETLK_TIMEOUT */
-// 微信内不使用 shm lock
-#define osSetPosixAdvisoryLock(h,x,t) SQLITE_OK
+#ifndef SQLITE_ENABLE_SETLK_TIMEOUT
+# define osSetPosixAdvisoryLock(h,x,t) osFcntl(h,F_SETLK,x)
+#else
+static int osSetPosixAdvisoryLock(
+  int h,                /* The file descriptor on which to take the lock */
+  struct flock *pLock,  /* The description of the lock */
+  unixFile *pFile       /* Structure holding timeout value */
+){
+  int rc = osFcntl(h,F_SETLK,pLock);
+  while( rc<0 && pFile->iBusyTimeout>0 ){
+    /* On systems that support some kind of blocking file lock with a timeout,
+    ** make appropriate changes here to invoke that blocking file lock.  On
+    ** generic posix, however, there is no such API.  So we simply try the
+    ** lock once every millisecond until either the timeout expires, or until
+    ** the lock is obtained. */
+    usleep(1000);
+    rc = osFcntl(h,F_SETLK,pLock);
+    pFile->iBusyTimeout--;
+  }
+  return rc;
+}
+#endif /* SQLITE_ENABLE_SETLK_TIMEOUT */
+#endif
 
 /*
 ** Attempt to set a system-lock on the file pFile.  The lock is 
