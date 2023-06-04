@@ -4418,6 +4418,119 @@ shmpage_out:
   sqlite3_mutex_leave(pShmNode->mutex);
   return rc;
 }
+      
+#ifdef SQLITE_WCDB
+void checkOpenShm(sqlite3_file *fd, int *opened)
+{
+  winFile *pDbFd=(winFile*)fd;
+  if(pDbFd->pShm!=NULL){
+    *opened = 1;
+    return;
+  }
+  int pathLength = sqlite3Strlen30(pDbFd->zPath);
+  char* shmName = sqlite3MallocZero( pathLength + 17 );
+  if(shmName == NULL) {
+    // No memory. Set opened to 1 to avoid further operations.
+    *opened = 1;
+    return;
+  }
+  sqlite3_snprintf(pathLength+15, shmName, "%s-shm", pDbFd->zPath);
+  sqlite3FileSuffix3(pDbFd->zPath, shmName);
+
+  winShmNode *pShmNode = 0;
+  *opened = 0;
+
+  winShmEnterMutex();
+  for(pShmNode=winShmNodeList; pShmNode; pShmNode=pShmNode->pNext){
+      if( sqlite3StrICmp(pShmNode->zFilename, shmName)==0 ) {
+        *opened = 1;
+        break;
+      }
+  }
+  winShmLeaveMutex();
+}
+      
+sqlite3_int64 enterMutexAndLockShm(sqlite3_file *fd) {
+  winShmEnterMutex();
+  HANDLE shmHandle = INVALID_HANDLE_VALUE;
+  winFile *pDbFd = (winFile*)fd;
+
+  int pathLength = sqlite3Strlen30(pDbFd->zPath);
+  char* shmName = sqlite3MallocZero( pathLength + 17 );
+  if(shmName == NULL) {
+    goto shm_lock_finish;
+  }
+  sqlite3_snprintf(pathLength+15, shmName, "%s-shm", pDbFd->zPath);
+  sqlite3FileSuffix3(pDbFd->zPath, shmName);
+
+  winShmNode *pShmNode = 0;
+  int checked = 0;
+
+  for(pShmNode = winShmNodeList; pShmNode; pShmNode=pShmNode->pNext){
+    if( sqlite3StrICmp(pShmNode->zFilename, shmName)==0 ) {
+      checked = 1;
+      break;
+    }
+  }
+  if(checked) {
+    goto shm_lock_finish;
+  }
+  int inFlags = SQLITE_OPEN_WAL | SQLITE_OPEN_READONLY;
+  int outFlags = SQLITE_OPEN_READONLY;
+  winFile winFile;
+
+  int rc = winOpen(pDbFd->pVfs, shmName, (sqlite3_file*)&winFile, inFlags, &outFlags);
+  if (rc != SQLITE_OK || winFile.h == INVALID_HANDLE_VALUE) {
+    goto shm_lock_finish;
+  }
+  
+  rc = winLockFile(&winFile.h, LOCKFILE_FAIL_IMMEDIATELY, WIN_SHM_DMS, 0, 1, 0);
+  if (rc != SQLITE_OK) {
+    winUnlockFile(&winFile.h, WIN_SHM_DMS, 0, 1, 0);
+    winClose((sqlite3_file *)&winFile);
+    goto shm_lock_finish;
+  }
+  
+  shmHandle = winFile.h;
+    
+shm_lock_finish:
+  if(shmName != 0){
+    sqlite3_free(shmName);
+  }
+  return (sqlite3_int64)shmHandle;
+}
+
+void leaveMutexAndUnLockShm(sqlite3_int64 handle) {
+  HANDLE shmHandle = (HANDLE)handle;
+  if (shmHandle != 0 && shmHandle != INVALID_HANDLE_VALUE) {
+    winUnlockFile(&shmHandle, WIN_SHM_DMS, 0, 1, 0);
+    int rc, cnt = 0;
+    do {
+      rc = osCloseHandle(shmHandle);
+      /* SimulateIOError( rc=0; cnt=MX_CLOSE_ATTEMPT; ); */
+    } while (rc == 0 && ++cnt < MX_CLOSE_ATTEMPT && (sqlite3_win32_sleep(100), 1));
+  }
+  winShmLeaveMutex();
+}
+
+int readShmFile(sqlite3_int64 handle, sqlite3_int64 offset, void *pBuf, int cnt) {
+  winFile winFile;
+  memset((void*)&winFile, 0, sizeof(winFile));
+  winFile.h = (HANDLE)handle;
+  winFile.zPath = "";
+  sqlite3_int64 size = 0;
+  int rc = SQLITE_OK;
+  rc = winFileSize((sqlite3_file *)&winFile, &size);
+  if(rc != SQLITE_OK){
+    return rc;
+  }
+  if(size<offset+cnt){
+    return SQLITE_IOERR_SHORT_READ;
+  }
+  return winRead((sqlite3_file *)&winFile, pBuf, cnt, offset);
+}
+
+#endif
 
 #else
 # define winShmMap     0

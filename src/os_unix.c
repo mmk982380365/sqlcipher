@@ -5106,7 +5106,7 @@ static int unixShmUnmap(
 }
 
 #ifdef SQLITE_WCDB
-void unixCheckOpenShm(sqlite3_file *fd, int *opened)
+void checkOpenShm(sqlite3_file *fd, int *opened)
 {
   unixFile *file = (unixFile*)fd;
   if(file->pInode == 0){
@@ -5122,13 +5122,13 @@ void unixCheckOpenShm(sqlite3_file *fd, int *opened)
   }
 }
 
-int unixEnterMutexAndLockShm(sqlite3_file *fd)
+sqlite_int64 enterMutexAndLockShm(sqlite3_file *fd)
 {
   unixEnterMutex();
-  int shmFd = -1;                    /* File Descriptpr of SHM file */
+  sqlite_int64 shmFd = -1;                    /* File Descriptpr of SHM file */
   
   int opened = 0;
-  unixCheckOpenShm(fd, &opened);
+  checkOpenShm(fd, &opened);
   if(opened){
     return shmFd;
   }
@@ -5159,7 +5159,7 @@ int unixEnterMutexAndLockShm(sqlite3_file *fd)
                    (u32)sStat.st_ino, (u32)sStat.st_dev);
 #else
   sqlite3_snprintf(nShmFileNameLength, shmFileName, "%s-shm", zBasePath);
-  sqlite3FileSuffix3(pDbFd->zPath, zShm);
+  sqlite3FileSuffix3(pDbFd->zPath, shmFileName);
 #endif
   
   shmFd = robust_open(shmFileName, O_RDONLY, (sStat.st_mode&0777));
@@ -5189,7 +5189,7 @@ shm_lock_finish:
   return shmFd;
 }
 
-void unixLeaveMutexAndUnLockShm(int shmFd)
+void leaveMutexAndUnLockShm(sqlite_int64 shmFd)
 {
   if(shmFd>=0){
     struct flock f;        /* The posix advisory locking structure */
@@ -5204,76 +5204,22 @@ void unixLeaveMutexAndUnLockShm(int shmFd)
   unixLeaveMutex();
 }
 
-int unixReadShmFile(int shmFd, sqlite3_int64 offset, void *pBuf, int cnt)
+int readShmFile(int shmFd, sqlite3_int64 offset, void *pBuf, int cnt)
 {
-  int rc = SQLITE_OK;                /* Result code */
-  struct stat statBuf;
-  rc = osFstat(shmFd, &statBuf);
-  SimulateIOError( rc=1 );
-  if( rc!=0 ){
-    rc = SQLITE_IOERR_FSTAT;
-    goto shm_read_finish;
+  unixFile unixFile;
+  memset((void*)&unixFile, 0, sizeof(unixFile));
+  unixFile.h = shmFd;
+  unixFile.zPath = "";
+  int rc = SQLITE_OK;
+  sqlite_int64 size = 0;
+  rc = unixFileSize((sqlite3_file*)&unixFile, &size);
+  if(rc != SQLITE_OK) {
+    return rc;
   }
-  if(statBuf.st_size == 1 || statBuf.st_size<offset+cnt){
-    rc = SQLITE_IOERR_SHORT_READ;
-    goto shm_read_finish;
+  if(size < offset + cnt){
+    return SQLITE_IOERR_SHORT_READ;
   }
-
-  /* When opening a zero-size database, the findInodeInfo() procedure
-  ** writes a single byte into that file in order to work around a bug
-  ** in the OS-X msdos filesystem.  In o gbzrder to avoid problems with upper
-  ** layers, we need to report this file size as zero even though it is
-  ** really 1.   Ticket #3260.
-  */
-  int got;
-  int prior = 0;
-  int readLength = cnt;
-  char* readBuf = pBuf;
-#if (!defined(USE_PREAD) && !defined(USE_PREAD64))
-  i64 newOffset;
-#endif
-  assert( readLength==(readLength&0x1ffff) );
-  assert( shmFd>2 );
-  do{
-#if defined(USE_PREAD)
-    got = osPread(shmFd, readBuf, readLength, offset);
-    SimulateIOError( got = -1 );
-#elif defined(USE_PREAD64)
-    got = osPread64(shmFd, readBuf, readLength, offset);
-    SimulateIOError( got = -1 );
-#else
-    newOffset = lseek(shmFd, offset, SEEK_SET);
-    SimulateIOError( newOffset = -1 );
-    if( newOffset<0 ){
-      rc = -1;
-      goto shm_read_finish;
-    }
-    got = osRead(shmFd, readBuf, readLength);
-#endif
-    if( got==readLength ) break;
-    if( got<0 ){
-      if( errno==EINTR ){ got = 1; continue; }
-      prior = 0;
-      break;
-    }else if( got>0 ){
-      readLength -= got;
-      offset += got;
-      prior += got;
-      readBuf = (void*)(got + readBuf);
-    }
-  }while( got>0 );
-  if(got+prior == cnt){
-    rc = SQLITE_OK;
-  }else if(got+prior < 0){
-    rc = SQLITE_IOERR_READ;
-  }else{
-    /* Unread parts of the buffer must be zero-filled */
-    memset(&((char*)pBuf)[got+prior], 0, cnt-got-prior);
-    rc = SQLITE_IOERR_SHORT_READ;
-  }
-  
-shm_read_finish:
-  return rc;
+  return unixRead((sqlite3_file*)&unixFile, pBuf, cnt, offset);
 }
 #endif
 
