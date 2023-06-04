@@ -2200,10 +2200,10 @@ static int walIndexTryHdr(Wal *pWal, int *pChanged){
 #define WAL_RETRY  (-1)
 
 #ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
-extern void unixCheckOpenShm(sqlite3_file *file, int *opened);
-extern int  unixEnterMutexAndLockShm(sqlite3_file *pDbFd);
-extern void unixLeaveMutexAndUnLockShm(int shmFd);
-extern int  unixReadShmFile(int shmFd, sqlite3_int64 offset, void *pBuf, int cnt);
+extern void checkOpenShm(sqlite3_file *file, int *opened);
+extern sqlite_int64  enterMutexAndLockShm(sqlite3_file *pDbFd);
+extern void leaveMutexAndUnLockShm(sqlite_int64 shmFd);
+extern int  readShmFile(int shmFd, sqlite3_int64 offset, void *pBuf, int cnt);
 
 static int tryRecoverBackfill(Wal *pWal)
 {
@@ -2215,7 +2215,7 @@ static int tryRecoverBackfill(Wal *pWal)
     return 0;
   }
   int opened = 0;
-  unixCheckOpenShm(pWal->pDbFd, &opened);
+  checkOpenShm(pWal->pDbFd, &opened);
   if(opened){
     return 0;
   }
@@ -2227,10 +2227,10 @@ static int tryRecoverBackfill(Wal *pWal)
   }
   
   int nBackFill = 0;
-  int shmFd = -1;
+  sqlite_int64 shmFd = -1;
   
-  shmFd = unixEnterMutexAndLockShm(pWal->pDbFd);
-  if(shmFd < 0){
+  shmFd = enterMutexAndLockShm(pWal->pDbFd);
+  if(shmFd == -1 || shmFd == 0){
     goto recover_backfill_finish;
   }
   
@@ -2238,7 +2238,7 @@ static int tryRecoverBackfill(Wal *pWal)
   u32 aCksum[2];                  /* Checksum on the header content */
   WalCkptInfo *pInfo;             /* Checkpoint information in wal-index */
   int shmHdrSize = sizeof(WalIndexHdr);
-  rc = unixReadShmFile(shmFd, 0, shmBuf, WALINDEX_HDR_SIZE);
+  rc = readShmFile(shmFd, 0, shmBuf, WALINDEX_HDR_SIZE);
   if(rc != SQLITE_OK){
     goto recover_backfill_finish;
   }
@@ -2275,7 +2275,7 @@ static int tryRecoverBackfill(Wal *pWal)
   nBackFill = pInfo->nBackfill;
   
   recover_backfill_finish:
-  unixLeaveMutexAndUnLockShm(shmFd);
+  leaveMutexAndUnLockShm(shmFd);
   return nBackFill;
 }
 #else
