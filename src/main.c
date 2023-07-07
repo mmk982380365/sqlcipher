@@ -3639,6 +3639,111 @@ void sqlite3_thread_cleanup(void){
 }
 #endif
 
+#ifdef SQLITE_WCDB
+
+SQLITE_API int sqlite3_table_meta(
+  sqlite3 *db,
+  const char *tableName,
+  int *pAutoIncrement,
+  int *pWithoutRowid,
+  const char **pIntegerPrimaryKey
+) {
+  if( db == 0 || tableName==0 ){
+    return SQLITE_MISUSE_BKPT;
+  }
+  int rc;
+  char *zErrMsg = 0;
+  Table *pTab = 0;
+  /* Ensure the database schema has been loaded */
+  sqlite3_mutex_enter(db->mutex);
+  sqlite3BtreeEnterAll(db);
+  rc = sqlite3Init(db, &zErrMsg);
+  if( SQLITE_OK!=rc ){
+    goto error_out;
+  }
+
+  /* Locate the table in question */
+  pTab = sqlite3FindTable(db, tableName, NULL);
+  if( !pTab || pTab->pSelect ){
+    pTab = 0;
+    goto error_out;
+  }
+    
+  if(pIntegerPrimaryKey && pTab->iPKey >= 0) {
+    *pIntegerPrimaryKey = pTab->aCol[pTab->iPKey].zName;
+  }
+  if(pAutoIncrement) {
+    *pAutoIncrement = (pTab->tabFlags & TF_Autoincrement)!=0;
+  }
+  if(pWithoutRowid) {
+    *pWithoutRowid = (pTab->tabFlags & TF_WithoutRowid)!=0;
+  }
+    
+error_out:
+  sqlite3BtreeLeaveAll(db);
+
+  if( SQLITE_OK==rc && !pTab ){
+    sqlite3DbFree(db, zErrMsg);
+    zErrMsg = sqlite3MPrintf(db, "no such table: %s", tableName);
+    rc = SQLITE_ERROR;
+  }
+  sqlite3ErrorWithMsg(db, rc, (zErrMsg?"%s":0), zErrMsg);
+  sqlite3DbFree(db, zErrMsg);
+  rc = sqlite3ApiExit(db, rc);
+  sqlite3_mutex_leave(db->mutex);
+  return rc;
+}
+
+SQLITE_API int sqlite3_table_config_auto_increment(
+  sqlite3 *db,
+  const char *tableName
+) {
+  if( db == 0 || tableName==0 ){
+    return SQLITE_MISUSE_BKPT;
+  }
+  int rc;
+  char *zErrMsg = 0;
+  Table *pTab = 0;
+  /* Ensure the database schema has been loaded */
+  sqlite3_mutex_enter(db->mutex);
+  sqlite3BtreeEnterAll(db);
+  rc = sqlite3Init(db, &zErrMsg);
+  if( SQLITE_OK!=rc ){
+    goto error_out;
+  }
+
+  /* Locate the table in question */
+  pTab = sqlite3FindTable(db, tableName, NULL);
+  if( !pTab || pTab->pSelect ){
+    pTab = 0;
+    goto error_out;
+  }
+
+  pTab->tabFlags |= TF_Autoincrement;
+  
+  Db* mainDB = &db->aDb[0];
+  int schema_cookie = mainDB->pSchema->schema_cookie;
+  schema_cookie += 1;
+  mainDB->pSchema->schema_cookie = schema_cookie;
+  rc = sqlite3BtreeUpdateMeta(mainDB->pBt, BTREE_SCHEMA_VERSION, schema_cookie);
+    
+error_out:
+  sqlite3BtreeLeaveAll(db);
+
+  if( SQLITE_OK==rc && !pTab ){
+    sqlite3DbFree(db, zErrMsg);
+    zErrMsg = sqlite3MPrintf(db, "no such table: %s", tableName);
+    rc = SQLITE_ERROR;
+  }
+  sqlite3ErrorWithMsg(db, rc, (zErrMsg?"%s":0), zErrMsg);
+  sqlite3DbFree(db, zErrMsg);
+  rc = sqlite3ApiExit(db, rc);
+  sqlite3_mutex_leave(db->mutex);
+  return rc;
+}
+
+#endif
+
 /*
 ** Return meta information about a specific column of a database table.
 ** See comment in sqlite3.h (sqlite.h.in) for details.
