@@ -30,6 +30,19 @@ extern "C" {
 
 #ifdef SQLITE_WCDB
 
+SQLITE_API int sqlite3_table_meta(
+  sqlite3 *db,
+  const char *tableName,
+  int *pAutoIncrement,
+  int *pWithoutRowid,
+  const char **pIntegerPrimaryKey
+);
+
+SQLITE_API int sqlite3_table_config_auto_increment(
+  sqlite3 *db,
+  const char *tableName
+);
+
 #ifdef SQLITE_WCDB_LOCK_HOOK
 /*
  ** Register handlers when lock state changed.
