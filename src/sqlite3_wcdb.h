@@ -82,6 +82,8 @@ int sqlcipher_codec_ctx_get_reservesize(void *ctx);
 
 void* sqlite3Codec(void *iCtx, void *data, unsigned int pgno, int mode);
 
+void sqlite3CodecGetKey(sqlite3* db, int nDb, void **zKey, int *nKey);
+
 #endif // SQLITE_WCDB
 
 #endif /* SQLITE3_WCDB_H */
