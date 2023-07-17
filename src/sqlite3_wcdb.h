@@ -30,8 +30,9 @@ extern "C" {
 
 #ifdef SQLITE_WCDB
 
-SQLITE_API int sqlite3_table_meta(
+SQLITE_API int sqlite3_table_config(
   sqlite3 *db,
+  const char *dbName,
   const char *tableName,
   int *pAutoIncrement,
   int *pWithoutRowid,

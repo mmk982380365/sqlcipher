@@ -3641,8 +3641,9 @@ void sqlite3_thread_cleanup(void){
 
 #ifdef SQLITE_WCDB
 
-SQLITE_API int sqlite3_table_meta(
+SQLITE_API int sqlite3_table_config(
   sqlite3 *db,
+  const char *dbName,
   const char *tableName,
   int *pAutoIncrement,
   int *pWithoutRowid,
@@ -3663,7 +3664,7 @@ SQLITE_API int sqlite3_table_meta(
   }
 
   /* Locate the table in question */
-  pTab = sqlite3FindTable(db, tableName, NULL);
+  pTab = sqlite3FindTable(db, tableName, dbName);
   if( !pTab || pTab->pSelect ){
     pTab = 0;
     goto error_out;
@@ -3713,7 +3714,7 @@ SQLITE_API int sqlite3_table_config_auto_increment(
   }
 
   /* Locate the table in question */
-  pTab = sqlite3FindTable(db, tableName, NULL);
+  pTab = sqlite3FindTable(db, tableName, "main");
   if( !pTab || pTab->pSelect ){
     pTab = 0;
     goto error_out;
