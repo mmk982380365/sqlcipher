@@ -3641,6 +3641,56 @@ void sqlite3_thread_cleanup(void){
 
 #ifdef SQLITE_WCDB
 
+SQLITE_API int sqlite3_schema_info(
+  sqlite3 *db,
+  int *tableCount,
+  int *indexCount,
+  int *triggerCount
+) {
+  if( db == 0 ){
+    return SQLITE_MISUSE_BKPT;
+  }
+  sqlite3_mutex_enter(db->mutex);
+  sqlite3BtreeEnterAll(db);
+    
+  char *zErrMsg = 0;
+  int rc = sqlite3Init(db, &zErrMsg);
+  if( SQLITE_OK!=rc ){
+    goto error_out;
+  }
+  if(tableCount != NULL){
+    *tableCount = 0;
+  }
+  if(indexCount != NULL) {
+    *indexCount = 0;
+  }
+  if(triggerCount != NULL){
+    *triggerCount = 0;
+  }
+  for(int i=0; i<db->nDb; i++){
+    Schema *pSchema = db->aDb[i].pSchema;
+    if( ALWAYS(pSchema!=0) ){
+      HashElem *p;
+      if(tableCount != NULL){
+        *tableCount += pSchema->tblHash.count;
+      }
+      if(indexCount != NULL) {
+        *indexCount += pSchema->idxHash.count;
+      }
+      if(triggerCount != NULL){
+        *triggerCount += pSchema->trigHash.count;
+      }
+    }
+  }
+error_out:
+  sqlite3BtreeLeaveAll(db);
+  sqlite3ErrorWithMsg(db, rc, (zErrMsg?"%s":0), zErrMsg);
+  sqlite3DbFree(db, zErrMsg);
+  rc = sqlite3ApiExit(db, rc);
+  sqlite3_mutex_leave(db->mutex);
+  return rc;
+}
+
 SQLITE_API int sqlite3_table_config(
   sqlite3 *db,
   const char *dbName,
