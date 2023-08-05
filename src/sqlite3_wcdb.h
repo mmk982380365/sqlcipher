@@ -30,6 +30,13 @@ extern "C" {
 
 #ifdef SQLITE_WCDB
 
+SQLITE_API int sqlite3_schema_info(
+  sqlite3 *db,
+  int *tableCount,
+  int *indexCount,
+  int *triggerCount
+);
+
 SQLITE_API int sqlite3_table_config(
   sqlite3 *db,
   const char *dbName,
