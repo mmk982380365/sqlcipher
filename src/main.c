@@ -3721,7 +3721,17 @@ SQLITE_API int sqlite3_table_config(
   }
     
   if(pIntegerPrimaryKey && pTab->iPKey >= 0) {
-    *pIntegerPrimaryKey = pTab->aCol[pTab->iPKey].zName;
+    const char* name = pTab->aCol[pTab->iPKey].zName;
+    int length = name != NULL ? strlen(name) : 0;
+    if(length > 0) {
+      int length = strlen(name);
+      int size = (strlen(name) + 1) * sizeof(char);
+      char* buffer = malloc(size);
+      if(buffer != NULL) {
+        memcpy(buffer, name, size);
+        *pIntegerPrimaryKey = buffer;
+      }
+    }
   }
   if(pAutoIncrement) {
     *pAutoIncrement = (pTab->tabFlags & TF_Autoincrement)!=0;
