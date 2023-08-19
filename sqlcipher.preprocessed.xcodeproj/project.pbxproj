@@ -713,6 +713,7 @@
 					arm64e,
 				);
 				DEAD_CODE_STRIPPING = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 			};
 			name = Debug;
 		};
@@ -725,6 +726,7 @@
 					arm64e,
 				);
 				DEAD_CODE_STRIPPING = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 			};
 			name = Release;
 		};
