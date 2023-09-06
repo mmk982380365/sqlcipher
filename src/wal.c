@@ -1795,33 +1795,6 @@ int walWriteHeader(
 
 static int walIndexReadHdr(Wal *pWal, int *pChanged);
 
-#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
-
-struct CheckpointHook {
-    void (*xCheckPointBegin)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2);
-    void (*xCheckPointPage)(void *ctx, u32 pageNo, void *data, int size);
-    void (*xCheckPointFinish)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2);
-    void *ctx;
-};
-
-typedef struct CheckpointHook CheckpointHook;
-SQLITE_WSD static CheckpointHook checkPointHook = { 0 };
-#define checkPointHook GLOBAL(CheckpointHook *, checkPointHook)
-
-int sqlite3_checkpoint_hook(void (*xCheckPointBegin)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
-                            void (*xCheckPointPage)(void *ctx, u32 pageNo, void *data, int size),
-                            void (*xCheckPointFinish)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
-                            void *ctx) {
-    if( sqlite3GlobalConfig.isInit ) return SQLITE_MISUSE_BKPT;
-    checkPointHook.xCheckPointBegin = xCheckPointBegin;
-    checkPointHook.xCheckPointPage = xCheckPointPage;
-    checkPointHook.xCheckPointFinish = xCheckPointFinish;
-    checkPointHook.ctx = ctx;
-    return SQLITE_OK;
-}
-
-#endif
-
 /*
 ** Copy as much content as we can from the WAL back into the database file
 ** in response to an sqlite3_wal_checkpoint() request or the equivalent.
@@ -1876,9 +1849,10 @@ static int walCheckpoint(
   testcase( szPage<=32768 );
   testcase( szPage>=65536 );
   pInfo = walCkptInfo(pWal);
-#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
-  if(checkPointHook.xCheckPointBegin != NULL) {
-    checkPointHook.xCheckPointBegin(checkPointHook.ctx, pInfo->nBackfill, pWal->hdr.mxFrame, pWal->hdr.aSalt[0], pWal->hdr.aSalt[1]);
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  const char* dbPath = NULL;
+  if(db->xCheckPointBegin != NULL){
+      db->xCheckPointBegin(db->pCheckpointCtx, pInfo->nBackfill, pWal->hdr.mxFrame, pWal->hdr.aSalt[0], pWal->hdr.aSalt[1]);
   }
 #endif
   if( pInfo->nBackfill<pWal->hdr.mxFrame ){
@@ -1967,9 +1941,9 @@ static int walCheckpoint(
         testcase( IS_BIG_INT(iOffset) );
         rc = sqlite3OsWrite(pWal->pDbFd, zBuf, szPage, iOffset);
         if( rc!=SQLITE_OK ) break;
-#ifdef SQLITE_WCDB_IMPROVED_CHECKPOINT
-        if(checkPointHook.xCheckPointPage != NULL) {
-          checkPointHook.xCheckPointPage(checkPointHook.ctx, iDbpage, zBuf, szPage);
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+        if(db->xCheckPointPage != NULL){
+          db->xCheckPointPage(db->pCheckpointCtx, iDbpage, zBuf, szPage);
         }
 #endif
       }
@@ -2075,8 +2049,11 @@ static int walCheckpoint(
     }
     walUnlockExclusive(pWal, WAL_READ_LOCK(1), WAL_NREADER-1);
   }
-  if(checkPointHook.xCheckPointFinish != NULL) {
-    checkPointHook.xCheckPointFinish(checkPointHook.ctx, pInfo->nBackfill, pWal->hdr.mxFrame, pWal->hdr.aSalt[0], pWal->hdr.aSalt[1]);
+#endif
+
+#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
+  if(db->xCheckPointFinish != NULL){
+    db->xCheckPointFinish(db->pCheckpointCtx, pInfo->nBackfill, pWal->hdr.mxFrame, pWal->hdr.aSalt[0], pWal->hdr.aSalt[1]);
   }
 #endif
 

@@ -2346,8 +2346,10 @@ int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb){
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 void *sqlite3_wal_checkpoint_handler(sqlite3 *db,
-                                   void (*xCallback)(void*, sqlite3*, const char *),
-                                   void* pArg){
+                                     void (*xCheckPointBegin)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
+                                     void (*xCheckPointPage)(void *ctx, u32 pageNo, void *data, int size),
+                                     void (*xCheckPointFinish)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
+                                     void* pCtx){
 #ifndef SQLITE_OMIT_WAL
   void *pRet;
 #ifdef SQLITE_ENABLE_API_ARMOR
@@ -2357,9 +2359,11 @@ void *sqlite3_wal_checkpoint_handler(sqlite3 *db,
   }
 #endif
   sqlite3_mutex_enter(db->mutex);
-  pRet = db->pCheckpointArg;
-  db->xCheckpointCallback = xCallback;
-  db->pCheckpointArg = pArg;
+  pRet = db->pCheckpointCtx;
+  db->xCheckPointBegin = xCheckPointBegin;
+  db->xCheckPointPage = xCheckPointPage;
+  db->xCheckPointFinish = xCheckPointFinish;
+  db->pCheckpointCtx = pCtx;
   sqlite3_mutex_leave(db->mutex);
   return pRet;
 #else
@@ -2407,11 +2411,6 @@ int sqlite3Checkpoint(sqlite3 *db, int iDb, int eMode, int *pnLog, int *pnCkpt){
         bBusy = 1;
         rc = SQLITE_OK;
       }
-#ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
-      if( rc==SQLITE_OK && db->xCheckpointCallback) {
-        db->xCheckpointCallback(db->pCheckpointArg, db, db->aDb[i].zDbSName);
-      }
-#endif
     }
   }
 

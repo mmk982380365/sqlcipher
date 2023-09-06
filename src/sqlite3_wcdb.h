@@ -67,7 +67,12 @@ SQLITE_API int sqlite3_lock_hook(void (*xWillLock)(void *pArg, const char* zPath
 /*
  ** Register a handler when checkpoint did happen.
  */
-SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *, void (*xCallback)(void*, sqlite3*, const char *), void*);
+SQLITE_API void *sqlite3_wal_checkpoint_handler(sqlite3 *db,
+                                                void (*xCheckPointBegin)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
+                                                void (*xCheckPointPage)(void *ctx, u32 pageNo, void *data, int size),
+                                                void (*xCheckPointFinish)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
+                                                void* pCtx);
+
 #endif // SQLITE_WCDB_CHECKPOINT_HANDLER
 
 #ifdef SQLITE_WCDB_SUSPEND
