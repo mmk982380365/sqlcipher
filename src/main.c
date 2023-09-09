@@ -2346,9 +2346,9 @@ int sqlite3_wal_checkpoint(sqlite3 *db, const char *zDb){
 
 #ifdef SQLITE_WCDB_CHECKPOINT_HANDLER
 void *sqlite3_wal_checkpoint_handler(sqlite3 *db,
-                                     void (*xCheckPointBegin)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
-                                     void (*xCheckPointPage)(void *ctx, u32 pageNo, void *data, int size),
-                                     void (*xCheckPointFinish)(void *ctx, u32 nBackFill, u32 mxFrame, u32 salt1, u32 salt2),
+                                     void (*xCheckPointBegin)(void *ctx, int nBackFill, int mxFrame, int salt1, int salt2),
+                                     void (*xCheckPointPage)(void *ctx, int pageNo, void *data, int size),
+                                     void (*xCheckPointFinish)(void *ctx, int nBackFill, int mxFrame, int salt1, int salt2),
                                      void* pCtx){
 #ifndef SQLITE_OMIT_WAL
   void *pRet;
